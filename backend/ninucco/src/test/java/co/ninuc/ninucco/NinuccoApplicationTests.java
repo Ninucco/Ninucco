@@ -1,10 +1,10 @@
-package com.ninucco.backend;
+package co.ninuc.ninucco;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class NinuccoApplicationTests {
 
 	@Test
 	void contextLoads() {
