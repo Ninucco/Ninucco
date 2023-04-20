@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/providers/test_provider.dart';
+import 'package:ninucco/screens/ranking/ranking_battle_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'screens/home.dart';
 
 void main() {
   runApp(const App());
@@ -17,7 +16,7 @@ class App extends StatelessWidget {
         title: 'ninucco',
         home: ChangeNotifierProvider(
           create: (_) => TestProvider(),
-          child: const Home(),
+          child: const RankingBattleScreen(),
         ));
   }
 }
