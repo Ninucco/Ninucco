@@ -22,6 +22,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-assets:
-  - assets/fonts/dummy.md
-  - assets/images/dummy.md
+  assets:
+    - assets/fonts/dummy.md
+    - assets/images/dummy.md
+    - assets/icons/
