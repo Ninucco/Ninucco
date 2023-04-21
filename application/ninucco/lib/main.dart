@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/navigators/battle_navigator.dart';
+import 'package:ninucco/navigators/home_navigator.dart';
+import 'package:ninucco/navigators/profile_navigator.dart';
+import 'package:ninucco/navigators/rank_navigator.dart';
 import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/providers/test_provider.dart';
-import 'package:ninucco/screens/home.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -33,8 +36,29 @@ class Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+
     return Scaffold(
-      body: const Home(),
+      body: Stack(
+        children: [
+          Offstage(
+            offstage: navProvider.index != 0,
+            child: const HomeNavigator(tabIndex: 0),
+          ),
+          Offstage(
+            offstage: navProvider.index != 1,
+            child: const RankNavigator(tabIndex: 1),
+          ),
+          Offstage(
+            offstage: navProvider.index != 2,
+            child: const BattleNavigator(tabIndex: 2),
+          ),
+          Offstage(
+            offstage: navProvider.index != 3,
+            child: const ProfileNavigator(tabIndex: 3),
+          ),
+        ],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton.large(
         backgroundColor: const Color(0xff7E81FB),
