@@ -60,12 +60,15 @@ class Layout extends StatelessWidget {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton.large(
-        backgroundColor: const Color(0xff7E81FB),
-        onPressed: () {},
-        child: Image.asset('assets/icons/ninucco.png'),
-      ),
-      bottomNavigationBar: const BottomNav(),
+      floatingActionButton: Provider.of<NavProvider>(context).show
+          ? FloatingActionButton.large(
+              backgroundColor: const Color(0xff7E81FB),
+              onPressed: () {},
+              child: Image.asset('assets/icons/ninucco.png'),
+            )
+          : null,
+      bottomNavigationBar:
+          Provider.of<NavProvider>(context).show ? const BottomNav() : null,
     );
   }
 }

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ninucco/providers/nav_provider.dart';
+import 'package:provider/provider.dart';
 
 class FaceScan extends StatefulWidget {
   final RouteSettings settings;
@@ -15,10 +17,9 @@ class _FaceScanState extends State<FaceScan> {
   File? _image;
   void setImage(path) {
     setState(() {
-      if (path == null) {
-        _image = null;
-      } else {
+      if (path != null) {
         _image = File(path);
+        Provider.of<NavProvider>(context, listen: false).hideBottomNav();
       }
     });
   }
@@ -34,6 +35,21 @@ class _FaceScanState extends State<FaceScan> {
                 : Image.file(File(_image!.path))));
   }
 
+  // 화면이 dispose 될 때 bottom Nav 를 다시 그림
+  late NavProvider _navProvider;
+  @override
+  void didChangeDependencies() {
+    _navProvider = Provider.of<NavProvider>(context, listen: false);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _navProvider.showBottomNav());
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,22 +57,42 @@ class _FaceScanState extends State<FaceScan> {
         title: Text("args.title ${widget.settings.arguments}"),
       ),
       body: Container(
-        child: Column(children: [
-          showImage(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CameraButton(
-                setImage: setImage,
-                type: 'camera',
+        decoration: const BoxDecoration(
+          color: Colors.amber,
+        ),
+        child: Stack(
+          children: [
+            if (_image != null)
+              Positioned(
+                width: MediaQuery.of(context).size.width,
+                height: 60,
+                right: 0,
+                bottom: 0,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("SUBMIT"),
+                ),
               ),
-              CameraButton(
-                setImage: setImage,
-                type: 'gallery',
-              )
-            ],
-          )
-        ]),
+            Column(
+              children: [
+                showImage(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CameraButton(
+                      setImage: setImage,
+                      type: 'camera',
+                    ),
+                    CameraButton(
+                      setImage: setImage,
+                      type: 'gallery',
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
