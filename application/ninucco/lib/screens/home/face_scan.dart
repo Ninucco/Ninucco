@@ -15,12 +15,19 @@ class FaceScan extends StatefulWidget {
 
 class _FaceScanState extends State<FaceScan> {
   File? _image;
+  bool _loading = false;
   void setImage(path) {
     setState(() {
       if (path != null) {
         _image = File(path);
         Provider.of<NavProvider>(context, listen: false).hideBottomNav();
       }
+    });
+  }
+
+  void setLoading(loading) {
+    setState(() {
+      _loading = loading;
     });
   }
 
@@ -63,16 +70,8 @@ class _FaceScanState extends State<FaceScan> {
         child: Stack(
           children: [
             if (_image != null)
-              Positioned(
-                width: MediaQuery.of(context).size.width,
-                height: 60,
-                right: 0,
-                bottom: 0,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text("SUBMIT"),
-                ),
-              ),
+              SubmitButton(
+                  loading: _loading, setLoading: setLoading, context: context),
             Column(
               children: [
                 showImage(),
@@ -91,8 +90,52 @@ class _FaceScanState extends State<FaceScan> {
                 ),
               ],
             ),
+            if (_loading)
+              Positioned.fill(
+                  child: Container(
+                decoration: const BoxDecoration(color: Colors.black38),
+                child: const Text("Loading..."),
+              ))
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SubmitButton extends StatelessWidget {
+  final bool loading;
+  final Function setLoading;
+  final BuildContext context;
+  const SubmitButton({
+    super.key,
+    required this.loading,
+    required this.setLoading,
+    required this.context,
+  });
+
+  void handleSubmit() async {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    print("분석 시작");
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      setLoading(false);
+      Navigator.pushNamed(context, '/ScanResult');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      width: MediaQuery.of(context).size.width,
+      height: 60,
+      right: 0,
+      bottom: 0,
+      child: ElevatedButton(
+        onPressed: handleSubmit,
+        child: const Text("SUBMIT"),
       ),
     );
   }
