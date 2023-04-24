@@ -21,7 +21,6 @@ class HomePage extends StatelessWidget {
               shape: ContinuousRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
-              floating: true,
               elevation: 2,
               forceElevated: true,
               backgroundColor: Colors.white,
@@ -48,93 +47,133 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            SliverMasonryGrid.count(
-              crossAxisCount: 2,
-              childCount: 6,
-              crossAxisSpacing: 15,
-              mainAxisSpacing: 15,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/FaceScan',
-                    arguments: index,
-                  );
-                },
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      'assets/images/scan_items/${index + 1}.png',
-                      scale: 0.1,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 20,
-                        horizontal: 10,
+            SliverGrid.builder(
+              itemCount: 6,
+              gridDelegate: SliverQuiltedGridDelegate(
+                crossAxisCount: 2,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+                repeatPattern: QuiltedGridRepeatPattern.inverted,
+                pattern: [
+                  const QuiltedGridTile(2, 1),
+                  const QuiltedGridTile(1, 1),
+                  const QuiltedGridTile(1, 1),
+                ],
+              ),
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/FaceScan',
+                      arguments: index,
+                    );
+                  },
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        'assets/images/scan_items/${index + 1}.png',
+                        scale: 0.1,
+                        fit: BoxFit.cover,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 20),
-                          Text(
-                            "나와",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 20,
+                          horizontal: 10,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 20),
+                            Text(
+                              "나와",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "닮은 직업상 찾기",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            Text(
+                              "닮은 직업상 찾기",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                );
+              },
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 12, top: 36),
+                child: const Text(
+                  "오늘의 배틀",
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
             SliverList(
-              delegate: SliverChildListDelegate([
-                Container(color: Colors.red, height: 150.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.purple, height: 100.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.green, height: 200.0),
-              ]),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate([
-                Container(color: Colors.red, height: 150.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.purple, height: 100.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.green, height: 200.0),
-              ]),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate([
-                Container(color: Colors.red, height: 150.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.purple, height: 100.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.green, height: 200.0),
-              ]),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate([
-                Container(color: Colors.red, height: 150.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.purple, height: 100.0),
-                const SizedBox(height: 100),
-                Container(color: Colors.green, height: 200.0),
-              ]),
+              delegate: SliverChildListDelegate(
+                [
+                  for (var i in [1, 2, 3, 4, 5])
+                    Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: AspectRatio(
+                                    aspectRatio: 1,
+                                    child: Image.network(
+                                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwVVfi9a81AcdLJQCiVitDydwOnDDiRLpcbw&usqp=CAU',
+                                      scale: 0.1,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: AspectRatio(
+                                    aspectRatio: 1,
+                                    child: Image.network(
+                                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRky4seZyCNJWW8Wu3pt6AoaMMTsIZ203_xtQ&usqp=CAU',
+                                      scale: 0.1,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Positioned.fill(
+                                bottom: 0,
+                                left: 0,
+                                child: Icon(
+                                  Icons.brightness_auto_outlined,
+                                  color: Colors.purpleAccent,
+                                  size: 64,
+                                )),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        const Text("34명이 배팅했어요"),
+                        const Divider(
+                          height: 24,
+                          color: Color(0x88000000),
+                        )
+                      ],
+                    ),
+                ],
+              ),
             ),
           ],
         ),
