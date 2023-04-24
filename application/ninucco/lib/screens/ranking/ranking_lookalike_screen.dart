@@ -1,21 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/widgets/ranking/ranking_item_widget.dart';
+import 'package:ninucco/services/user_rank_api_service.dart';
+import 'package:ninucco/models/user_rank_info_model.dart';
 
 class RankingLookalikeScreen extends StatelessWidget {
-  const RankingLookalikeScreen({super.key});
-  // final Future<List<UserRankInfoModel>> userRanks =
+  RankingLookalikeScreen({super.key});
+
+  final Future<List<UserRankInfoModel>> userRanks =
+      UserRankApiService.getUserRanks();
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
-      body: RankingItem(
-        profileImage:
-            "https://user-images.githubusercontent.com/31383362/233578360-75193691-f74b-406a-8f7b-1f481f45ab7a.png",
-        nickname: "해피한 피카츄",
-        topSimilarity: "어처구니 없는 고래상",
-        rankIdx: 1,
+      body: FutureBuilder(
+        future: userRanks,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Expanded(child: makeList(snapshot))
+              ],
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
+    );
+  }
+
+  ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
+    return ListView.separated(
+      scrollDirection: Axis.vertical,
+      itemCount: snapshot.data!.length,
+      // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      itemBuilder: (context, index) {
+        var userRank = snapshot.data![index];
+        return RankingItem(
+          id: userRank.id,
+          profileImage: userRank.profileImage,
+          nickname: "뛰어난 수장룡",
+          topSimilarity: "방금 막 자다깬 유니콘상",
+          index: index,
+        );
+      },
+      separatorBuilder: (context, index) => const SizedBox(width: 20),
     );
   }
 }

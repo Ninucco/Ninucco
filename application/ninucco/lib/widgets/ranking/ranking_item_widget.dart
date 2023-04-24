@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 class RankingItem extends StatelessWidget {
   final String profileImage, nickname, topSimilarity;
-  final int rankIdx;
+  final int id, index;
 
   const RankingItem({
     super.key,
     required this.profileImage,
     required this.nickname,
     required this.topSimilarity,
-    required this.rankIdx,
+    required this.id,
+    required this.index,
   });
 
   @override
@@ -18,7 +19,7 @@ class RankingItem extends StatelessWidget {
       child: Align(
         alignment: Alignment.topCenter,
         child: Container(
-          margin: const EdgeInsets.all(15),
+          margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.all(15),
           width: MediaQuery.of(context).size.width * 0.9,
           height: 90,
@@ -103,10 +104,7 @@ class RankingItem extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Image.asset(
-                        'assets/images/first_place.png',
-                        fit: BoxFit.cover,
-                      ),
+                      child: getPrizeIcon(),
                     ),
                   ],
                 ),
@@ -116,5 +114,26 @@ class RankingItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget getPrizeIcon() {
+    if (index == 0) {
+      return Image.asset(
+        'assets/images/first_place.png',
+        fit: BoxFit.cover,
+      );
+    } else if (index == 1) {
+      return Image.asset(
+        'assets/images/second_place.png',
+        fit: BoxFit.cover,
+      );
+    } else if (index == 2) {
+      return Image.asset(
+        'assets/images/third_place.png',
+        fit: BoxFit.cover,
+      );
+    } else {
+      return const SizedBox(height: 10);
+    }
   }
 }

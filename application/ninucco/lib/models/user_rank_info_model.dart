@@ -1,10 +1,11 @@
 class UserRankInfoModel {
   final String profileImage, nickname, topSimilarity;
-  int rankIdx;
+  int id;
 
   UserRankInfoModel.fromJson(Map<String, dynamic> json)
-      : profileImage = json['profileImage'],
-        nickname = json['nickname'],
-        topSimilarity = json['topSimilarity'],
-        rankIdx = json['rankIdx'];
+      : id = json["id"],
+        profileImage = json['image'],
+        nickname = json['username'],
+        topSimilarity =
+            json['firstName'] + " " + json['lastName']; // 최고 닮은꼴로 수정 예정
 }

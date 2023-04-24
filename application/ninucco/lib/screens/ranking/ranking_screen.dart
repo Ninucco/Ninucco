@@ -62,7 +62,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const <Widget>[
+        children: <Widget>[
           Center(
             child: RankingBattleScreen(),
           ),
