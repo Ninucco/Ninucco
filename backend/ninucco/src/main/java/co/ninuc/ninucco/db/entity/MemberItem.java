@@ -1,13 +1,14 @@
 package co.ninuc.ninucco.db.entity;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @Table(name="member_item")
-@IdClass(MemberItemId.class)
 public class MemberItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name = "member_id")

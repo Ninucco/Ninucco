@@ -8,7 +8,6 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Table(name = "member_similarity")
-@IdClass(MemberSimilarityId.class)
 public class MemberSimilarity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name = "member_id")
