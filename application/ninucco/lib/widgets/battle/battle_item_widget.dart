@@ -33,9 +33,6 @@ class BattleItem extends StatelessWidget {
           children: [
             Container(
               margin: const EdgeInsets.all(10),
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-              ),
               width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -148,6 +145,32 @@ class BattleItem extends StatelessWidget {
                     progressColor: Colors.blue.shade400,
                     backgroundColor: Colors.red.shade400,
                     barRadius: const Radius.elliptical(5, 3),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 3,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment(0.8, 1),
+                          colors: <Color>[
+                            Color(0xffd0d3fe),
+                            Color(0xffddccfd),
+                            Color(0xffefc9fc),
+                            Color(0xfffbc6f4),
+                            Color(0xfffac3dc),
+                            Color(0xfff8c0c3),
+                            Color(0xfff7d1bd),
+                            Color(0xfff5e6ba),
+                          ],
+                          tileMode: TileMode.mirror,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -12,18 +12,31 @@ class BattleAllScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back_ios_new_outlined,
+        //       color: Colors.black),
+        //   onPressed: () => Navigator.of(context).pop(),
+        // ),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: const Text(
+          '전체 배틀',
+        ),
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+        ),
+      ),
       backgroundColor: Colors.white,
       body: FutureBuilder(
         future: userRanks,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(child: makeList(snapshot))
-              ],
+              children: [Expanded(child: makeList(snapshot))],
             );
           }
           return const Center(
