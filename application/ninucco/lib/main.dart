@@ -3,11 +3,20 @@ import 'package:ninucco/navigators/battle_navigator.dart';
 import 'package:ninucco/navigators/home_navigator.dart';
 import 'package:ninucco/navigators/profile_navigator.dart';
 import 'package:ninucco/navigators/rank_navigator.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/providers/test_provider.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const App());
 }
 
@@ -22,6 +31,7 @@ class App extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (_) => TestProvider()),
           ChangeNotifierProvider(create: (_) => NavProvider()),
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
         ],
         child: const Layout(),
       ),
