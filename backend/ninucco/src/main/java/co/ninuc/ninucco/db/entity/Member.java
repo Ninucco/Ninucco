@@ -1,7 +1,5 @@
 package co.ninuc.ninucco.db.entity;
 
-import com.sun.istack.NotNull;
-
 import javax.persistence.*;
 
 import lombok.Builder;
@@ -24,27 +22,22 @@ public class Member {
     @Column(name="id")
     String id;
 
-    @Column(name="nickname", unique = true)
-    @NotNull
+    @Column(name="nickname", unique = true, nullable = false)
     String nickname;
 
-    @Column(name="win_count")
-    @NotNull
+    @Column(name="win_count", nullable = false)
     @ColumnDefault("0")
     Long winCount;
 
-    @Column(name="lose_count")
-    @NotNull
+    @Column(name="lose_count", nullable = false)
     @ColumnDefault("0")
     Long loseCount;
 
-    @Column(name="point")
-    @NotNull
+    @Column(name="point", nullable = false)
     @ColumnDefault("0")
     Long point;
 
-    @Column(name="rate")
-    @NotNull
+    @Column(name="rate", nullable = false)
     @ColumnDefault("0")
     Long rate;
 

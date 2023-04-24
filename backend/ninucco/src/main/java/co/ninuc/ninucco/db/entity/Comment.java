@@ -1,6 +1,5 @@
 package co.ninuc.ninucco.db.entity;
 
-import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,20 +17,17 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Comment extends BaseEntity {
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(referencedColumnName = "id", name = "member_id")
+    @JoinColumn(referencedColumnName = "id", name = "member_id", nullable = false)
     Member member;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(referencedColumnName = "id", name = "battle_id")
+    @JoinColumn(referencedColumnName = "id", name = "battle_id", nullable = false)
     Battle battle;
 
-    @NotNull
-    @Column(name="content", length = 200)
+    @Column(name="content", nullable = false, length = 200)
     String content;
 
     @CreatedDate

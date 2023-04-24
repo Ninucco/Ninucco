@@ -10,6 +10,6 @@ WORKDIR  /home/A605
 RUN chmod +x gradlew
 RUN ./gradlew clean build
 
-RUN mv ./build/libs/ninuco-0.0.1-SNAPSHOT.jar ./ninucco.jar
+RUN mv ./build/libs/ninucco-0.0.1-SNAPSHOT.jar ./ninucco.jar
 
 CMD ["nohup", "java", "-jar", "ninucco.jar", "&"]
