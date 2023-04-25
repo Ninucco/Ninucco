@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 
 @Entity
-@IdClass(MemberFriendId.class)
 @Table(name="member_friend")
 @Getter
 @NoArgsConstructor
