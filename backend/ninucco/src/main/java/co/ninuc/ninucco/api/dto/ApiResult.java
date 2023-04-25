@@ -1,17 +1,15 @@
 package co.ninuc.ninucco.api.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class ApiResult<T>{
+@AllArgsConstructor
+public class ApiResult<Res>{
     private final boolean success;
-    private final T response;
-    private final ApiError apiError;
-    public ApiResult(boolean success, T response, ApiError apiError) {
-        this.success = success;
-        this.response = response;
-        this.apiError = apiError;
-    }
+    /*
+    * Response dto는 Res를 구현
+    * 성공일 경우 XXXRes, 실패일 경우 ErrorRes
+    * */
+    private final Res response;
 }
