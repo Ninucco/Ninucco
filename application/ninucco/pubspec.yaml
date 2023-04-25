@@ -9,11 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
   http: ^0.13.5
+  flutter_staggered_grid_view: ^0.6.2
+  image_picker: ^0.8.7+4
   percent_indicator: ^4.2.3
+
 
 dev_dependencies:
   flutter_test:
@@ -26,5 +28,7 @@ flutter:
   assets:
     - assets/fonts/dummy.md
     - assets/images/dummy.md
+    - assets/images/scan_items/
+    - assets/images/bg/
     - assets/images/
     - assets/icons/
