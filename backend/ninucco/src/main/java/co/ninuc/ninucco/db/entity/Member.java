@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
     @Id
-    @Column(name="id")
+    @Column(name="id", length = 40)
     String id;
 
     @Column(name="nickname", unique = true, nullable = false)
