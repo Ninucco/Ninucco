@@ -146,7 +146,7 @@ class HomePage extends StatelessWidget {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  for (var i in [1, 2, 3, 4, 5])
+                  for (var _ in [1, 2, 3, 4, 5])
                     Column(
                       children: [
                         Stack(
