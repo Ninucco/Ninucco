@@ -67,6 +67,12 @@ public class BattleServiceImpl implements BattleService{
                 .opponentOdds(1.0).build();
     }
     Betting toEntity(BettingCreateReq bettingCreateReq){
-        return null;
+        return Betting.builder()
+                .battle(battleRepository.findById(bettingCreateReq.getBattleId())
+                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_A)))
+                .member(memberRepository.findById(bettingCreateReq.getMemberId())
+                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_A)))
+                .betSide(bettingCreateReq.getBetSide())
+                .betMoney(bettingCreateReq.getBetMoney()).build();
     }
 }
