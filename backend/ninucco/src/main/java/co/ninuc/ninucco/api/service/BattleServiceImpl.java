@@ -24,7 +24,7 @@ public class BattleServiceImpl implements BattleService{
 
     @Transactional
     @Override
-    public Long insertBattle(BattleCreateReq battleCreateReq) throws CustomException {
+    public Long insertBattle(BattleCreateReq battleCreateReq){
         return null;
     }
 
@@ -34,18 +34,18 @@ public class BattleServiceImpl implements BattleService{
     }
 
     @Override
-    public BattleRes selectOneBattle(Long battleId) throws CustomException {
+    public BattleRes selectOneBattle(Long battleId){
         return null;
     }
 
     @Transactional
     @Override
-    public Long insertBetting(BettingCreateReq battleCreateReq) throws CustomException {
+    public Long insertBetting(BettingCreateReq battleCreateReq){
         return null;
     }
 
     @Override
-    public BattleResultRes selectOneBattleResult(Long battleId) throws CustomException {
+    public BattleResultRes selectOneBattleResult(Long battleId){
         return null;
     }
     //시간마다 배틀 끝났는지 체크
