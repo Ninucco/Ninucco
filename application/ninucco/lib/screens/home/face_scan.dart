@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ninucco/providers/nav_provider.dart';
+import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:provider/provider.dart';
+import 'package:wrapped_korean_text/wrapped_korean_text.dart';
 
 class FaceScan extends StatefulWidget {
   final RouteSettings settings;
@@ -33,13 +35,25 @@ class _FaceScanState extends State<FaceScan> {
 
   Widget showImage() {
     return Container(
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
         color: const Color(0xffd0cece),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width,
-        child: Center(
-            child: _image == null
-                ? const Text('No image selected.')
-                : Image.file(File(_image!.path))));
+      ),
+      width: MediaQuery.of(context).size.width - 64,
+      height: MediaQuery.of(context).size.width - 64,
+      child: Expanded(
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: _image == null
+              ? const Center(child: Text('No image selected.'))
+              : Image.file(
+                  File(_image!.path),
+                  fit: BoxFit.cover,
+                ),
+        ),
+      ),
+    );
   }
 
   // 화면이 dispose 될 때 bottom Nav 를 다시 그림
@@ -59,44 +73,91 @@ class _FaceScanState extends State<FaceScan> {
 
   @override
   Widget build(BuildContext context) {
+    final scanList = ScanUtility().scanTitleList;
+    final int type = widget.settings.arguments as int;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text("args.title ${widget.settings.arguments}"),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.amber,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_outlined,
+              color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        child: Stack(
-          children: [
-            if (_image != null)
-              SubmitButton(
-                  loading: _loading, setLoading: setLoading, context: context),
-            Column(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg.png'),
+            fit: BoxFit.fill,
+          )),
+          child: Padding(
+            padding:
+                const EdgeInsets.only(top: 96, right: 32, bottom: 32, left: 32),
+            child: Stack(
               children: [
-                showImage(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
                   children: [
-                    CameraButton(
-                      setImage: setImage,
-                      type: 'camera',
+                    showImage(),
+                    const SizedBox(height: 32),
+                    Text(
+                      scanList[type].join(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 6.0,
+                            color: Colors.black26,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
                     ),
-                    CameraButton(
-                      setImage: setImage,
-                      type: 'gallery',
-                    )
+                    const SizedBox(height: 16),
+                    WrappedKoreanText(
+                      '다른 사람이 봤을때 나는 어떤 동물로 보여질지 확인해 보세요. 결과 검사를 통해서  귀여운 프로필과 ninu 코인을 받아보세요!',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        height: 1.6,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CameraButton(
+                          setImage: setImage,
+                          type: 'camera',
+                        ),
+                        CameraButton(
+                          setImage: setImage,
+                          type: 'gallery',
+                        )
+                      ],
+                    ),
+                    if (_image != null)
+                      SubmitButton(
+                          loading: _loading,
+                          setLoading: setLoading,
+                          context: context),
                   ],
                 ),
+                if (_loading)
+                  Container(
+                    decoration: const BoxDecoration(color: Colors.black38),
+                    child: const Text("Loading..."),
+                  ),
               ],
             ),
-            if (_loading)
-              Positioned.fill(
-                  child: Container(
-                decoration: const BoxDecoration(color: Colors.black38),
-                child: const Text("Loading..."),
-              ))
-          ],
+          ),
         ),
       ),
     );
@@ -172,8 +233,15 @@ class _CameraButtonState extends State<CameraButton> {
       },
       child: Stack(
         children: [
-          Image.asset(
-              'assets/images/scan_items/${widget.type == 'camera' ? 'blue' : 'purple'}_block.png'),
+          Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: Image.asset(
+              'assets/images/scan_items/${widget.type == 'camera' ? 'blue' : 'purple'}_block.png',
+              width: MediaQuery.of(context).size.width * 0.5 - 40,
+              fit: BoxFit.cover,
+            ),
+          ),
           Positioned.fill(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
