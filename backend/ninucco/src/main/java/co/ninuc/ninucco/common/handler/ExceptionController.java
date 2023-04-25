@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionController {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ApiResult<Res>> handleNotFoundException(CustomException ex) {
-        log.error("handleNotFoundException : ", ex);
+    public ResponseEntity<ApiResult<Res>> handleCustomException(CustomException ex) {
+        log.error("handleCustomException : {}", ex.getErrorCode());
         return ResponseEntity.ok(new ApiResult<>(false, ex.getErrorCode()));
     }
 }
