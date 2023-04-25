@@ -13,6 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
   http: ^0.13.5
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:
@@ -25,7 +26,5 @@ flutter:
   assets:
     - assets/fonts/dummy.md
     - assets/images/dummy.md
-    - assets/images/first_place.png
-    - assets/images/second_place.png
-    - assets/images/third_place.png
+    - assets/images/
     - assets/icons/

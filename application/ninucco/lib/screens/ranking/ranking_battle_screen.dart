@@ -36,6 +36,7 @@ class RankingBattleScreen extends StatelessWidget {
 
   ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
     return ListView.separated(
+      shrinkWrap: true,
       scrollDirection: Axis.vertical,
       itemCount: snapshot.data!.length,
       // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),

@@ -5,7 +5,7 @@ import 'package:ninucco/screens/ranking/ranking_betting_screen.dart';
 
 class RankingScreen extends StatelessWidget {
   const RankingScreen({super.key});
-  // final Future<List<UserRankInfoModel>> userRanks =
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
