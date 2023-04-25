@@ -11,5 +11,5 @@ public class ApiResult<Res>{
     * Response dto는 Res를 구현
     * 성공일 경우 XXXRes, 실패일 경우 ErrorRes
     * */
-    private final Res response;
+    private final Res data;
 }
