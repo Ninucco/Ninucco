@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:ninucco/utilities/scan_list_data.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final scanList = ScanUtility().scanTitleList;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -13,7 +16,7 @@ class HomePage extends StatelessWidget {
           image: AssetImage('assets/images/bg/bg.png'),
           fit: BoxFit.cover,
         )),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(16),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -51,8 +54,8 @@ class HomePage extends StatelessWidget {
               itemCount: 6,
               gridDelegate: SliverQuiltedGridDelegate(
                 crossAxisCount: 2,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
                 repeatPattern: QuiltedGridRepeatPattern.inverted,
                 pattern: [
                   const QuiltedGridTile(2, 1),
@@ -72,13 +75,19 @@ class HomePage extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.asset(
-                        'assets/images/scan_items/${index + 1}.png',
-                        scale: 0.1,
-                        fit: BoxFit.cover,
+                      Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Image.asset(
+                          'assets/images/scan_items/${index + 1}.png',
+                          scale: 0.1,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
                           vertical: 20,
                           horizontal: 10,
                         ),
@@ -86,19 +95,33 @@ class HomePage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 20),
                             Text(
-                              "나와",
-                              style: TextStyle(
-                                fontSize: 20,
+                              scanList[index][0],
+                              style: const TextStyle(
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                             ),
                             Text(
-                              "닮은 직업상 찾기",
-                              style: TextStyle(
-                                fontSize: 20,
+                              scanList[index][1],
+                              style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    blurRadius: 6.0,
+                                    color: Colors.black12,
+                                    offset: Offset(2, 2),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              scanList[index][2],
+                              style: const TextStyle(
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
