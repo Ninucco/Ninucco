@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionController {
 
+    final boolean FAIL = false;
+
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResult<Res>> handleCustomException(CustomException ex) {
         log.error("handleCustomException : {}", ex.getErrorCode());
-        return ResponseEntity.ok(new ApiResult<>(false, ex.getErrorCode()));
+        return ResponseEntity.ok(new ApiResult<>(FAIL, ex.getErrorCode()));
     }
 }
