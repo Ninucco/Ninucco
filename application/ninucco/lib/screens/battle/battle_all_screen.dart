@@ -6,6 +6,9 @@ import 'package:ninucco/models/user_rank_info_model.dart';
 class BattleAllScreen extends StatelessWidget {
   BattleAllScreen({super.key});
 
+  // final Future<List<UserRankInfoModel>> userRanks =
+  //     UserRankApiService.getUserRanks();
+
   final Future<List<UserRankInfoModel>> userRanks =
       UserRankApiService.getUserRanks();
 
