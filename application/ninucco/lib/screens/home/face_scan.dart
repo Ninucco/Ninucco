@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ninucco/providers/nav_provider.dart';
+import 'package:ninucco/screens/home/scan_result.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:provider/provider.dart';
 import 'package:wrapped_korean_text/wrapped_korean_text.dart';
@@ -106,12 +109,12 @@ class _FaceScanState extends State<FaceScan> {
             image: AssetImage('assets/images/bg/bg.png'),
             fit: BoxFit.fill,
           )),
-          child: Padding(
-            padding:
-                const EdgeInsets.only(top: 96, right: 32, bottom: 32, left: 32),
-            child: Stack(
-              children: [
-                Column(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 96, right: 32, bottom: 32, left: 32),
+                child: Column(
                   children: [
                     showImage(),
                     const SizedBox(height: 32),
@@ -154,18 +157,33 @@ class _FaceScanState extends State<FaceScan> {
                     ),
                     if (_image != null)
                       SubmitButton(
-                          loading: _loading,
-                          setLoading: setLoading,
-                          context: context),
+                        loading: _loading,
+                        setLoading: setLoading,
+                        context: context,
+                        type: type,
+                      ),
                   ],
                 ),
-                if (_loading)
-                  Container(
-                    decoration: const BoxDecoration(color: Colors.black38),
-                    child: const Text("Loading..."),
+              ),
+              if (_loading)
+                Positioned(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child: const Center(
+                      child: Text(
+                        "Loading...",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       ),
@@ -177,36 +195,62 @@ class SubmitButton extends StatelessWidget {
   final bool loading;
   final Function setLoading;
   final BuildContext context;
+  final int type;
   const SubmitButton({
     super.key,
     required this.loading,
     required this.setLoading,
     required this.context,
+    required this.type,
   });
+
+  Future fetchScanResult() async {
+    final response =
+        await http.get(Uri.parse('https://dummyjson.com/products/1'));
+
+    return ResultData(
+      description: jsonDecode(response.body)['description'],
+      imageUrl: jsonDecode(response.body)['thumbnail'],
+      title: jsonDecode(response.body)['title'],
+      type: type,
+    );
+  }
 
   void handleSubmit() async {
     if (loading) {
       return;
     }
     setLoading(true);
-    print("분석 시작");
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      setLoading(false);
-      Navigator.pushNamed(context, '/ScanResult');
-    });
+
+    Navigator.pushNamed(context, '/ScanResult',
+        arguments: await fetchScanResult());
+    setLoading(false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      width: MediaQuery.of(context).size.width,
-      height: 60,
-      right: 0,
-      bottom: 0,
-      child: ElevatedButton(
-        onPressed: handleSubmit,
-        child: const Text("SUBMIT"),
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 32),
+        GestureDetector(
+          onTap: handleSubmit,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: const BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.all(Radius.circular(12))),
+            width: double.infinity,
+            child: const Text(
+              "분석하기",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
