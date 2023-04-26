@@ -40,8 +40,7 @@ public class Battle extends BaseEntity {
     BattleResult result;
     @CreatedDate
     LocalDateTime createdAt;
-    @LastModifiedDate
-    LocalDateTime updatedAt;
+    LocalDateTime finishAt;
 
     @Builder
     public Battle(String title, Member applicant, Member opponent, String applicantUrl, String opponentUrl, Double applicantOdds, Double opponentOdds){
