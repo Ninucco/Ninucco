@@ -28,6 +28,8 @@ public class Battle extends BaseEntity {
     Member opponent;
     @Column(name="applicant_url", nullable = false)
     String applicantUrl;
+    @Column(name="opponent_url", nullable = false)
+    String opponentUrl;
     @Column(name="applicant_odds", nullable = false)
     Double applicantOdds;
     @Column(name="opponent_odds", nullable = false)
@@ -42,13 +44,15 @@ public class Battle extends BaseEntity {
     LocalDateTime updatedAt;
 
     @Builder
-    public Battle(String title, Member applicant, Member opponent, Double applicantOdds, Double opponentOdds, BattleStatus status, BattleResult result){
+    public Battle(String title, Member applicant, Member opponent, String applicantUrl, String opponentUrl, Double applicantOdds, Double opponentOdds){
         this.title=title;
         this.applicant=applicant;
         this.opponent=opponent;
+        this.applicantUrl=applicantUrl;
+        this.opponentUrl=opponentUrl;
         this.applicantOdds=applicantOdds;
         this.opponentOdds=opponentOdds;
-        this.status=status;
-        this.result=result;
+        this.status=BattleStatus.PROCEEDING;
+        this.result=BattleResult.PROCEEDING;
     }
 }

@@ -10,8 +10,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class BettingCreateReq {
-    private final String battleId;
-    private final String memberMemberId;
+    private final Long battleId;
+    private final String memberId;
     private final BetSide betSide;
     private final Long betMoney;
 }
