@@ -35,6 +35,7 @@ class BattleDetailScreen extends StatefulWidget {
 class _BattleDetailScreenState extends State<BattleDetailScreen> {
   late Future<BattleInfoModel> battle;
   late Future<List<BattleCommentInfoModel>> battleComments;
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -319,7 +320,22 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                         height: 10,
                       ),
                       // 댓글 쓰기
-
+                      TextFormField(
+                        controller: _textEditingController,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _textEditingController.notifyListeners();
+                          });
+                        },
+                        child: const Icon(Icons.send),
+                      ),
+                      (_textEditingController.value.text.isEmpty)
+                          ? const Text("")
+                          : Text(
+                              _textEditingController.value.text,
+                            ),
                       const SizedBox(
                         height: 15,
                       ),
