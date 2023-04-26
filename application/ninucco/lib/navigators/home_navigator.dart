@@ -20,7 +20,7 @@ class HomeNavigator extends StatelessWidget {
               case "/FaceScan":
                 return FaceScan(settings: settings);
               case "/ScanResult":
-                return const ScanResult();
+                return ScanResult(settings: settings);
               default:
                 return const Placeholder();
             }
