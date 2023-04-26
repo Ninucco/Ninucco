@@ -3,6 +3,7 @@ package co.ninuc.ninucco.db.entity;
 import javax.persistence.*;
 
 import lombok.Builder;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,5 +60,11 @@ public class Member {
         this.loseCount=loseCount;
         this.point=point;
         this.rate=rate;
+    }
+
+
+
+    public void setMemberId(String id){
+        this.id=id;
     }
 }
