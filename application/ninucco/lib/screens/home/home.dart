@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
           image: AssetImage('assets/images/bg/bg.png'),
           fit: BoxFit.cover,
         )),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -41,6 +41,9 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
+            const SliverToBoxAdapter(
+              child: TextField(),
+            ),
             SliverToBoxAdapter(
               child: Container(
                 padding: const EdgeInsets.only(bottom: 12),
