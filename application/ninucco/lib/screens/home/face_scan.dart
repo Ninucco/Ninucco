@@ -16,8 +16,17 @@ class FaceScan extends StatefulWidget {
 }
 
 class _FaceScanState extends State<FaceScan> {
+  final ScanUtility _scanUtility = ScanUtility();
+  int type = 0;
   File? _image;
   bool _loading = false;
+
+  @override
+  void initState() {
+    type = widget.settings.arguments as int;
+    super.initState();
+  }
+
   void setImage(path) {
     setState(() {
       if (path != null) {
@@ -38,7 +47,6 @@ class _FaceScanState extends State<FaceScan> {
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: const Color(0xffd0cece),
       ),
       width: MediaQuery.of(context).size.width - 64,
       height: MediaQuery.of(context).size.width - 64,
@@ -46,7 +54,10 @@ class _FaceScanState extends State<FaceScan> {
         child: AspectRatio(
           aspectRatio: 1,
           child: _image == null
-              ? const Center(child: Text('No image selected.'))
+              ? Image.asset(
+                  'assets/images/scan_items/no_img_${type + 1}.png',
+                  fit: BoxFit.cover,
+                )
               : Image.file(
                   File(_image!.path),
                   fit: BoxFit.cover,
@@ -73,8 +84,6 @@ class _FaceScanState extends State<FaceScan> {
 
   @override
   Widget build(BuildContext context) {
-    final scanList = ScanUtility().scanTitleList;
-    final int type = widget.settings.arguments as int;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -107,7 +116,7 @@ class _FaceScanState extends State<FaceScan> {
                     showImage(),
                     const SizedBox(height: 32),
                     Text(
-                      scanList[type].join(),
+                      _scanUtility.getScanTitleList[type].join(),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -122,7 +131,7 @@ class _FaceScanState extends State<FaceScan> {
                     ),
                     const SizedBox(height: 16),
                     WrappedKoreanText(
-                      '다른 사람이 봤을때 나는 어떤 동물로 보여질지 확인해 보세요. 결과 검사를 통해서  귀여운 프로필과 ninu 코인을 받아보세요!',
+                      _scanUtility.getScanDescription[type],
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.black87,
