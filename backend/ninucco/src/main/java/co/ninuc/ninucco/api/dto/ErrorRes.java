@@ -8,23 +8,29 @@ import lombok.Getter;
 public enum ErrorRes implements Res{
 
     // 400 BAD_REQUEST 잘못된 요청
-    INVALID_PARAMETER("N???"),
+    BAD_REQUEST("N001"),
 
-    // 403 Forbidden 접근 권한 없음 : A, B는 예시입니다.
-    ACCESS_DENIED_A("N???"),
-    ACCESS_DENIED_B("N???"),
+    // 401 Unauthorized 미승인(회원도, 비회원도 아님)
+    UNAUTHORIZED_MEMBER("N002"),
 
-    // 404 NOT_FOUND 잘못된 리소스 접근 : A, B는 예시입니다.
-    NOT_FOUND_A("N???"),
-    NOT_FOUND_B("N???"),
+    // 403 Forbidden 접근 권한 없음(회원이 아님)
+    ACCESS_DENIED_MEMBER("N003"),
 
+    // 404 NOT_FOUND 잘못된 리소스 접근
+    NOT_FOUND_BATTLE("N101"),
+    NOT_FOUND_BETTING("N102"),
+    NOT_FOUND_COMMENT("N103"),
+    NOT_FOUND_ITEM("N104"),
+    NOT_FOUND_MEMBER("N105"),
+    NOT_FOUND_FRIEND("N106"),
 
-    // 409 CONFLICT 중복된 리소스 : A, B는 예시입니다.
-    ALREADY_SAVED_A("N???"),
-    ALREADY_SAVED_B("N???"),
+    // 409 CONFLICT 중복된 리소스
+    CONFLICT_BETTING("N201"),
+    CONFLICT_MEMBER("N202"),
+    CONFLICT_MEMBER_FRIEND("N203"),
 
     //500 INTERNAL SERVER ERROR
-    INTERNAL_SERVER_ERROR("N???");
+    INTERNAL_SERVER_ERROR("N301");
 
     private final String code;
 
