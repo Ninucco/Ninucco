@@ -120,17 +120,17 @@ class RankingItem extends StatelessWidget {
     if (index == 0) {
       return Image.asset(
         'assets/images/first_place.png',
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
       );
     } else if (index == 1) {
       return Image.asset(
         'assets/images/second_place.png',
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
       );
     } else if (index == 2) {
       return Image.asset(
         'assets/images/third_place.png',
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
       );
     } else {
       return const SizedBox(height: 10);

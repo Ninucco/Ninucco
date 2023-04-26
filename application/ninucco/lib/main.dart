@@ -71,12 +71,28 @@ class Layout extends StatelessWidget {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton.large(
-        backgroundColor: const Color(0xff7E81FB),
-        onPressed: () {},
-        child: Image.asset('assets/icons/ninucco.png'),
-      ),
-      bottomNavigationBar: const BottomNav(),
+      floatingActionButton: Provider.of<NavProvider>(context).show
+          ? Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 8),
+                width: 72,
+                height: 80,
+                child: FloatingActionButton(
+                  backgroundColor: const Color(0xff7E81FB),
+                  onPressed: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      'assets/icons/ninucco.png',
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : null,
+      bottomNavigationBar:
+          Provider.of<NavProvider>(context).show ? const BottomNav() : null,
     );
   }
 }
