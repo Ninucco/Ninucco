@@ -19,10 +19,8 @@ public enum ErrorRes implements Res{
     // 404 NOT_FOUND 잘못된 리소스 접근
     NOT_FOUND_BATTLE("N101"),
     NOT_FOUND_BETTING("N102"),
-    NOT_FOUND_COMMENT("N103"),
-    NOT_FOUND_ITEM("N104"),
-    NOT_FOUND_MEMBER("N105"),
-    NOT_FOUND_FRIEND("N106"),
+    NOT_FOUND_ITEM("N103"),
+    NOT_FOUND_MEMBER("N104"),
 
     // 409 CONFLICT 중복된 리소스
     CONFLICT_BETTING("N201"),
