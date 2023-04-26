@@ -51,12 +51,6 @@ class BattleItem extends StatelessWidget {
       child: Column(
         // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Hero(
-            tag: 10,
-            child: Image.asset(
-              "assets/images/vs.png",
-            ),
-          ),
           Container(
             margin: const EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width * 0.9,
@@ -79,8 +73,6 @@ class BattleItem extends StatelessWidget {
                               children: [
                                 Container(
                                   margin: const EdgeInsets.all(10),
-                                  width: 200,
-                                  height: 200,
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -102,8 +94,6 @@ class BattleItem extends StatelessWidget {
                               children: [
                                 Container(
                                   margin: const EdgeInsets.all(10),
-                                  width: 200,
-                                  height: 200,
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -148,16 +138,17 @@ class BattleItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "$memberANickname이 이기면 $ratioA배",
+                        "$memberANickname이\n이기면 $ratioA배",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
                       ),
                       Text(
-                        "$memberBNickname이 이기면 $ratioB배",
+                        "$memberBNickname이\n이기면 $ratioB배",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
+                        textAlign: TextAlign.right,
                       ),
                     ],
                   ),
