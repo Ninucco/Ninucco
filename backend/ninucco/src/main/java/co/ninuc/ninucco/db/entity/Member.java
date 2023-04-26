@@ -3,6 +3,7 @@ package co.ninuc.ninucco.db.entity;
 import javax.persistence.*;
 
 import lombok.Builder;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,9 @@ public class Member {
 
     @Column(name="nickname", unique = true, nullable = false)
     String nickname;
+
+    @Column(name="url", unique = true, nullable = true)
+    String url;
 
     @Column(name="win_count", nullable = false)
     @ColumnDefault("0")
@@ -48,12 +52,19 @@ public class Member {
     LocalDateTime updatedAt;
 
     @Builder
-    public Member(String id, String nickname, Long winCount, Long loseCount, Long point, Long rate){
+    public Member(String id, String nickname,String url, Long winCount, Long loseCount, Long point, Long rate){
         this.id=id;
         this.nickname=nickname;
+        this.url=url;
         this.winCount=winCount;
         this.loseCount=loseCount;
         this.point=point;
         this.rate=rate;
+    }
+
+
+
+    public void setMemberId(String id){
+        this.id=id;
     }
 }
