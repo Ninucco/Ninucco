@@ -119,7 +119,6 @@ class SubmitButton extends StatelessWidget {
       return;
     }
     setLoading(true);
-    print("분석 시작");
     Future.delayed(const Duration(milliseconds: 1500), () {
       setLoading(false);
       Navigator.pushNamed(context, '/ScanResult');
