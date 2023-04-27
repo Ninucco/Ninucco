@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: r_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./r_proxy:/etc/nginx/conf.d/
+      - nginx-certs:/etc/letsencrypt
+    depends_on:
+      - back-end
+    restart: always
+
+  back-end:
+    image: nyang_back:latest
+    container_name: ninucco_back
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  nginx-certs:
+    external: true
