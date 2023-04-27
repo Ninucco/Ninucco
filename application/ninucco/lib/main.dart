@@ -6,8 +6,14 @@ import 'package:ninucco/navigators/rank_navigator.dart';
 import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/providers/test_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  KakaoSdk.init(
+    nativeAppKey: '27f1506378a113d853b372bfa95cc5b1',
+    javaScriptAppKey: 'e27d0aa411109cb9f5344f538b5a5282',
+  );
   runApp(const App());
 }
 
