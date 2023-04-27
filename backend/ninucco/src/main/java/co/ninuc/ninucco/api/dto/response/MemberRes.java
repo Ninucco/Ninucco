@@ -13,16 +13,16 @@ public class MemberRes {
 
     String url;
 
-    Long winCount;
+    int winCount;
 
-    Long loseCount;
+    int loseCount;
 
-    Long point;
+    long point;
 
-    Long rate;
+    double rate;
 
     @Builder
-    public MemberRes(String id, String nickname,String url, Long winCount, Long loseCount, Long point, Long rate){
+    public MemberRes(String id, String nickname,String url, int winCount, int loseCount, long point, double rate){
         this.id=id;
         this.nickname=nickname;
         this.url=url;

@@ -19,9 +19,9 @@ public class MemberController {
 
     @ApiOperation(value = "회원 가입", notes="유저를 등록합니다.")
     @PostMapping("/")
-    public ResponseEntity<?> insertBattle(MemberCreateReq memberCreateReq){
+    public ResponseEntity<?> insertMember(MemberCreateReq memberCreateReq){
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberService.insertUser(memberCreateReq))
+                new ApiResult<>(SUCCESS, memberService.insertMember(memberCreateReq))
         );
     }
 }
