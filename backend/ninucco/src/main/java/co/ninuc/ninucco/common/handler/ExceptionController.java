@@ -16,7 +16,7 @@ public class ExceptionController {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResult<Res>> handleCustomException(CustomException ex) {
-        log.error("handleCustomException : {}", ex.getErrorCode());
-        return ResponseEntity.ok(new ApiResult<>(FAIL, ex.getErrorCode()));
+        log.error("handleCustomException : {}", ex.getErrorRes().getCode());
+        return ResponseEntity.ok(new ApiResult<>(FAIL, ex.getErrorRes()));
     }
 }
