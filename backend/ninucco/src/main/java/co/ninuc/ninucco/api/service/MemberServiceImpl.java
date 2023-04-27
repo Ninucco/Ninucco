@@ -1,9 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
-import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.response.MemberRes;
-import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,23 +15,16 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberRes insertUser(MemberCreateReq memberCreateReq) {
-
-        Member member=toEntity(memberCreateReq,memberCreateReq.getId());
-
-        memberRepository.save(member);
-
-        MemberRes memberRes=toDto(member);
-
-        return memberRes;
+        return toDto(memberRepository.save(toEntity(memberCreateReq)));
     }
 
 
 
-    Member toEntity(MemberCreateReq memberCreateReq, String id){
+    Member toEntity(MemberCreateReq memberCreateReq){
         Member member=Member.builder()
-                .id(id)
-                .url(memberCreateReq.getUrl())
+                .id(memberCreateReq.getId())
                 .nickname(memberCreateReq.getNickname())
+                .url(memberCreateReq.getUrl())
                 .build();
 
         return member;
