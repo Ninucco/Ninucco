@@ -37,22 +37,23 @@ class BattleDetailScreen extends StatefulWidget {
 
 class _BattleDetailScreenState extends State<BattleDetailScreen> {
   late Future<BattleInfoModel> battle;
-  late Future<List<BattleCommentInfoModel>> battleComments;
+  late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();
   final StreamController _streamController = StreamController();
-  // FocusNode textFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     battle = BattleApiService.getBattlesById(widget.battleId);
     battleComments = BattleApiCommentService.getBattleComments(widget.battleId);
+    _streamController.add(battleComments);
   }
 
   @override
   Widget build(BuildContext context) {
     List<String> splitA = widget.memberANickname.split(' ');
     List<String> splitB = widget.memberBNickname.split(' ');
+
     return Scaffold(
       appBar: const MyAppbarWidget(
         titleText: "이 배틀의 상황은?",
@@ -350,27 +351,38 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                             ),
                             Flexible(
                               flex: 1,
-                              child: SizedBox(
+                              child: Container(
                                 width: 50,
                                 height: 50,
-                                child: ElevatedButton(
-                                  style: const ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStatePropertyAll<Color>(
-                                      Color(0xff9C9EFE),
+                                margin: const EdgeInsets.all(5),
+                                child: Ink(
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xff9C9EFE),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
                                     ),
                                   ),
-                                  onPressed: () {
-                                    setState(
-                                      () {
-                                        _textEditingController
-                                            .notifyListeners();
-                                      },
-                                    );
-                                  },
-                                  child: const Icon(
-                                    Icons.send,
-                                    size: 20,
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.send,
+                                    ),
+                                    mouseCursor:
+                                        MaterialStateMouseCursor.clickable,
+                                    color: Colors.white,
+                                    tooltip: "댓글 달기",
+                                    onPressed: () {
+                                      setState(
+                                        () {
+                                          battleComments =
+                                              BattleApiCommentService
+                                                  .getBattleComments(
+                                                      widget.battleId);
+                                          _textEditingController
+                                              .notifyListeners();
+                                          _streamController.add(battleComments);
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
@@ -381,7 +393,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                           height: 10,
                         ),
                         (_textEditingController.value.text.isEmpty)
-                            ? const Text("")
+                            ? const SizedBox(height: 0)
                             : BattleCommentItem(
                                 id: 1,
                                 profileImage:
@@ -389,8 +401,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                 nickname: "언제봐도 사랑스러운 코코짱",
                                 content: _textEditingController.value.text,
                               ),
-                        FutureBuilder(
-                          future: battleComments,
+                        StreamBuilder(
+                          stream: battleComments,
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Row(
