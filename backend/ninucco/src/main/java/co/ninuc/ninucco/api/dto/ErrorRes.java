@@ -1,10 +1,13 @@
 package co.ninuc.ninucco.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorRes implements Res{
 
     // 400 BAD_REQUEST 잘못된 요청
@@ -30,6 +33,7 @@ public enum ErrorRes implements Res{
     //500 INTERNAL SERVER ERROR
     INTERNAL_SERVER_ERROR("N301");
 
+    @JsonProperty("code")
     private final String code;
 
 }
