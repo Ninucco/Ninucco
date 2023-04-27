@@ -13,9 +13,12 @@ import javax.persistence.Table;
 @Table(name= "keyword")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Keyword extends BaseEntity{
     Category category;
     String name;
+    @Builder
+    public Keyword(Category category, String name){
+        this.category=category;
+        this.name=name;
+    }
 }

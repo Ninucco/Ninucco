@@ -2,11 +2,16 @@ package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
+import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
+import co.ninuc.ninucco.api.service.FaceServiceImpl;
+import co.ninuc.ninucco.db.entity.Keyword;
+import co.ninuc.ninucco.db.repository.KeywordRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +22,9 @@ import java.util.List;
 @RequestMapping("/face")
 @RequiredArgsConstructor
 public class FaceController {
+    private final FaceServiceImpl faceService;
     private final boolean SUCCESS = true;
+
     @ApiOperation(value = "얼굴인식 결과 조회", notes="배틀 리스트를 조회합니다.")
     @GetMapping("/dummy")
     public ResponseEntity<?> dummyResult() {
@@ -33,9 +40,24 @@ public class FaceController {
                                 "\n" +
                                 "사고형의 사람들은 객관성과 합리성을 중시하며 논리에 집중하느라 감정을 간과할 때가 많습니다. 이들은 사회적 조화보다는 효율성이 더 중요하다고 생각하는 경향이 있습니다.")
                         .resultPercentages(new ArrayList<>(List.of(new SimilarityResult[]{
-                                SimilarityResult.builder().title("고양이상").value(0.6).build(),
-                                SimilarityResult.builder().title("강아지상").value(0.2).build()
+                                SimilarityResult.builder().keyword("고양이상").value(0.6).build(),
+                                SimilarityResult.builder().keyword("강아지상").value(0.2).build()
                         }))).build())
         );
+    }
+
+    @ApiOperation(value = "데이터용: 키워드 넣기", notes="카테고리: 0:PERSONALITY, 1:JOB, 2:ANIMAL")
+    @PostMapping("/keyword")
+    public ResponseEntity<?> saveKeyword(KeywordCreateReq keyword) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, faceService.saveKeyword(keyword)
+                ));
+    }
+    @ApiOperation(value = "키워드 리스트 확인하기", notes="키워드 리스트 확인하기")
+    @GetMapping("/keyword/list")
+    public ResponseEntity<?> findAllKeywords() {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, faceService.findAllKeywords()
+                ));
     }
 }

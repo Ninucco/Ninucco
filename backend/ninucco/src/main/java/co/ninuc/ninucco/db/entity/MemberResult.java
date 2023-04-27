@@ -8,17 +8,17 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Table(name = "member_similarity")
-public class MemberSimilarity extends BaseEntity {
+public class MemberResult extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name = "member_id")
     Member member;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name = "similarity_id")
-    Similarity similarity;
+    Result result;
 
     @Builder
-    public MemberSimilarity(Member member, Similarity similarity) {
+    public MemberResult(Member member, Result result) {
         this.member = member;
-        this.similarity = similarity;
+        this.result = result;
     }
 }
