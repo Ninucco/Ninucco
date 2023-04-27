@@ -14,7 +14,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
 
     @Override
-    public MemberRes insertUser(MemberCreateReq memberCreateReq) {
+    public MemberRes insertMember(MemberCreateReq memberCreateReq) {
         return toDto(memberRepository.save(toEntity(memberCreateReq)));
     }
 

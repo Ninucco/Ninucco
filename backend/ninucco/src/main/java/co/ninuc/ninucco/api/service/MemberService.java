@@ -4,5 +4,5 @@ import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.response.MemberRes;
 
 public interface MemberService {
-    MemberRes insertUser(MemberCreateReq memberCreateReq);
+    MemberRes insertMember(MemberCreateReq memberCreateReq);
 }
