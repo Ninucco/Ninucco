@@ -25,7 +25,7 @@ public class Member {
     @Column(name="nickname", unique = true, nullable = false)
     String nickname;
 
-    @Column(name="url", unique = true)
+    @Column(name="url")
     String url;
 
     @Column(name="win_count", nullable = false)
