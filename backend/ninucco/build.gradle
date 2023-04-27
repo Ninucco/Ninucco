@@ -38,6 +38,18 @@ dependencies {
 	/* swagger2 */
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+
+	/* FCM */
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+	/* okhttp3 */
+	implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+
+	/* json */
+	implementation 'org.json:json:20230227'
+
+
+
 }
 
 tasks.named('test') {
