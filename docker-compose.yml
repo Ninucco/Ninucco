@@ -15,7 +15,7 @@ services:
     restart: always
 
   back-end:
-    image: nyang_back:latest
+    image: ninucco_back:latest
     container_name: ninucco_back
     ports:
       - "8080:8080"
