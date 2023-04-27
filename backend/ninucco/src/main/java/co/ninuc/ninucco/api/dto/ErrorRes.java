@@ -1,10 +1,12 @@
 package co.ninuc.ninucco.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorRes implements Res{
 
     // 400 BAD_REQUEST 잘못된 요청
