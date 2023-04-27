@@ -14,20 +14,20 @@ import java.time.LocalDateTime;
 @Table(name = "similarity")
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-public class Similarity extends BaseEntity {
+public class Result extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name="member_id")
     Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name="similarity_id1")
-    Similarity similarity1;
+    Result result1;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name="similarity_id2")
-    Similarity similarity2;
+    Result result2;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name="similarity_id3")
-    Similarity similarity3;
+    Result result3;
     @Column(name = "similarity_rate1", nullable = false)
     Double similarityRate1;
     @Column(name = "similarity_rate2", nullable = false)
@@ -38,11 +38,11 @@ public class Similarity extends BaseEntity {
     LocalDateTime createdAt;
 
     @Builder
-    public Similarity(Member member, Similarity similarity1, Similarity similarity2, Similarity similarity3, Double similarityRate1, Double similarityRate2, Double similarityRate3) {
+    public Result(Member member, Result result1, Result result2, Result result3, Double similarityRate1, Double similarityRate2, Double similarityRate3) {
         this.member = member;
-        this.similarity1 = similarity1;
-        this.similarity2 = similarity2;
-        this.similarity3 = similarity3;
+        this.result1 = result1;
+        this.result2 = result2;
+        this.result3 = result3;
         this.similarityRate1 = similarityRate1;
         this.similarityRate2 = similarityRate2;
         this.similarityRate3 = similarityRate3;
