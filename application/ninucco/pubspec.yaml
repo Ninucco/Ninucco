@@ -17,6 +17,7 @@ dependencies:
   percent_indicator: ^4.2.3
   wrapped_korean_text: ^0.0.3
   cached_network_image: ^3.2.3
+  kakao_flutter_sdk: ^1.4.2
 
 
 dev_dependencies:
