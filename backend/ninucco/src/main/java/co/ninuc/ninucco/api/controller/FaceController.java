@@ -5,8 +5,6 @@ import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.api.service.FaceServiceImpl;
-import co.ninuc.ninucco.db.entity.Keyword;
-import co.ninuc.ninucco.db.repository.KeywordRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +43,7 @@ public class FaceController {
                         }))).build())
         );
     }
-
+    //얼굴인식 키워드 넣기용
     @ApiOperation(value = "데이터용: 키워드 넣기", notes="카테고리: 0:PERSONALITY, 1:JOB, 2:ANIMAL")
     @PostMapping("/keyword")
     public ResponseEntity<?> saveKeyword(KeywordCreateReq keyword) {
@@ -59,5 +57,13 @@ public class FaceController {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, faceService.findAllKeywords()
                 ));
+    }
+    //나와 닮은 동물 찾기(PERSONALITY + ANIMAL)
+    @ApiOperation(value = "나와 닮은 동물 찾기", notes="나와 닮은 동물 찾기를 합니다. 다 되면 FCM을 보냅니다.")
+    @GetMapping("/animal")
+    public ResponseEntity<?> generateAnimal(Object o) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, faceService.generateAnimal(o))
+        );
     }
 }

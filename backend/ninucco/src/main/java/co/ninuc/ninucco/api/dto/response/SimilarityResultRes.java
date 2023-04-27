@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.dto.response;
 
 import co.ninuc.ninucco.api.dto.Res;
+import co.ninuc.ninucco.api.dto.SimilarityResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,5 +15,5 @@ public class SimilarityResultRes implements Res {
     String imgUrl;
     String resultTitle;
     String resultDescription;
-    List<Object> resultPercentages;
+    List<SimilarityResult> resultPercentages;
 }
