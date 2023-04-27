@@ -87,10 +87,9 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     }
 
     @Bean
-    public Docket similarityApi() {
-        return getDocket("similarity", Predicates.or(PathSelectors.regex("/similarity.*")));
+    public Docket faceApi() {
+        return getDocket("face", Predicates.or(PathSelectors.regex("/face.*")));
     }
-
 
 
 
