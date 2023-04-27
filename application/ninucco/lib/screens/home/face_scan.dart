@@ -206,13 +206,17 @@ class SubmitButton extends StatelessWidget {
 
   Future fetchScanResult() async {
     final response =
-        await http.get(Uri.parse('https://dummyjson.com/products/1'));
-
+        await http.get(Uri.parse('https://k8a605.p.ssafy.io/api/face/dummy'));
+    var json = jsonDecode(response.body)['data'];
+    var list = json['resultPercentages'] as List;
+    List<AnalyticItem> analyticItemList =
+        list.map((i) => AnalyticItem.fromJson(i)).toList();
     return ResultData(
-      description: jsonDecode(response.body)['description'],
-      imageUrl: jsonDecode(response.body)['thumbnail'],
-      title: jsonDecode(response.body)['title'],
       type: type,
+      resultTitle: json['resultTitle'],
+      resultDescription: json['resultDescription'],
+      imgUrl: json['imgUrl'],
+      resultPercentages: analyticItemList,
     );
   }
 
