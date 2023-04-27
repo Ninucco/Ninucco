@@ -13,5 +13,6 @@ import java.util.List;
 public class SimilarityResultRes implements Res {
     String imgUrl;
     String resultTitle;
+    String resultDescription;
     List<Object> resultPercentages;
 }

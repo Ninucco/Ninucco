@@ -8,6 +8,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class SimilarityResult {
-    String title;
+    String keyword;
     Double value;
 }
