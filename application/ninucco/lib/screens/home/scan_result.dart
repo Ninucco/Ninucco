@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 import 'package:wrapped_korean_text/wrapped_korean_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -58,6 +60,8 @@ class ScanResult extends StatefulWidget {
 
 class _ScanResultState extends State<ScanResult> {
   ScanUtility? _scanUtility;
+  late NavProvider _navProvider;
+
   ResultData _resultData = ResultData(
     type: 0,
     resultTitle: 'title',
@@ -70,6 +74,7 @@ class _ScanResultState extends State<ScanResult> {
   void initState() {
     _resultData = widget.settings.arguments as ResultData;
     _scanUtility = ScanUtility();
+    _navProvider = Provider.of<NavProvider>(context, listen: false);
     super.initState();
   }
 
@@ -223,6 +228,7 @@ class _ScanResultState extends State<ScanResult> {
                     const SizedBox(height: 16),
                     GestureDetector(
                       onTap: () {
+                        _navProvider.showBottomNav();
                         Navigator.pushNamed(context, '/');
                       },
                       child: Container(
