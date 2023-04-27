@@ -9,6 +9,7 @@ import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     @Override
     public String insertMember(MemberCreateReq memberCreateReq) {
         //닉네임 중복검사가 되어 있다고 가정(프론트에서 닉네임 중복검사 후 막기)
@@ -37,11 +39,13 @@ public class MemberServiceImpl implements MemberService{
         return null;
     }
 
+    @Transactional
     @Override
     public Long updateMemberUrl(String url) {
         return null;
     }
 
+    @Transactional
     @Override
     public Long updateMemberNickname(String nickName) {
         return null;
@@ -57,6 +61,7 @@ public class MemberServiceImpl implements MemberService{
         return null;
     }
 
+    @Transactional
     @Override
     public Long insertMemberFriend(String friendId) {
         return null;
@@ -73,17 +78,15 @@ public class MemberServiceImpl implements MemberService{
     }
 
     Member toEntity(MemberCreateReq memberCreateReq){
-        Member member=Member.builder()
+        return Member.builder()
                 .id(memberCreateReq.getId())
                 .nickname(memberCreateReq.getNickname())
                 .url(memberCreateReq.getUrl())
                 .build();
-
-        return member;
     }
 
     MemberRes toDto(Member member){
-        MemberRes memberRes=MemberRes.builder()
+        return MemberRes.builder()
                 .url(member.getId())
                 .id(member.getId())
                 .nickname(member.getNickname())
@@ -92,8 +95,6 @@ public class MemberServiceImpl implements MemberService{
                 .point(member.getPoint())
                 .rate(member.getRate())
                 .build();
-
-        return memberRes;
     }
 
 
