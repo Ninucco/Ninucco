@@ -29,10 +29,13 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     @Override
     public MemberFriendRes insertMemberFriend(String memberId, String friendId) {
         log.info("memberId : {}, friendId : {}", memberId, friendId);
-
-        //TODO 중복등록 방지
+        
         Member member = memberValidateById(memberId);
         Member friend = memberValidateById(friendId);
+
+        if(memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(memberId, friendId)) {
+            throw new CustomException(ErrorRes.CONFLICT_FRIEND);
+        }
 
         MemberFriend memberFriend = toEntity(member, friend);
         MemberFriend friendMember = toEntity(friend, member);
