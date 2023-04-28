@@ -6,6 +6,9 @@ import 'package:ninucco/models/user_rank_info_model.dart';
 class BattleAllScreen extends StatelessWidget {
   BattleAllScreen({super.key});
 
+  // final Future<List<UserRankInfoModel>> userRanks =
+  //     UserRankApiService.getUserRanks();
+
   final Future<List<UserRankInfoModel>> userRanks =
       UserRankApiService.getUserRanks();
 
@@ -56,10 +59,10 @@ class BattleAllScreen extends StatelessWidget {
         var userRank = snapshot.data![index];
         return BattleItem(
           memberAId: 1,
-          memberANickname: "장인훅",
+          memberANickname: "무서운 갈라파고스 장인훅",
           memberAImage: userRank.profileImage,
           memberBId: 1,
-          memberBNickname: "하훈묵",
+          memberBNickname: "무서운 갈라파고스 하훈묵",
           memberBImage: userRank.profileImage,
           battleId: userRank.id,
           question: "누가 더 백엔드 개발자처럼 생겼나요?",
