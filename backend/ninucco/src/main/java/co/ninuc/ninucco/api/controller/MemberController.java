@@ -4,6 +4,8 @@ import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberFriendCreateReq;
+import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
+import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
 import io.swagger.annotations.ApiOperation;
@@ -21,15 +23,31 @@ public class MemberController {
 
     @ApiOperation(value = "회원 가입", notes="유저를 등록합니다.")
     @PostMapping("/regist")
-    public ResponseEntity<ApiResult<Res>> insertMember(MemberCreateReq memberCreateReq){
+    public ResponseEntity<ApiResult<Res>> insertMember(@RequestBody MemberCreateReq memberCreateReq){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.insertMember(memberCreateReq))
+        );
+    }
+    
+    @ApiOperation(value = "멤버 사진 업데이트", notes="멤버 사진주소를 업데이트 합니다.")
+    @PatchMapping("/photo")
+    public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestBody MemberUpdatePhotoReq memberUpdatePhotoReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoReq))
+        );
+    }
+
+    @ApiOperation(value = "멤버 닉네임 업데이트", notes="멤버 닉네임을 업데이트 합니다.")
+    @PatchMapping("/nickname")
+    public ResponseEntity<ApiResult<Res>> updateMemberNickname(@RequestBody MemberUpdateNicknameReq memberUpdateNicknameReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.updateMemberNickname(memberUpdateNicknameReq))
         );
     }
 
     @ApiOperation(value = "친구 맺기", notes = "친구 신청을 수락합니다.")
     @PostMapping("/friend")
-    public ResponseEntity<ApiResult<Res>> insertMemberFriend(MemberFriendCreateReq memberFriendCreateReq) {
+    public ResponseEntity<ApiResult<Res>> insertMemberFriend(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
 
         //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
         return ResponseEntity.ok().body(

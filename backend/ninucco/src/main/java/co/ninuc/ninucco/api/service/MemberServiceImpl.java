@@ -2,6 +2,8 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
+import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
+import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
 import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.ItemRes;
 import co.ninuc.ninucco.api.dto.response.MemberIdRes;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Null;
 import java.util.List;
 
 @Service
@@ -36,21 +39,27 @@ public class MemberServiceImpl implements MemberService{
         return new BooleanRes(true);
     }
 
+    @Transactional
     @Override
-    public Boolean checkMemberEmail(String email) {
-        return null;
+    public BooleanRes updateMemberUrl(MemberUpdatePhotoReq memberUpdatePhotoReq) {
+
+        Member member=memberRepository.findById(memberUpdatePhotoReq.getId())
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        member.updateUrl(memberUpdatePhotoReq.getUrl());
+
+        return new BooleanRes(true);
     }
 
     @Transactional
     @Override
-    public Long updateMemberUrl(String url) {
-        return null;
-    }
+    public BooleanRes updateMemberNickname(MemberUpdateNicknameReq memberUpdateNicknameReq) {
+        Member member=memberRepository.findById(memberUpdateNicknameReq.getId())
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
 
-    @Transactional
-    @Override
-    public Long updateMemberNickname(String nickName) {
-        return null;
+        member.updateNickname(memberUpdateNicknameReq.getNickname());
+
+        return new BooleanRes(true);
     }
 
     @Override
