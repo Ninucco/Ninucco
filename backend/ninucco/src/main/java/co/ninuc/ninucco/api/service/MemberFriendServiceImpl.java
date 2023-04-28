@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
+import co.ninuc.ninucco.api.dto.MemberFriendInfo;
 import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendListRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendRes;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,8 +31,8 @@ public class MemberFriendServiceImpl implements MemberFriendService{
         log.info("memberId : {}, friendId : {}", memberId, friendId);
 
         //TODO 중복등록 방지
-        Member member = memberFriendAuthorization(memberId);
-        Member friend = memberFriendAuthorization(friendId);
+        Member member = memberValidateById(memberId);
+        Member friend = memberValidateById(friendId);
 
         MemberFriend memberFriend = toEntity(member, friend);
         MemberFriend friendMember = toEntity(friend, member);
@@ -45,20 +45,20 @@ public class MemberFriendServiceImpl implements MemberFriendService{
 
     @Override
     public BooleanRes selectOneMemberFriend(String memberId, String friendId) {
-        memberFriendAuthorization(memberId);
-        memberFriendAuthorization(friendId);
+        memberValidateById(memberId);
+        memberValidateById(friendId);
 
-        return toBooleanRes(memberFriendRepository.findMemberFriendByMember_IdAndFriend_Id(memberId, friendId).isPresent());
+        return new BooleanRes(memberFriendRepository.findMemberFriendByMember_IdAndFriend_Id(memberId, friendId).isPresent());
     }
 
     @Override
-    public List<MemberFriendListRes> selectAllMemberFriend(String memberId) {
-        memberFriendAuthorization(memberId);
+    public MemberFriendListRes selectAllMemberFriend(String memberId) {
+        memberValidateById(memberId);
 
-        return memberFriendRepository.findAllByMember_Id(memberId).stream().map(this::toMemberFriendListRes).collect(Collectors.toList());
+        return new MemberFriendListRes(memberFriendRepository.findAllByMember_Id(memberId).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
     }
 
-    public Member memberFriendAuthorization(String memberId) {
+    public Member memberValidateById(String memberId) {
         log.info("memberFriendAuthorization : {}", memberId);
         return memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
     }
@@ -77,17 +77,12 @@ public class MemberFriendServiceImpl implements MemberFriendService{
                 .build();
     }
 
-    MemberFriendListRes toMemberFriendListRes(MemberFriend memberFriend) {
+    MemberFriendInfo toMemberFriendListRes(MemberFriend memberFriend) {
         Member friend = memberRepository.findById(memberFriend.getFriend().getId()).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
-        return MemberFriendListRes.builder()
+
+        return MemberFriendInfo.builder()
                 .profileImage(friend.getUrl())
                 .nickname(friend.getNickname())
-                .build();
-    }
-
-    BooleanRes toBooleanRes(boolean success) {
-        return BooleanRes.builder()
-                .success(success)
                 .build();
     }
 }

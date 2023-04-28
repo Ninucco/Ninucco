@@ -1,12 +1,13 @@
 package co.ninuc.ninucco.api.dto.response;
 
+import co.ninuc.ninucco.api.dto.Res;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class MemberRes {
+public class MemberRes implements Res {
     String id;
 
     String nickname;

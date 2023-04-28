@@ -1,14 +1,16 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
+import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.ItemRes;
+import co.ninuc.ninucco.api.dto.response.MemberIdRes;
 import co.ninuc.ninucco.api.dto.response.MemberRes;
 
 import java.util.List;
 
 public interface MemberService {
-    String insertMember(MemberCreateReq memberCreateReq);
-    Boolean checkMemberNickname(String nickName);
+    MemberIdRes insertMember(MemberCreateReq memberCreateReq);
+    BooleanRes checkMemberNickname(String nickName);
     Boolean checkMemberEmail(String email);
 
     Long updateMemberUrl(String url);
