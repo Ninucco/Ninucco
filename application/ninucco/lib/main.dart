@@ -70,14 +70,16 @@ class Layout extends StatelessWidget {
           ),
         ],
       ),
+      // resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Provider.of<NavProvider>(context).show
+      floatingActionButton: Provider.of<NavProvider>(context).show &&
+              MediaQuery.of(context).viewInsets.bottom == 0
           ? Align(
               alignment: Alignment.bottomCenter,
               child: Container(
                 padding: const EdgeInsets.only(bottom: 8),
-                width: 72,
-                height: 80,
+                width: 64,
+                height: 72,
                 child: FloatingActionButton(
                   backgroundColor: const Color(0xff7E81FB),
                   onPressed: () {},

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/screens/battle/battle_detail_screen.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class BattleItem extends StatelessWidget {
@@ -23,23 +24,43 @@ class BattleItem extends StatelessWidget {
     required this.ratioA,
     required this.ratioB,
   });
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(10),
-              width: MediaQuery.of(context).size.width * 0.9,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  Stack(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BattleDetailScreen(
+              battleId: battleId,
+              memberAId: memberAId,
+              memberBId: memberAId,
+              memberAImage: memberAImage,
+              memberANickname: memberANickname,
+              memberBImage: memberBImage,
+              memberBNickname: memberBNickname,
+              question: question,
+              ratioA: ratioA,
+              ratioB: ratioB,
+            ),
+            fullscreenDialog: true,
+          ),
+        );
+      },
+      child: Column(
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            margin: const EdgeInsets.all(10),
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Material(
+                  child: Stack(
                     alignment: AlignmentDirectional.center,
                     children: [
                       Row(
@@ -52,8 +73,6 @@ class BattleItem extends StatelessWidget {
                               children: [
                                 Container(
                                   margin: const EdgeInsets.all(10),
-                                  width: 200,
-                                  height: 200,
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -75,8 +94,6 @@ class BattleItem extends StatelessWidget {
                               children: [
                                 Container(
                                   margin: const EdgeInsets.all(10),
-                                  width: 200,
-                                  height: 200,
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -101,82 +118,83 @@ class BattleItem extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  question,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
                   ),
-                  Text(
-                    question,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "$memberANickname이 이기면 $ratioA배",
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "$memberANickname이\n이기면 $ratioA배",
+                        style: const TextStyle(
+                          fontSize: 12,
                         ),
-                        Text(
-                          "$memberBNickname이 이기면 $ratioB배",
-                          style: const TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  LinearPercentIndicator(
-                    animation: true,
-                    animationDuration: 500,
-                    lineHeight: 10.0,
-                    percent: (ratioA) / (ratioA + ratioB),
-                    progressColor: Colors.blue.shade400,
-                    backgroundColor: Colors.red.shade400,
-                    barRadius: const Radius.elliptical(5, 3),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  SizedBox(
-                    height: 3,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment(0.8, 1),
-                          colors: <Color>[
-                            Color(0xffd0d3fe),
-                            Color(0xffddccfd),
-                            Color(0xffefc9fc),
-                            Color(0xfffbc6f4),
-                            Color(0xfffac3dc),
-                            Color(0xfff8c0c3),
-                            Color(0xfff7d1bd),
-                            Color(0xfff5e6ba),
-                          ],
-                          tileMode: TileMode.mirror,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
+                      Text(
+                        "$memberBNickname이\n이기면 $ratioB배",
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                LinearPercentIndicator(
+                  animation: true,
+                  animationDuration: 500,
+                  lineHeight: 10.0,
+                  percent: (ratioA) / (ratioA + ratioB),
+                  progressColor: Colors.blue.shade400,
+                  backgroundColor: Colors.red.shade400,
+                  barRadius: const Radius.elliptical(5, 3),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 3,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment(0.8, 1),
+                        colors: <Color>[
+                          Color(0xffd0d3fe),
+                          Color(0xffddccfd),
+                          Color(0xffefc9fc),
+                          Color(0xfffbc6f4),
+                          Color(0xfffac3dc),
+                          Color(0xfff8c0c3),
+                          Color(0xfff7d1bd),
+                          Color(0xfff5e6ba),
+                        ],
+                        tileMode: TileMode.mirror,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

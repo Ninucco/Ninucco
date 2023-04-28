@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ninucco/providers/nav_provider.dart';
+import 'package:ninucco/screens/home/scan_result.dart';
+import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:provider/provider.dart';
+import 'package:wrapped_korean_text/wrapped_korean_text.dart';
 
 class FaceScan extends StatefulWidget {
   final RouteSettings settings;
@@ -14,8 +19,17 @@ class FaceScan extends StatefulWidget {
 }
 
 class _FaceScanState extends State<FaceScan> {
+  final ScanUtility _scanUtility = ScanUtility();
+  int type = 0;
   File? _image;
   bool _loading = false;
+
+  @override
+  void initState() {
+    type = widget.settings.arguments as int;
+    super.initState();
+  }
+
   void setImage(path) {
     setState(() {
       if (path != null) {
@@ -33,13 +47,27 @@ class _FaceScanState extends State<FaceScan> {
 
   Widget showImage() {
     return Container(
-        color: const Color(0xffd0cece),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width,
-        child: Center(
-            child: _image == null
-                ? const Text('No image selected.')
-                : Image.file(File(_image!.path))));
+      clipBehavior: Clip.hardEdge,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      width: MediaQuery.of(context).size.width - 64,
+      height: MediaQuery.of(context).size.width - 64,
+      child: Expanded(
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: _image == null
+              ? Image.asset(
+                  'assets/images/scan_items/no_img_${type + 1}.png',
+                  fit: BoxFit.cover,
+                )
+              : Image.file(
+                  File(_image!.path),
+                  fit: BoxFit.cover,
+                ),
+        ),
+      ),
+    );
   }
 
   // 화면이 dispose 될 때 bottom Nav 를 다시 그림
@@ -60,43 +88,103 @@ class _FaceScanState extends State<FaceScan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text("args.title ${widget.settings.arguments}"),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.amber,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_outlined,
+              color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        child: Stack(
-          children: [
-            if (_image != null)
-              SubmitButton(
-                  loading: _loading, setLoading: setLoading, context: context),
-            Column(
-              children: [
-                showImage(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg.png'),
+            fit: BoxFit.fill,
+          )),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 96, right: 32, bottom: 32, left: 32),
+                child: Column(
                   children: [
-                    CameraButton(
-                      setImage: setImage,
-                      type: 'camera',
+                    showImage(),
+                    const SizedBox(height: 32),
+                    Text(
+                      _scanUtility.getScanTitleList[type].join(),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 6.0,
+                            color: Colors.black26,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
                     ),
-                    CameraButton(
-                      setImage: setImage,
-                      type: 'gallery',
-                    )
+                    const SizedBox(height: 16),
+                    WrappedKoreanText(
+                      _scanUtility.getScanDescription[type],
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        height: 1.6,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CameraButton(
+                          setImage: setImage,
+                          type: 'camera',
+                        ),
+                        CameraButton(
+                          setImage: setImage,
+                          type: 'gallery',
+                        )
+                      ],
+                    ),
+                    if (_image != null)
+                      SubmitButton(
+                        loading: _loading,
+                        setLoading: setLoading,
+                        context: context,
+                        type: type,
+                      ),
                   ],
                 ),
-              ],
-            ),
-            if (_loading)
-              Positioned.fill(
+              ),
+              if (_loading)
+                Positioned(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  bottom: 0,
                   child: Container(
-                decoration: const BoxDecoration(color: Colors.black38),
-                child: const Text("Loading..."),
-              ))
-          ],
+                    color: Colors.black.withOpacity(0.5),
+                    child: const Center(
+                      child: Text(
+                        "Loading...",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -107,35 +195,62 @@ class SubmitButton extends StatelessWidget {
   final bool loading;
   final Function setLoading;
   final BuildContext context;
+  final int type;
   const SubmitButton({
     super.key,
     required this.loading,
     required this.setLoading,
     required this.context,
+    required this.type,
   });
+
+  Future fetchScanResult() async {
+    final response =
+        await http.get(Uri.parse('https://dummyjson.com/products/1'));
+
+    return ResultData(
+      description: jsonDecode(response.body)['description'],
+      imageUrl: jsonDecode(response.body)['thumbnail'],
+      title: jsonDecode(response.body)['title'],
+      type: type,
+    );
+  }
 
   void handleSubmit() async {
     if (loading) {
       return;
     }
     setLoading(true);
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      setLoading(false);
-      Navigator.pushNamed(context, '/ScanResult');
-    });
+
+    Navigator.pushNamed(context, '/ScanResult',
+        arguments: await fetchScanResult());
+    setLoading(false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      width: MediaQuery.of(context).size.width,
-      height: 60,
-      right: 0,
-      bottom: 0,
-      child: ElevatedButton(
-        onPressed: handleSubmit,
-        child: const Text("SUBMIT"),
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 32),
+        GestureDetector(
+          onTap: handleSubmit,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: const BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.all(Radius.circular(12))),
+            width: double.infinity,
+            child: const Text(
+              "분석하기",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -171,8 +286,15 @@ class _CameraButtonState extends State<CameraButton> {
       },
       child: Stack(
         children: [
-          Image.asset(
-              'assets/images/scan_items/${widget.type == 'camera' ? 'blue' : 'purple'}_block.png'),
+          Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: Image.asset(
+              'assets/images/scan_items/${widget.type == 'camera' ? 'blue' : 'purple'}_block.png',
+              width: MediaQuery.of(context).size.width * 0.5 - 40,
+              fit: BoxFit.cover,
+            ),
+          ),
           Positioned.fill(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

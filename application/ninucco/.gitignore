@@ -45,3 +45,4 @@ app.*.map.json
 
 # firebase 관련 업로드 배제
 /lib/firebase_options.dart
+pubspec.lock
