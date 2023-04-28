@@ -8,10 +8,8 @@ import co.ninuc.ninucco.api.service.FaceServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +59,9 @@ public class FaceController {
     //나와 닮은 동물 찾기(PERSONALITY + ANIMAL)
     @ApiOperation(value = "나와 닮은 동물 찾기", notes="나와 닮은 동물 찾기를 합니다. 다 되면 FCM을 보냅니다.")
     @GetMapping("/animal")
-    public ResponseEntity<?> generateAnimal(Object o) {
+    public ResponseEntity<?> generateAnimal(@RequestParam MultipartFile file) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.generateAnimal(o))
+                new ApiResult<>(SUCCESS, faceService.generateAnimal(file))
         );
     }
 }

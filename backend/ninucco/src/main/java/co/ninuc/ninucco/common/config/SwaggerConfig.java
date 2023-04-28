@@ -41,7 +41,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
 //		responseMessages.add(new ResponseMessageBuilder().code(404).message("페이지를 찾을 수 없습니다 !!!").build());
         return new Docket(DocumentationType.SWAGGER_2).groupName(groupName).apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.basePackage("co.ninuc.ninucco.api.controller")).paths(predicate)
-                .apis(RequestHandlerSelectors.any()).build();
+                .apis(RequestHandlerSelectors.any())
+                .build();
 //				.useDefaultResponseMessages(false)
 //				.globalResponseMessage(RequestMethod.GET,responseMessages);
     }
