@@ -48,8 +48,6 @@ public class MemberServiceImpl implements MemberService{
 
         member.updateUrl(memberUpdatePhotoReq.getUrl());
 
-        memberRepository.save(member);
-
         return new BooleanRes(true);
     }
 
@@ -60,8 +58,6 @@ public class MemberServiceImpl implements MemberService{
                 .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
 
         member.updateNickname(memberUpdateNicknameReq.getNickname());
-
-        memberRepository.save(member);
 
         return new BooleanRes(true);
     }
