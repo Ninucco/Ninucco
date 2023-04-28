@@ -30,12 +30,22 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signIn() async {
-    await signInWithGoogle();
-    setUser(FirebaseAuth.instance.currentUser);
+    try {
+      await signInWithGoogle();
+      setUser(FirebaseAuth.instance.currentUser);
+    } catch (error) {
+      // Handle the error here
+      debugPrint('Failed to sign in with Google: $error');
+    }
   }
 
   Future<void> signOut() async {
-    await FirebaseAuth.instance.signOut();
-    setUser(null);
+    try {
+      await FirebaseAuth.instance.signOut();
+      setUser(null);
+    } catch (error) {
+      // Handle the error here
+      debugPrint('Failed to sign in with Google: $error');
+    }
   }
 }

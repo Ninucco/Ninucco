@@ -7,7 +7,7 @@ import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/providers/test_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:ninucco/screens/login/login_screen.dart';
+// import 'package:ninucco/screens/login/login_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -26,16 +26,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ninucco',
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => TestProvider()),
-          ChangeNotifierProvider(create: (_) => NavProvider()),
-          ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ],
-        child: const LoginScreen(),
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TestProvider()),
+        ChangeNotifierProvider(create: (_) => NavProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const MaterialApp(title: 'ninucco', home: Layout()),
     );
   }
 }

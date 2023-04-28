@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 
 class HomePage extends StatelessWidget {
@@ -8,6 +9,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scanList = ScanUtility().scanTitleList;
+    dynamic currentUser = AuthProvider().user ?? '송승현';
 
     return Scaffold(
       body: Container(
@@ -35,7 +37,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               title: const Text(
-                "안녕하세요, 송승현님!",
+                "안녕하세요!",
                 style:
                     TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
