@@ -1,15 +1,11 @@
 package co.ninuc.ninucco.api.dto.response;
 
-import lombok.Builder;
+import co.ninuc.ninucco.api.dto.Res;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public class BooleanRes {
-
+@AllArgsConstructor
+public class BooleanRes implements Res {
     boolean success;
-
-    @Builder
-    public BooleanRes(boolean success) {
-        this.success = success;
-    }
 }

@@ -1,18 +1,15 @@
 package co.ninuc.ninucco.api.dto.response;
 
-import lombok.Builder;
+import co.ninuc.ninucco.api.dto.FriendListInfo;
+import co.ninuc.ninucco.api.dto.Res;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
-public class MemberFriendListRes {
+@AllArgsConstructor
+public class MemberFriendListRes implements Res {
 
-    String profileImage;
-
-    String nickname;
-
-    @Builder
-    public MemberFriendListRes(String profileImage, String nickname) {
-        this.profileImage = profileImage;
-        this.nickname = nickname;
-    }
+    List<FriendListInfo> friendList;
 }

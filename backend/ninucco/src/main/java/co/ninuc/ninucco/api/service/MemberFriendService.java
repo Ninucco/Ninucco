@@ -4,13 +4,11 @@ import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendListRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendRes;
 
-import java.util.List;
-
 public interface MemberFriendService {
 
     MemberFriendRes insertMemberFriend(String memberId, String friendId);
 
-    BooleanRes selectOneMemberFriend(String memberId, String friendNickname);
+    BooleanRes selectOneMemberFriend(String memberId, String friendId);
 
-    List<MemberFriendListRes> selectAllMemberFriend(String memberId);
+    MemberFriendListRes selectAllMemberFriend(String memberId);
 }

@@ -2,7 +2,9 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
+import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.ItemRes;
+import co.ninuc.ninucco.api.dto.response.MemberIdRes;
 import co.ninuc.ninucco.api.dto.response.MemberRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.db.entity.Member;
@@ -21,17 +23,17 @@ public class MemberServiceImpl implements MemberService{
 
     @Transactional
     @Override
-    public String insertMember(MemberCreateReq memberCreateReq) {
+    public MemberIdRes insertMember(MemberCreateReq memberCreateReq) {
         //닉네임 중복검사가 되어 있다고 가정(프론트에서 닉네임 중복검사 후 막기)
         if(memberRepository.existsById(memberCreateReq.getId()))
             throw new CustomException(ErrorRes.CONFLICT_MEMBER);
-        return memberRepository.save(toEntity(memberCreateReq)).getId();
+        return new MemberIdRes(memberRepository.save(toEntity(memberCreateReq)).getId());
     }
 
-    public Boolean checkMemberNickname(String nickName){
+    public BooleanRes checkMemberNickname(String nickName){
         if(memberRepository.existsByNickname(nickName))
             throw new CustomException(ErrorRes.CONFLICT_NICKNAME);
-        return true;
+        return new BooleanRes(true);
     }
 
     @Override
