@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MemberFriendInfo {
+public class FriendListInfo {
     String profileImage;
 
     String nickname;

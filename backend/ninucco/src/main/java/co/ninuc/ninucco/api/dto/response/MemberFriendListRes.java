@@ -1,6 +1,6 @@
 package co.ninuc.ninucco.api.dto.response;
 
-import co.ninuc.ninucco.api.dto.MemberFriendInfo;
+import co.ninuc.ninucco.api.dto.FriendListInfo;
 import co.ninuc.ninucco.api.dto.Res;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 public class MemberFriendListRes implements Res {
 
-    List<MemberFriendInfo> memberFriendInfo;
+    List<FriendListInfo> friendList;
 }

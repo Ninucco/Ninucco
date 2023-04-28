@@ -1,7 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
-import co.ninuc.ninucco.api.dto.MemberFriendInfo;
+import co.ninuc.ninucco.api.dto.FriendListInfo;
 import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendListRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendRes;
@@ -77,10 +77,10 @@ public class MemberFriendServiceImpl implements MemberFriendService{
                 .build();
     }
 
-    MemberFriendInfo toMemberFriendListRes(MemberFriend memberFriend) {
+    FriendListInfo toMemberFriendListRes(MemberFriend memberFriend) {
         Member friend = memberRepository.findById(memberFriend.getFriend().getId()).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
 
-        return MemberFriendInfo.builder()
+        return FriendListInfo.builder()
                 .profileImage(friend.getUrl())
                 .nickname(friend.getNickname())
                 .build();
