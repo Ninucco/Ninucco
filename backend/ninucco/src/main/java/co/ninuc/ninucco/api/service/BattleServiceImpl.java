@@ -60,12 +60,17 @@ public class BattleServiceImpl implements BattleService{
 
     // toEntity, toRes
     Battle toEntity(BattleCreateReq battleCreateReq){
+        Member applicant = memberRepository.findById(battleCreateReq.getApplicantId())
+                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+        Member opponent = memberRepository.findById(battleCreateReq.getOpponentId())
+                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
         return Battle.builder()
                 .title(battleCreateReq.getTitle())
-                .applicant(memberRepository.findById(battleCreateReq.getApplicantId())
-                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER)))
-                .opponent(memberRepository.findById(battleCreateReq.getOpponentId())
-                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER)))
+                .applicant(applicant)
+                .opponent(opponent)
+                .applicantNickname(applicant.getNickname())
+                .opponentNickname(opponent.getNickname())
                 .applicantUrl(battleCreateReq.getApplicantUrl())
                 .opponentUrl(battleCreateReq.getOpponentUrl())
                 .applicantOdds(1.0)
@@ -81,12 +86,10 @@ public class BattleServiceImpl implements BattleService{
                 .betMoney(bettingCreateReq.getBetMoney()).build();
     }
     BattleRes toRes(Battle battle){
-        Member applicant = battle.getApplicant();
-        Member opponent = battle.getOpponent();
         return BattleRes.builder()
                 .battleId(battle.getId())
-                .applicantName(applicant.getNickname())
-                .opponentName(opponent.getNickname())
+                .applicantName(battle.getApplicantNickname())
+                .opponentName(battle.getOpponentNickname())
                 .title(battle.getTitle())
                 .applicantUrl(battle.getApplicantUrl())
                 .opponentUrl(battle.getOpponentUrl())
