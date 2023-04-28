@@ -102,15 +102,17 @@ class BattleMemberWidget extends StatelessWidget {
               const SizedBox(
                 height: 5,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  BettingPopupWidget(
-                    memberId: memberId,
-                    nickname: nickname,
-                    posessCoin: 10000,
-                  ),
-                ],
+              SingleChildScrollView(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    BettingPopupWidget(
+                      memberId: memberId,
+                      nickname: nickname,
+                      posessCoin: 10000,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

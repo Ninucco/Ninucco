@@ -98,7 +98,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                               memberId: widget.memberBId,
                               nickname: widget.memberBNickname,
                               profileImage: widget.memberBImage,
-                              ratio: widget.ratioA,
+                              ratio: widget.ratioB,
                             ),
                           ],
                         ),
@@ -219,23 +219,23 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       ),
     );
   }
+}
 
-  ListView makeList(AsyncSnapshot<List<BattleCommentInfoModel>> snapshot) {
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: snapshot.data!.length,
-      itemBuilder: (context, index) {
-        var battleComment = snapshot.data![index];
-        return BattleCommentItem(
-          id: battleComment.id,
-          profileImage: battleComment.profileImage,
-          nickname: battleComment.nickname,
-          content: battleComment.content,
-        );
-      },
-      separatorBuilder: (context, index) => const SizedBox(width: 40),
-    );
-  }
+ListView makeList(AsyncSnapshot<List<BattleCommentInfoModel>> snapshot) {
+  return ListView.separated(
+    physics: const NeverScrollableScrollPhysics(),
+    shrinkWrap: true,
+    scrollDirection: Axis.vertical,
+    itemCount: snapshot.data!.length,
+    itemBuilder: (context, index) {
+      var battleComment = snapshot.data![index];
+      return BattleCommentItem(
+        id: battleComment.id,
+        profileImage: battleComment.profileImage,
+        nickname: battleComment.nickname,
+        content: battleComment.content,
+      );
+    },
+    separatorBuilder: (context, index) => const SizedBox(width: 40),
+  );
 }
