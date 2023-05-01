@@ -27,6 +27,10 @@ public class FaceServiceImpl {
     private final S3Service s3Service;
     private final LambdaService lambdaService;
     private final KeywordRepository keywordRepository;
+//    public FaceServiceImpl(LambdaService lambdaService, KeywordRepository keywordRepository){
+//        this.lambdaService = lambdaService;
+//        this.keywordRepository = keywordRepository;
+//    }
     @Transactional
     public Long saveKeyword(KeywordCreateReq keyword){
         return keywordRepository.save(Keyword.builder()

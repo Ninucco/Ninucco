@@ -48,7 +48,7 @@ public class Battle extends BaseEntity {
     LocalDateTime finishAt;
 
     @Builder
-    public Battle(String title, Member applicant, Member opponent, String applicantNickname, String opponentNickname, String applicantUrl, String opponentUrl, Double applicantOdds, Double opponentOdds){
+    public Battle(String title, Member applicant, Member opponent, String applicantNickname, String opponentNickname, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime finishAt, Double opponentOdds){
         this.title=title;
         this.applicant=applicant;
         this.opponent=opponent;
@@ -58,6 +58,7 @@ public class Battle extends BaseEntity {
         this.opponentUrl=opponentUrl;
         this.applicantOdds=applicantOdds;
         this.opponentOdds=opponentOdds;
+        this.finishAt=finishAt;
         this.status=BattleStatus.PROCEEDING;
         this.result=BattleResult.PROCEEDING;
     }

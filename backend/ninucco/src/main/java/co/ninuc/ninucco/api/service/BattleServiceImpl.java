@@ -16,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,7 +78,9 @@ public class BattleServiceImpl implements BattleService{
                 .applicantUrl(battleCreateReq.getApplicantUrl())
                 .opponentUrl(battleCreateReq.getOpponentUrl())
                 .applicantOdds(1.0)
-                .opponentOdds(1.0).build();
+                .opponentOdds(1.0)
+                .finishAt(LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1))
+                .build();
     }
     Betting toEntity(BettingCreateReq bettingCreateReq){
         return Betting.builder()

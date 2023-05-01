@@ -1,5 +1,6 @@
 package co.ninuc.ninucco.api.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,4 +12,5 @@ public class MemberCreateReq {
     String nickname;
 
     String url;
+
 }
