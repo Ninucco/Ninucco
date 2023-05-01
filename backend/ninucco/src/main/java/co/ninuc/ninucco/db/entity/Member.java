@@ -60,4 +60,11 @@ public class Member {
         this.point=0;
         this.rate=0.0;
     }
+
+    public void updateUrl(String url){
+        this.url=url;
+    }
+    public void updateNickname(String nickname){
+        this.nickname=nickname;
+    }
 }
