@@ -11,4 +11,6 @@ public interface MemberFriendService {
     BooleanRes selectOneMemberFriend(String memberId, String friendId);
 
     MemberFriendListRes selectAllMemberFriend(String memberId);
+
+    BooleanRes deleteMemberFriend(String memberId, String friendId);
 }

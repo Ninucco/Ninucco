@@ -29,10 +29,13 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     @Override
     public MemberFriendRes insertMemberFriend(String memberId, String friendId) {
         log.info("memberId : {}, friendId : {}", memberId, friendId);
-
-        //TODO 중복등록 방지
+        
         Member member = memberValidateById(memberId);
         Member friend = memberValidateById(friendId);
+
+        if(memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(memberId, friendId)) {
+            throw new CustomException(ErrorRes.CONFLICT_FRIEND);
+        }
 
         MemberFriend memberFriend = toEntity(member, friend);
         MemberFriend friendMember = toEntity(friend, member);
@@ -57,6 +60,25 @@ public class MemberFriendServiceImpl implements MemberFriendService{
 
         return new MemberFriendListRes(memberFriendRepository.findAllByMember_Id(memberId).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
     }
+
+    @Transactional
+    @Override
+    public BooleanRes deleteMemberFriend(String memberId, String friendId) {
+        memberValidateById(memberId);
+        memberValidateById(friendId);
+
+        if(memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(memberId, friendId)
+                && memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(friendId, memberId)) {
+            memberFriendRepository.deleteMemberFriendByMember_IdAndFriend_Id(memberId, friendId);
+            memberFriendRepository.deleteMemberFriendByMember_IdAndFriend_Id(friendId, memberId);
+        }
+        else {
+            throw new CustomException(ErrorRes.NOT_FOUND_MEMBER_FRIEND);
+        }
+
+        return new BooleanRes(true);
+    }
+
 
     public Member memberValidateById(String memberId) {
         log.info("memberFriendAuthorization : {}", memberId);
