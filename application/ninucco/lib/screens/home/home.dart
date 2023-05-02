@@ -20,30 +20,72 @@ class HomePage extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              toolbarHeight: 64,
+              toolbarHeight: 160,
               shape: ContinuousRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
-              elevation: 2,
+              elevation: 0,
               forceElevated: true,
-              backgroundColor: Colors.white,
-              leading: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Color(0xffFE9BB3),
+              backgroundColor: Colors.white.withOpacity(0.6),
+              // leading: const Padding(
+              //   padding: EdgeInsets.all(12.0),
+              //   child: CircleAvatar(
+              //     radius: 16,
+              //     backgroundColor: Color(0xffFE9BB3),
+              //   ),
+              // ),
+              title: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundColor: Color(0xffFE9BB3),
+                        ),
+                        SizedBox(width: 16),
+                        Text(
+                          "안녕하세요, 송승현님!",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "친구를 찾아서 경쟁해보세요!",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [
+                          const Color(0xffF7D1ED).withOpacity(0.7),
+                          const Color(0xffC8CDFA).withOpacity(0.7),
+                        ]),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const TextField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "친구검색",
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              title: const Text(
-                "안녕하세요, 송승현님!",
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
-            const SliverToBoxAdapter(
-              child: TextField(),
-            ),
             SliverToBoxAdapter(
               child: Container(
                 padding: const EdgeInsets.only(bottom: 12),
