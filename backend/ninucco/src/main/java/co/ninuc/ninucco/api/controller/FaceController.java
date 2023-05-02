@@ -23,7 +23,7 @@ public class FaceController {
 
     @ApiOperation(value = "얼굴인식 결과 조회", notes="배틀 리스트를 조회합니다.")
     @PostMapping("/dummy")
-    public ResponseEntity<?> dummyResult(@RequestParam SimilarityReq similarityReq) {
+    public ResponseEntity<?> dummyResult(@RequestBody SimilarityReq similarityReq) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, SimilarityResultRes.builder()
                         .imgUrl("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png")
