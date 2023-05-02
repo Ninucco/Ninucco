@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CameraButton extends StatefulWidget {
@@ -18,9 +21,23 @@ class CameraButton extends StatefulWidget {
 class _CameraButtonState extends State<CameraButton> {
   final picker = ImagePicker();
 
+  Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+    );
+    if (croppedImage == null) return null;
+    return File(croppedImage.path);
+  }
+
   Future getImage(ImageSource imageSource) async {
     final image = await picker.pickImage(source: imageSource);
-    widget.setImage(image?.path);
+    if (image == null) return;
+    File? img = File(image.path);
+    img = await _cropImage(imageFile: img);
+    if (img == null) return;
+
+    widget.setImage(img.path);
   }
 
   @override
