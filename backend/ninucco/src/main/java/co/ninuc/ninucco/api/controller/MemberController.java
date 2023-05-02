@@ -45,6 +45,14 @@ public class MemberController {
         );
     }
 
+    @ApiOperation(value = "프로필 조회", notes="유저 아이디로 유저 정보를 불러옵니다.")
+    @GetMapping("/{memberId}")
+    public ResponseEntity<ApiResult<Res>> updateMemberNickname(@PathVariable String memberId){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.selectOneMember(memberId))
+        );
+    }
+
     @ApiOperation(value = "친구 맺기", notes = "친구 신청을 수락합니다.")
     @PostMapping("/friend")
     public ResponseEntity<ApiResult<Res>> insertMemberFriend(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {

@@ -61,7 +61,10 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberRes selectOneMember(String memberId) {
-        return null;
+        Member member=memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        return toDto(member);
     }
 
     @Override
