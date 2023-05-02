@@ -11,13 +11,22 @@ import co.ninuc.ninucco.common.util.LambdaService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
 import co.ninuc.ninucco.db.entity.Keyword;
 import co.ninuc.ninucco.db.repository.KeywordRepository;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +35,10 @@ public class FaceServiceImpl {
     private final LambdaService lambdaService;
     private final StabilityAIService stabilityAIService;
     private final KeywordRepository keywordRepository;
-//    private final S3Uploader s3Uploader;
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
     @Transactional
     public Long saveKeyword(KeywordCreateReq keyword){
         return keywordRepository.save(Keyword.builder()
@@ -40,25 +52,29 @@ public class FaceServiceImpl {
     public SimilarityResultRes generateAnimal(SimilarityReq similarityReq) {
         //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
         String picBase64 = similarityReq.getPicBase64();
-//        byte[] picByteArray = Base64.decodeBase64(picBase64);
-
+        byte[] picByteArray = Base64.decodeBase64(picBase64);
+        StringBuilder picBinaryStringBiulder = new StringBuilder();
+        for(byte by: picByteArray){
+            picBinaryStringBiulder.append(Integer.toBinaryString(by & 0xFF));
+        }
+        String picBinaryString = picBinaryStringBiulder.toString();
         //파일이 사진인지 검사한다
         String[] picBase64Tokens = picBase64.split(",");
         String extension;
-        switch(picBase64Tokens[0]){
-            case "data:image/jpg;base64":
-                extension = "jpg";
-                break;
-            case "data:image/jpeg;base64":
-                extension = "jpeg";
-                break;
-            case "data:image/png;base64":
-                extension = "png";
-                break;
-            default:
-                //사진이 jpg, jpeg, png가 아님! 다시
-                throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
-        }
+//        switch(picBase64Tokens[0]){
+//            case "data:image/jpg;base64":
+//                extension = "jpg";
+//                break;
+//            case "data:image/jpeg;base64":
+//                extension = "jpeg";
+//                break;
+//            case "data:image/png;base64":
+//                extension = "png";
+//                break;
+//            default:
+//                //사진이 jpg, jpeg, png가 아님! 다시
+//                throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FILE_NOT_PICTURE);
+//        }
 //        String fileName = LocalDateTime.now().toString()+extension;
 
         //2. 무슨 수를 써서 어딘가로부터 데이터 리스트를 받는다(keyword-value)
@@ -73,16 +89,23 @@ public class FaceServiceImpl {
         String prompt=new StringBuilder().append("Cute small ")
                 .append(animalKeyword)
                 .append(personalityKeyword)
+                //기본 프롬프트
                 .append("sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render")
                 .toString();
         //4. 무슨 수를 써서 이미지를 얻어온다.
-        byte[] picByte = stabilityAIService.getByteArrayImgToImg(picBase64, prompt);
-        /* s3에 저장
-        * ......
-        *
-        * */
-        String imgUrl ="https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png";
-
+        byte[] picByte = stabilityAIService.getByteArrayImgToImg("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png", prompt);
+        //S3에 저장
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(picByte);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(byteArrayInputStream.available());
+        String fileName = UUID.nameUUIDFromBytes(picByte).toString();
+        amazonS3Client.putObject(
+                bucket,
+                fileName,
+                byteArrayInputStream,
+                objectMetadata
+        );
+        String imgUrl =amazonS3Client.getResourceUrl(bucket, fileName);
         // 5. 무슨 수를 써서 resultTitle, resultDescription을 얻는다.
         /*
          * ......

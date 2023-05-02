@@ -16,9 +16,15 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class StabilityAIService extends InterServiceCommunicationProvider{
-    private final Headers headers;
+    private final Headers promptToImgHeaders;
+    private final Headers imgToImgHeaders;
     public StabilityAIService(@Value("${ai.stability.key}") String stabilityAIKey) {
-        this.headers = Headers.of(
+        this.promptToImgHeaders = Headers.of(
+                "Content-Type","application/json",
+                "Accept","application/json",
+                "Authorization", stabilityAIKey
+        );
+        this.imgToImgHeaders = Headers.of(
                 "Content-Type","application/json",
                 "Accept","application/json",
                 "Authorization", stabilityAIKey
@@ -27,9 +33,9 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
 
     private JSONObject getJsonObjectPromptToImg(String prompt){
         Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image",
-                headers,
+                promptToImgHeaders,
                 new PromptToImgReq(prompt));
-        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);
         else return res.get();
     }
     public byte[] getByteArrayPromptToImg(String prompt){
@@ -40,9 +46,9 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
     }
     private JSONObject getJsonObjectImgToImg(String picBase64, String prompt){
         Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/img-to-image",
-                headers,
+                promptToImgHeaders,
                 new ImgToImgReq(picBase64, prompt));
-        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);
         else return res.get();
     }
     public byte[] getByteArrayImgToImg(String picBase64, String prompt){
