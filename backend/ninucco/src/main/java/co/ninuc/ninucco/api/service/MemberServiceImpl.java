@@ -2,6 +2,8 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
+import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
+import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
 import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.ItemRes;
 import co.ninuc.ninucco.api.dto.response.MemberIdRes;
@@ -31,31 +33,38 @@ public class MemberServiceImpl implements MemberService{
     }
 
     public BooleanRes checkMemberNickname(String nickName){
-        if(memberRepository.existsByNickname(nickName))
-            throw new CustomException(ErrorRes.CONFLICT_NICKNAME);
+        return memberRepository.existsByNickname(nickName) ? new BooleanRes(false) : new BooleanRes(true);
+    }
+
+    @Transactional
+    @Override
+    public BooleanRes updateMemberUrl(MemberUpdatePhotoReq memberUpdatePhotoReq) {
+
+        Member member=memberRepository.findById(memberUpdatePhotoReq.getId())
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        member.updateUrl(memberUpdatePhotoReq.getUrl());
+
+        return new BooleanRes(true);
+    }
+
+    @Transactional
+    @Override
+    public BooleanRes updateMemberNickname(MemberUpdateNicknameReq memberUpdateNicknameReq) {
+        Member member=memberRepository.findById(memberUpdateNicknameReq.getId())
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        member.updateNickname(memberUpdateNicknameReq.getNickname());
+
         return new BooleanRes(true);
     }
 
     @Override
-    public Boolean checkMemberEmail(String email) {
-        return null;
-    }
-
-    @Transactional
-    @Override
-    public Long updateMemberUrl(String url) {
-        return null;
-    }
-
-    @Transactional
-    @Override
-    public Long updateMemberNickname(String nickName) {
-        return null;
-    }
-
-    @Override
     public MemberRes selectOneMember(String memberId) {
-        return null;
+        Member member=memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        return toDto(member);
     }
 
     @Override

@@ -3,17 +3,13 @@ package co.ninuc.ninucco.api.controller;
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
+import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.api.service.FaceServiceImpl;
-import co.ninuc.ninucco.db.entity.Keyword;
-import co.ninuc.ninucco.db.repository.KeywordRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +22,8 @@ public class FaceController {
     private final boolean SUCCESS = true;
 
     @ApiOperation(value = "얼굴인식 결과 조회", notes="배틀 리스트를 조회합니다.")
-    @GetMapping("/dummy")
-    public ResponseEntity<?> dummyResult() {
+    @PostMapping("/dummy")
+    public ResponseEntity<?> dummyResult(@RequestBody SimilarityReq similarityReq) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, SimilarityResultRes.builder()
                         .imgUrl("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png")
@@ -45,7 +41,7 @@ public class FaceController {
                         }))).build())
         );
     }
-
+    //얼굴인식 키워드 넣기용
     @ApiOperation(value = "데이터용: 키워드 넣기", notes="카테고리: 0:PERSONALITY, 1:JOB, 2:ANIMAL")
     @PostMapping("/keyword")
     public ResponseEntity<?> saveKeyword(KeywordCreateReq keyword) {
@@ -59,5 +55,13 @@ public class FaceController {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, faceService.findAllKeywords()
                 ));
+    }
+    //나와 닮은 동물 찾기(PERSONALITY + ANIMAL)
+    @ApiOperation(value = "나와 닮은 동물 찾기", notes="나와 닮은 동물 찾기를 합니다. 다 되면 FCM을 보냅니다.")
+    @GetMapping("/animal")
+    public ResponseEntity<?> generateAnimal(@RequestBody SimilarityReq similarityReq) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, faceService.generateAnimal(similarityReq))
+        );
     }
 }

@@ -38,6 +38,23 @@ dependencies {
 	/* swagger2 */
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+
+	/* FCM */
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+	/* okhttp3 */
+	implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+
+	/* json */
+	implementation 'org.json:json:20230227'
+
+	/*aws sdk*/
+//	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.457'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	/* spring boot configuration processor */
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 }
 
 tasks.named('test') {
