@@ -23,6 +23,7 @@ public enum ErrorRes implements Res{
     NOT_FOUND_BETTING("N102"),
     NOT_FOUND_ITEM("N103"),
     NOT_FOUND_MEMBER("N104"),
+    NOT_FOUND_MEMBER_FRIEND("N105"),
 
     // 409 CONFLICT 중복된 리소스
     CONFLICT_BETTING("N201"),
