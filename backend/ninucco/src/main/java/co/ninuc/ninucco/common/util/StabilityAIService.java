@@ -44,15 +44,15 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
         String fstPicBase64 = (String)fstPic.get("base64");
         return Base64.decodeBase64(fstPicBase64);
     }
-    private JSONObject getJsonObjectImgToImg(String picBase64, String prompt){
+    private JSONObject getJsonObjectImgToImg(byte[] fileBytes, String prompt){
         Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/img-to-image",
                 promptToImgHeaders,
-                new ImgToImgReq(picBase64, prompt));
+                new ImgToImgReq(fileBytes, prompt));
         if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);
         else return res.get();
     }
-    public byte[] getByteArrayImgToImg(String picBase64, String prompt){
-        JSONArray picArray = (JSONArray) this.getJsonObjectImgToImg(picBase64,prompt).get("artifacts");
+    public byte[] getByteArrayImgToImg(byte[] fileBytes, String prompt){
+        JSONArray picArray = (JSONArray) this.getJsonObjectImgToImg(fileBytes,prompt).get("artifacts");
         JSONObject fstPic = (JSONObject)picArray.get(0);
         String fstPicBase64 = (String)fstPic.get("base64");
         return Base64.decodeBase64(fstPicBase64);

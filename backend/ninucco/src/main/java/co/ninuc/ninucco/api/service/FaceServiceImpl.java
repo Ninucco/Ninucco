@@ -19,9 +19,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,18 +52,18 @@ public class FaceServiceImpl {
         return keywordRepository.findAll();
     }
 
-    public SimilarityResultRes generateAnimal(SimilarityReq similarityReq) {
+    public SimilarityResultRes generateAnimal(MultipartFile multipartFile){
         //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
-        String picBase64 = similarityReq.getPicBase64();
-        byte[] picByteArray = Base64.decodeBase64(picBase64);
-        StringBuilder picBinaryStringBiulder = new StringBuilder();
-        for(byte by: picByteArray){
-            picBinaryStringBiulder.append(Integer.toBinaryString(by & 0xFF));
-        }
-        String picBinaryString = picBinaryStringBiulder.toString();
-        //파일이 사진인지 검사한다
-        String[] picBase64Tokens = picBase64.split(",");
-        String extension;
+//        String picBase64 = similarityReq.getPicBase64();
+//        byte[] picByteArray = Base64.decodeBase64(picBase64);
+//        StringBuilder picBinaryStringBiulder = new StringBuilder();
+//        for(byte by: picByteArray){
+//            picBinaryStringBiulder.append(Integer.toBinaryString(by & 0xFF));
+//        }
+//        String picBinaryString = picBinaryStringBiulder.toString();
+//        //파일이 사진인지 검사한다
+//        String[] picBase64Tokens = picBase64.split(",");
+//        String extension;
 //        switch(picBase64Tokens[0]){
 //            case "data:image/jpg;base64":
 //                extension = "jpg";
@@ -93,7 +96,14 @@ public class FaceServiceImpl {
                 .append("sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render")
                 .toString();
         //4. 무슨 수를 써서 이미지를 얻어온다.
-        byte[] picByte = stabilityAIService.getByteArrayImgToImg("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png", prompt);
+        byte[] fileBytes;
+        try{
+            fileBytes = multipartFile.getBytes();
+        }catch(IOException e){
+            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        }
+
+        byte[] picByte = stabilityAIService.getByteArrayImgToImg(fileBytes, prompt);
         //S3에 저장
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(picByte);
         ObjectMetadata objectMetadata = new ObjectMetadata();

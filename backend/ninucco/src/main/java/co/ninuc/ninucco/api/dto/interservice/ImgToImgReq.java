@@ -11,7 +11,7 @@ import java.util.List;
 public class ImgToImgReq {
     @JsonValue
     List<Prompt> text_prompts;
-    String init_image;
+    byte[] init_image;
     final String init_image_mode = "IMAGE_STRENGTH";
     final float image_strength = 0.35f;
     final int cfg_scale=7;
@@ -22,7 +22,7 @@ public class ImgToImgReq {
     //final String stype_preset;
     final int steps= 30;
     @Builder
-    public ImgToImgReq(String init_image, String prompt) {
+    public ImgToImgReq(byte[] init_image, String prompt) {
         this.init_image = init_image;
         this.text_prompts = new ArrayList<>();
         this.text_prompts.add(new Prompt(prompt));
