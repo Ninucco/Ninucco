@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ninucco/providers/nav_provider.dart';
+import 'package:ninucco/widgets/home/show_image.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:ninucco/widgets/home/camera_button.dart';
 import 'package:ninucco/widgets/home/submit_button.dart';
@@ -28,7 +29,7 @@ class _FaceScanState extends State<FaceScan> {
     super.initState();
   }
 
-  void setImage(path) {
+  void setImage(path) async {
     setState(() {
       if (path != null) {
         _image = File(path);
@@ -41,31 +42,6 @@ class _FaceScanState extends State<FaceScan> {
     setState(() {
       _loading = loading;
     });
-  }
-
-  Widget showImage() {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      width: MediaQuery.of(context).size.width - 64,
-      height: MediaQuery.of(context).size.width - 64,
-      child: Expanded(
-        child: AspectRatio(
-          aspectRatio: 1,
-          child: _image == null
-              ? Image.asset(
-                  'assets/images/scan_items/no_img_${type + 1}.png',
-                  fit: BoxFit.cover,
-                )
-              : Image.file(
-                  File(_image!.path),
-                  fit: BoxFit.cover,
-                ),
-        ),
-      ),
-    );
   }
 
   // 화면이 dispose 될 때 bottom Nav 를 다시 그림
@@ -114,7 +90,7 @@ class _FaceScanState extends State<FaceScan> {
                     top: 96, right: 32, bottom: 32, left: 32),
                 child: Column(
                   children: [
-                    showImage(),
+                    ShowImage(context: context, image: _image, type: type),
                     const SizedBox(height: 32),
                     Text(
                       _scanUtility.getScanTitleList[type].join(),
