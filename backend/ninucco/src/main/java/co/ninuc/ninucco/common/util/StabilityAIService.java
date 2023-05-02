@@ -7,20 +7,28 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Headers;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.util.Optional;
 
+@Component
 @Slf4j
 public class StabilityAIService extends InterServiceCommunicationProvider{
+    private final Headers headers;
 
-    private static String stabilityAIKey;
-    private Headers headers= Headers.of(
-            "Content-Type","application/json",
-            "Accept","application/json",
-            "Authorization",stabilityAIKey
-    );
+    public StabilityAIService(@Value("${ai.stability.key}") String stabilityAIKey) {
+        log.info("===> stabilityAiKey : {}", stabilityAIKey);
+        this.headers = Headers.of(
+                "Content-Type","application/json",
+                "Accept","application/json",
+                "Authorization", stabilityAIKey
+        );
+    }
 
     public JSONObject getJsonObject(String prompt){
+        log.info("===> stabilityAiKey : {}", headers.get("Authorization"));
         Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image",
                 headers,
                 new PromptToImgReq(prompt));
@@ -40,9 +48,4 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
         }
     }
 
-    public static void main(String[] args){
-        StabilityAIService sac = new StabilityAIService();
-        sac.getResult("Cute small cat sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render");
-
-    }
 }
