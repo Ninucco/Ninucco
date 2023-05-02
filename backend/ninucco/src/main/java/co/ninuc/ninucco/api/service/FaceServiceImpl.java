@@ -1,22 +1,19 @@
 package co.ninuc.ninucco.api.service;
 
-import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
+import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
-import co.ninuc.ninucco.common.config.AWSConfig;
-import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.LambdaService;
-import co.ninuc.ninucco.common.util.S3Service;
+//import co.ninuc.ninucco.common.util.S3Uploader;
+import co.ninuc.ninucco.common.util.StabilityAIService;
 import co.ninuc.ninucco.db.entity.Keyword;
 import co.ninuc.ninucco.db.repository.KeywordRepository;
-import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +21,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class FaceServiceImpl {
-    private final S3Service s3Service;
     private final LambdaService lambdaService;
+    private final StabilityAIService stabilityAIService;
     private final KeywordRepository keywordRepository;
-//    public FaceServiceImpl(LambdaService lambdaService, KeywordRepository keywordRepository){
-//        this.lambdaService = lambdaService;
-//        this.keywordRepository = keywordRepository;
-//    }
+//    private final S3Uploader s3Uploader;
     @Transactional
     public Long saveKeyword(KeywordCreateReq keyword){
         return keywordRepository.save(Keyword.builder()
@@ -41,15 +35,13 @@ public class FaceServiceImpl {
         return keywordRepository.findAll();
     }
 
-    public SimilarityResultRes generateAnimal(MultipartFile file) {
+    public SimilarityResultRes generateAnimal(SimilarityReq similarityReq) {
         //파일이 사진인지 검사한다
-        if(!file.getContentType().startsWith("image")){
-            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR); //파일이 사진이 아님
-        }
-        AmazonS3 s3 = s3Service.getS3();
-        log.info(s3.getS3AccountOwner().getId());
+
 
         //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
+        String picBase64 = similarityReq.getPicBase64();
+        byte[] picByteArray = Base64.decodeBase64(picBase64);
 
         //2. 무슨 수를 써서 어딘가로부터 데이터 리스트를 받는다(keyword-value)
         //List<SimilarityResult> animalSimilarityResultList = new ArrayList<>();
@@ -60,7 +52,11 @@ public class FaceServiceImpl {
         String animalKeyword = animalSimilarityResultList.get(0).getKeyword();
         String personalityKeyword = "깐깐한";//personalisySimilarityResultList.get(0).getKeyword();
 
+        String prompt="";
         //4. 무슨 수를 써서 이미지를 얻어온다.
+        byte[] picByte = stabilityAIService.getResultAsByteArray(prompt);
+
+
         /*
         * ......
         *

@@ -3,13 +3,13 @@ package co.ninuc.ninucco.api.controller;
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
+import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.api.service.FaceServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ public class FaceController {
     private final boolean SUCCESS = true;
 
     @ApiOperation(value = "얼굴인식 결과 조회", notes="배틀 리스트를 조회합니다.")
-    @GetMapping("/dummy")
-    public ResponseEntity<?> dummyResult() {
+    @PostMapping("/dummy")
+    public ResponseEntity<?> dummyResult(@RequestParam SimilarityReq similarityReq) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, SimilarityResultRes.builder()
                         .imgUrl("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png")
@@ -59,9 +59,9 @@ public class FaceController {
     //나와 닮은 동물 찾기(PERSONALITY + ANIMAL)
     @ApiOperation(value = "나와 닮은 동물 찾기", notes="나와 닮은 동물 찾기를 합니다. 다 되면 FCM을 보냅니다.")
     @GetMapping("/animal")
-    public ResponseEntity<?> generateAnimal(@RequestParam MultipartFile file) {
+    public ResponseEntity<?> generateAnimal(@RequestBody SimilarityReq similarityReq) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.generateAnimal(file))
+                new ApiResult<>(SUCCESS, faceService.generateAnimal(similarityReq))
         );
     }
 }
