@@ -48,7 +48,12 @@ dependencies {
 	/* json */
 	implementation 'org.json:json:20230227'
 
+	/*aws sdk*/
+//	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.457'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	/* spring boot configuration processor */
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 }
 
