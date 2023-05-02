@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -21,19 +22,26 @@ class SubmitButton extends StatelessWidget {
   });
 
   Future fetchScanResult() async {
-    String base64url = base64Encode(image.readAsBytesSync());
-    print(base64url);
-    final response =
-        await http.get(Uri.parse('https://k8a605.p.ssafy.io/api/face/dummy'));
-    var json = jsonDecode(response.body)['data'];
-    var list = json['resultPercentages'] as List;
+    Uint8List imagebytes = await image.readAsBytes();
+    String base64string = base64.encode(imagebytes);
+    print(base64string);
+    var body = json.encode({"similarityReq": base64string});
+
+    final response = await http.post(
+      Uri.parse('https://k8a605.p.ssafy.io/api/face/dummy'),
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );  
+
+    var jsonData = jsonDecode(response.body)['data'];
+    var list = jsonData['resultPercentages'] as List;
     List<AnalyticItem> analyticItemList =
         list.map((i) => AnalyticItem.fromJson(i)).toList();
     return ResultData(
       type: type,
-      resultTitle: json['resultTitle'],
-      resultDescription: json['resultDescription'],
-      imgUrl: json['imgUrl'],
+      resultTitle: jsonData['resultTitle'],
+      resultDescription: jsonData['resultDescription'],
+      imgUrl: jsonData['imgUrl'],
       resultPercentages: analyticItemList,
     );
   }
@@ -43,9 +51,8 @@ class SubmitButton extends StatelessWidget {
       return;
     }
     setLoading(true);
-    await fetchScanResult();
-    // Navigator.pushNamed(context, '/ScanResult',
-    //     arguments: await fetchScanResult());
+    Navigator.pushNamed(context, '/ScanResult',
+        arguments: await fetchScanResult());
     setLoading(false);
   }
 
