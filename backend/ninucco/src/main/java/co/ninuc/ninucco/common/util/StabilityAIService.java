@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.common.util;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
+import co.ninuc.ninucco.api.dto.interservice.ImgToImgReq;
 import co.ninuc.ninucco.api.dto.interservice.PromptToImgReq;
 import co.ninuc.ninucco.common.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +25,28 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
         );
     }
 
-    private JSONObject getJsonObject(String prompt){
+    private JSONObject getJsonObjectPromptToImg(String prompt){
         Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image",
                 headers,
                 new PromptToImgReq(prompt));
         if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         else return res.get();
     }
-    public byte[] getResultAsByteArray(String prompt){
-        JSONArray picArray = (JSONArray) this.getJsonObject(prompt).get("artifacts");
+    public byte[] getByteArrayPromptToImg(String prompt){
+        JSONArray picArray = (JSONArray) this.getJsonObjectPromptToImg(prompt).get("artifacts");
+        JSONObject fstPic = (JSONObject)picArray.get(0);
+        String fstPicBase64 = (String)fstPic.get("base64");
+        return Base64.decodeBase64(fstPicBase64);
+    }
+    private JSONObject getJsonObjectImgToImg(String picBase64, String prompt){
+        Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/img-to-image",
+                headers,
+                new ImgToImgReq(picBase64, prompt));
+        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        else return res.get();
+    }
+    public byte[] getByteArrayImgToImg(String picBase64, String prompt){
+        JSONArray picArray = (JSONArray) this.getJsonObjectImgToImg(picBase64,prompt).get("artifacts");
         JSONObject fstPic = (JSONObject)picArray.get(0);
         String fstPicBase64 = (String)fstPic.get("base64");
         return Base64.decodeBase64(fstPicBase64);

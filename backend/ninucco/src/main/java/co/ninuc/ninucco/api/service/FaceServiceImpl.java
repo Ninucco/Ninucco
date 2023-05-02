@@ -1,9 +1,11 @@
 package co.ninuc.ninucco.api.service;
 
+import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
+import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.LambdaService;
 //import co.ninuc.ninucco.common.util.S3Uploader;
 import co.ninuc.ninucco.common.util.StabilityAIService;
@@ -11,9 +13,9 @@ import co.ninuc.ninucco.db.entity.Keyword;
 import co.ninuc.ninucco.db.repository.KeywordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +38,28 @@ public class FaceServiceImpl {
     }
 
     public SimilarityResultRes generateAnimal(SimilarityReq similarityReq) {
-        //파일이 사진인지 검사한다
-
-
         //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
         String picBase64 = similarityReq.getPicBase64();
-        byte[] picByteArray = Base64.decodeBase64(picBase64);
+//        byte[] picByteArray = Base64.decodeBase64(picBase64);
+
+        //파일이 사진인지 검사한다
+        String[] picBase64Tokens = picBase64.split(",");
+        String extension;
+        switch(picBase64Tokens[0]){
+            case "data:image/jpg;base64":
+                extension = "jpg";
+                break;
+            case "data:image/jpeg;base64":
+                extension = "jpeg";
+                break;
+            case "data:image/png;base64":
+                extension = "png";
+                break;
+            default:
+                //사진이 jpg, jpeg, png가 아님! 다시
+                throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        }
+//        String fileName = LocalDateTime.now().toString()+extension;
 
         //2. 무슨 수를 써서 어딘가로부터 데이터 리스트를 받는다(keyword-value)
         //List<SimilarityResult> animalSimilarityResultList = new ArrayList<>();
@@ -50,14 +68,16 @@ public class FaceServiceImpl {
 
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다(리스트 길이가 0이 아님이 보장되어야함)
         String animalKeyword = animalSimilarityResultList.get(0).getKeyword();
-        String personalityKeyword = "깐깐한";//personalisySimilarityResultList.get(0).getKeyword();
+        String personalityKeyword = "encouraged";//"깐깐한";//personalisySimilarityResultList.get(0).getKeyword();
 
-        String prompt="";
+        String prompt=new StringBuilder().append("Cute small ")
+                .append(animalKeyword)
+                .append(personalityKeyword)
+                .append("sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render")
+                .toString();
         //4. 무슨 수를 써서 이미지를 얻어온다.
-        byte[] picByte = stabilityAIService.getResultAsByteArray(prompt);
-
-
-        /*
+        byte[] picByte = stabilityAIService.getByteArrayImgToImg(picBase64, prompt);
+        /* s3에 저장
         * ......
         *
         * */
