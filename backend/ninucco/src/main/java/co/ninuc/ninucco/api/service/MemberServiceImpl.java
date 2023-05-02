@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.Null;
 import java.util.List;
 
 @Service
@@ -34,9 +33,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     public BooleanRes checkMemberNickname(String nickName){
-        if(memberRepository.existsByNickname(nickName))
-            throw new CustomException(ErrorRes.CONFLICT_NICKNAME);
-        return new BooleanRes(true);
+        return memberRepository.existsByNickname(nickName) ? new BooleanRes(false) : new BooleanRes(true);
     }
 
     @Transactional
