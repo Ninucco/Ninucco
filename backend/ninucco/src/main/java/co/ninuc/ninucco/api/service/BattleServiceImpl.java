@@ -3,6 +3,7 @@ package co.ninuc.ninucco.api.service;
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
 import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
+import co.ninuc.ninucco.api.dto.response.BattleListRes;
 import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
@@ -20,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,14 +32,16 @@ public class BattleServiceImpl implements BattleService{
 
     @Transactional
     @Override
-    public Long insertBattle(BattleCreateReq battleCreateReq){
-        return battleRepository.save(toEntity(battleCreateReq)).getId();
+    public BattleRes insertBattle(BattleCreateReq battleCreateReq){
+        Battle battle = toEntity(battleCreateReq);
+        battleRepository.save(battle);
+        return toRes(battle);
     }
 
     @Override
-    public List<BattleRes> selectAllBattle(String option) {
-        return battleRepository.findAll().stream()
-                .map(this::toRes).collect(Collectors.toList());
+    public BattleListRes selectAllBattle(String option) {
+        return new BattleListRes(battleRepository.findAll().stream()
+                .map(this::toRes).collect(Collectors.toList()));
     }
 
     @Override

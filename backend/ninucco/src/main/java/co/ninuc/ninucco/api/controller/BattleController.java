@@ -23,7 +23,7 @@ public class BattleController {
     //배틀 등록
     @ApiOperation(value = "배틀 등록", notes = "배틀을 등록합니다.")
     @PostMapping("")
-    public ResponseEntity<?> insertBattle(@RequestBody BattleCreateReq battleCreateReq) {
+    public ResponseEntity<ApiResult<Res>> insertBattle(@RequestBody BattleCreateReq battleCreateReq) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.insertBattle(battleCreateReq))
         );
@@ -31,7 +31,7 @@ public class BattleController {
     //배틀 리스트 조회
     @ApiOperation(value = "배틀 리스트 조회", notes="배틀 리스트를 조회합니다. option: latest(최신순), votes(투표수 높은 순)")
     @GetMapping("/list")
-    public ResponseEntity<?> selectAllBattle(@RequestParam String option){
+    public ResponseEntity<ApiResult<Res>> selectAllBattle(@RequestParam String option){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.selectAllBattle(option))
         );
@@ -39,7 +39,7 @@ public class BattleController {
     //배틀 상세정보 조회
     @ApiOperation(value = "배틀 상세정보 조회", notes = "배틀 진행중의 상세정보를 조회합니다.")
     @GetMapping("/{battleId}")
-    public ResponseEntity<?> selectOneBattle(@PathVariable Long battleId) {
+    public ResponseEntity<ApiResult<Res>> selectOneBattle(@PathVariable Long battleId) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.selectOneBattle(battleId))
         );
