@@ -9,5 +9,5 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class ItemListRes implements Res {
-    List<ItemRes> itemRes;
+    List<ItemRes> itemList;
 }
