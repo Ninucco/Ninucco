@@ -2,12 +2,10 @@ package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
-import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
-import co.ninuc.ninucco.api.dto.request.MemberFriendCreateReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
+import co.ninuc.ninucco.api.dto.request.*;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
+import co.ninuc.ninucco.db.repository.MemberRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +18,30 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberFriendService memberFriendService;
     private final boolean SUCCESS = true;
+    private final MemberRepository memberRepository;
+
+    @ApiOperation(value = "로그인",notes="파이버베이스 키(PK)를 주면 해당 유저의 정보를 반환합니다.")
+    @PostMapping("/login")
+    public ResponseEntity<ApiResult<Res>> login(@RequestBody LoginReq loginReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.login(loginReq))
+        );
+    }
+
 
     @ApiOperation(value = "회원 가입", notes="유저를 등록합니다.")
     @PostMapping("/regist")
     public ResponseEntity<ApiResult<Res>> insertMember(@RequestBody MemberCreateReq memberCreateReq){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.insertMember(memberCreateReq))
+        );
+    }
+
+    @ApiOperation(value = "키워드로 멤버 찾기", notes="멤버 닉네임에 키워드가 포함되어 있으면 검색해 줍니다.")
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<ApiResult<?>> searchMember(@PathVariable String keyword){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.findByNicknameKeyword(keyword))
         );
     }
     
@@ -36,6 +52,7 @@ public class MemberController {
                 new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoReq))
         );
     }
+
 
     @ApiOperation(value = "멤버 닉네임 업데이트", notes="멤버 닉네임을 업데이트 합니다.")
     @PatchMapping("/nickname")

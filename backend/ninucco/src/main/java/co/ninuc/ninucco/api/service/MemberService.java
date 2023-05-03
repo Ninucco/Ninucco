@@ -1,5 +1,6 @@
 package co.ninuc.ninucco.api.service;
 
+import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
@@ -21,4 +22,7 @@ public interface MemberService {
     Long insertMemberFriend(String friendId);
     List<MemberRes> selectAllFriendsByMemberId(String memberId);
     Object selectOneFriend(String friendNickName);
+    List<MemberRes> findByNicknameKeyword(String keyword);
+
+    MemberRes login(LoginReq loginReq);
 }
