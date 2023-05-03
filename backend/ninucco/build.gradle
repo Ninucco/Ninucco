@@ -52,9 +52,6 @@ dependencies {
 //	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.457'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	/* spring boot configuration processor */
-	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-
 }
 
 tasks.named('test') {

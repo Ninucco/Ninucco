@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +59,10 @@ public class FaceController {
     }
     //나와 닮은 동물 찾기(PERSONALITY + ANIMAL)
     @ApiOperation(value = "나와 닮은 동물 찾기", notes="나와 닮은 동물 찾기를 합니다. 다 되면 FCM을 보냅니다.")
-    @GetMapping("/animal")
-    public ResponseEntity<?> generateAnimal(@RequestBody SimilarityReq similarityReq) {
+    @PostMapping("/animal")
+    public ResponseEntity<?> generateAnimal(@RequestBody MultipartFile image) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.generateAnimal(similarityReq))
+                new ApiResult<>(SUCCESS, faceService.generateAnimal(image))
         );
     }
 }

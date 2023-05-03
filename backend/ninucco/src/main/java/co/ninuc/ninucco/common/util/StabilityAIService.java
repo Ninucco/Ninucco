@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.common.util;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
+import co.ninuc.ninucco.api.dto.interservice.ImgToImgReq;
 import co.ninuc.ninucco.api.dto.interservice.PromptToImgReq;
 import co.ninuc.ninucco.common.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
@@ -15,24 +16,43 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class StabilityAIService extends InterServiceCommunicationProvider{
-    private final Headers headers;
+    private final Headers promptToImgHeaders;
+    private final Headers imgToImgHeaders;
     public StabilityAIService(@Value("${ai.stability.key}") String stabilityAIKey) {
-        this.headers = Headers.of(
+        this.promptToImgHeaders = Headers.of(
+                "Content-Type","application/json",
+                "Accept","application/json",
+                "Authorization", stabilityAIKey
+        );
+        this.imgToImgHeaders = Headers.of(
                 "Content-Type","application/json",
                 "Accept","application/json",
                 "Authorization", stabilityAIKey
         );
     }
 
-    private JSONObject getJsonObject(String prompt){
+    private JSONObject getJsonObjectPromptToImg(String prompt){
         Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image",
-                headers,
+                promptToImgHeaders,
                 new PromptToImgReq(prompt));
-        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);
         else return res.get();
     }
-    public byte[] getResultAsByteArray(String prompt){
-        JSONArray picArray = (JSONArray) this.getJsonObject(prompt).get("artifacts");
+    public byte[] getByteArrayPromptToImg(String prompt){
+        JSONArray picArray = (JSONArray) this.getJsonObjectPromptToImg(prompt).get("artifacts");
+        JSONObject fstPic = (JSONObject)picArray.get(0);
+        String fstPicBase64 = (String)fstPic.get("base64");
+        return Base64.decodeBase64(fstPicBase64);
+    }
+    private JSONObject getJsonObjectImgToImg(byte[] fileBytes, String prompt){
+        Optional<JSONObject> res = postRequestToUrlGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/img-to-image",
+                promptToImgHeaders,
+                new ImgToImgReq(fileBytes, prompt));
+        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);
+        else return res.get();
+    }
+    public byte[] getByteArrayImgToImg(byte[] fileBytes, String prompt){
+        JSONArray picArray = (JSONArray) this.getJsonObjectImgToImg(fileBytes,prompt).get("artifacts");
         JSONObject fstPic = (JSONObject)picArray.get(0);
         String fstPicBase64 = (String)fstPic.get("base64");
         return Base64.decodeBase64(fstPicBase64);
