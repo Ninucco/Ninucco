@@ -2,10 +2,7 @@ package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
-import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
-import co.ninuc.ninucco.api.dto.request.MemberFriendCreateReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
+import co.ninuc.ninucco.api.dto.request.*;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +17,15 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberFriendService memberFriendService;
     private final boolean SUCCESS = true;
+
+    @ApiOperation(value = "로그인",notes="파이버베이스 키(PK)를 주면 해당 유저의 정보를 반환합니다.")
+    @PostMapping("/login")
+    public ResponseEntity<ApiResult<Res>> login(@RequestBody LoginReq loginReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.login(loginReq))
+        );
+    }
+
 
     @ApiOperation(value = "회원 가입", notes="유저를 등록합니다.")
     @PostMapping("/regist")
@@ -42,6 +48,14 @@ public class MemberController {
     public ResponseEntity<ApiResult<Res>> updateMemberNickname(@RequestBody MemberUpdateNicknameReq memberUpdateNicknameReq){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.updateMemberNickname(memberUpdateNicknameReq))
+        );
+    }
+
+    @ApiOperation(value = "프로필 조회", notes="유저 아이디로 유저 정보를 불러옵니다.")
+    @GetMapping("/{memberId}")
+    public ResponseEntity<ApiResult<Res>> updateMemberNickname(@PathVariable String memberId){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.selectOneMember(memberId))
         );
     }
 

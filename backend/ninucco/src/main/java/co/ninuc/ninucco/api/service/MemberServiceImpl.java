@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
+import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.Null;
 import java.util.List;
 
 @Service
@@ -34,9 +34,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     public BooleanRes checkMemberNickname(String nickName){
-        if(memberRepository.existsByNickname(nickName))
-            throw new CustomException(ErrorRes.CONFLICT_NICKNAME);
-        return new BooleanRes(true);
+        return memberRepository.existsByNickname(nickName) ? new BooleanRes(false) : new BooleanRes(true);
     }
 
     @Transactional
@@ -64,7 +62,18 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public MemberRes selectOneMember(String memberId) {
-        return null;
+        Member member=memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        return toDto(member);
+    }
+
+    @Override
+    public MemberRes login(LoginReq loginReq) {
+        Member member=memberRepository.findById(loginReq.getId())
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        return toDto(member);
     }
 
     @Override
@@ -87,6 +96,8 @@ public class MemberServiceImpl implements MemberService{
     public Object selectOneFriend(String friendNickName) {
         return null;
     }
+
+
 
     Member toEntity(MemberCreateReq memberCreateReq){
         return Member.builder()
