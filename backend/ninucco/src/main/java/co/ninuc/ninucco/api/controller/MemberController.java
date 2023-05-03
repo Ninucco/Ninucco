@@ -41,7 +41,7 @@ public class MemberController {
 
     @ApiOperation(value = "키워드로 멤버 찾기", notes="멤버 닉네임에 키워드가 포함되어 있으면 검색해 줍니다.")
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<ApiResult<MemberListRes>> searchMember(@PathVariable String keyword){
+    public ResponseEntity<ApiResult<Res>> searchMember(@PathVariable String keyword){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.findByNicknameKeyword(keyword))
         );
@@ -57,7 +57,7 @@ public class MemberController {
 
     @ApiOperation(value = "멤버가 가진 아이템 확인", notes="멤버가 소유한 아이템을 확인합니다.")
     @GetMapping("/{memberId}/item")
-    public ResponseEntity<ApiResult<ItemListRes>> memberItem(@PathVariable String memberId){
+    public ResponseEntity<ApiResult<Res>> memberItem(@PathVariable String memberId){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.findItemByMember(memberId))
         );
