@@ -24,6 +24,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ninucco',
+      theme: ThemeData().copyWith(
+        scaffoldBackgroundColor: Colors.white,
+        colorScheme:
+            ThemeData().colorScheme.copyWith(primary: const Color(0xff9BA0FC)),
+      ),
       home: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => TestProvider()),
@@ -43,7 +48,8 @@ class Layout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavProvider navProvider = Provider.of<NavProvider>(context);
-
+    bool showFloatButton = Provider.of<NavProvider>(context).show &&
+        MediaQuery.of(context).viewInsets.bottom == 0;
     return Scaffold(
       body: Stack(
         children: [
@@ -67,8 +73,7 @@ class Layout extends StatelessWidget {
       ),
       // resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Provider.of<NavProvider>(context).show &&
-              MediaQuery.of(context).viewInsets.bottom == 0
+      floatingActionButton: showFloatButton
           ? Align(
               alignment: Alignment.bottomCenter,
               child: Container(
