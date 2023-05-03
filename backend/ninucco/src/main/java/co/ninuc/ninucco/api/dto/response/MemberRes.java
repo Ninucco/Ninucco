@@ -20,16 +20,16 @@ public class MemberRes implements Res {
 
     long point;
 
-    double rate;
+    int elo;
 
     @Builder
-    public MemberRes(String id, String nickname,String url, int winCount, int loseCount, long point, double rate){
+    public MemberRes(String id, String nickname,String url, int winCount, int loseCount, long point, int elo){
         this.id=id;
         this.nickname=nickname;
         this.url=url;
         this.winCount=winCount;
         this.loseCount=loseCount;
         this.point=point;
-        this.rate=rate;
+        this.elo=elo;
     }
 }
