@@ -3,6 +3,7 @@ package co.ninuc.ninucco.api.controller;
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.*;
+import co.ninuc.ninucco.api.dto.response.MemberListRes;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
 import co.ninuc.ninucco.db.repository.MemberRepository;
@@ -39,7 +40,7 @@ public class MemberController {
 
     @ApiOperation(value = "키워드로 멤버 찾기", notes="멤버 닉네임에 키워드가 포함되어 있으면 검색해 줍니다.")
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<ApiResult<?>> searchMember(@PathVariable String keyword){
+    public ResponseEntity<ApiResult<MemberListRes>> searchMember(@PathVariable String keyword){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.findByNicknameKeyword(keyword))
         );

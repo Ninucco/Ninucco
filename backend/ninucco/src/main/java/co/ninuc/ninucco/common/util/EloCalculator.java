@@ -17,17 +17,17 @@ public class EloCalculator {
             mWin = opponent;
             mLose = applicant;
         }else throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
-        int rLose = mLose.getRate();
-        int rSum = mWin.getRate()+rLose;
+        int rLose = mLose.getElo();
+        int rSum = mWin.getElo()+rLose;
         int d = (int)((double)C*2*rLose/rSum);
         if(d==0) d=1;
-        mWin.updateRate(mWin.getRate()+d);
-        mLose.updateRate(mLose.getRate()-d);
+        mWin.updateRate(mWin.getElo()+d);
+        mLose.updateRate(mLose.getElo()-d);
     }
     // 배당 구하기
     public static double[] calcOdds(Member m1, Member m2){
-        int r1=m1.getRate();
-        int r2=m2.getRate();
+        int r1=m1.getElo();
+        int r2=m2.getElo();
         int rSum = r1+r2;
         double o1 = 1+(double)2*r2/rSum;
         double o2 = 1+(double)2*r1/rSum;

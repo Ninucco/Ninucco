@@ -5,10 +5,7 @@ import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
-import co.ninuc.ninucco.api.dto.response.BooleanRes;
-import co.ninuc.ninucco.api.dto.response.ItemRes;
-import co.ninuc.ninucco.api.dto.response.MemberIdRes;
-import co.ninuc.ninucco.api.dto.response.MemberRes;
+import co.ninuc.ninucco.api.dto.response.*;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.repository.MemberRepository;
@@ -82,14 +79,16 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public List<MemberRes> findByNicknameKeyword(String keyword){
+    public MemberListRes findByNicknameKeyword(String keyword){
         ArrayList<MemberRes> nicknames=new ArrayList<>();
         List<Member> members=memberRepository.findMembersByNicknameContaining(keyword);
         for(Member member:members){
             nicknames.add(toDto(member));
         }
 
-        return nicknames;
+        MemberListRes memberListRes=new MemberListRes(nicknames);
+
+        return memberListRes;
     }
 
 
@@ -132,7 +131,7 @@ public class MemberServiceImpl implements MemberService{
                 .winCount(member.getWinCount())
                 .loseCount(member.getLoseCount())
                 .point(member.getPoint())
-                .rate(member.getElo())
+                .elo(member.getElo())
                 .build();
     }
 
