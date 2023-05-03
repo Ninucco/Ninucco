@@ -42,7 +42,7 @@ public class Member {
 
     @Column(name="rate", nullable = false)
     @ColumnDefault("1000")
-    int rate;
+    int elo;
 
     @CreatedDate
     LocalDateTime createdAt;
@@ -58,7 +58,7 @@ public class Member {
         this.winCount=0;
         this.loseCount=0;
         this.point=0;
-        this.rate=1000;
+        this.elo =1000;
     }
 
     public void updateUrl(String url){
@@ -67,7 +67,7 @@ public class Member {
     public void updateNickname(String nickname){
         this.nickname=nickname;
     }
-    public void updateRate(int rate){
-        this.rate=rate;
+    public void updateRate(int elo){
+        this.elo =elo;
     }
 }

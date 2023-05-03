@@ -132,7 +132,7 @@ public class MemberServiceImpl implements MemberService{
                 .winCount(member.getWinCount())
                 .loseCount(member.getLoseCount())
                 .point(member.getPoint())
-                .rate(member.getRate())
+                .rate(member.getElo())
                 .build();
     }
 
