@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
+import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
 import co.ninuc.ninucco.api.dto.request.CommentCreateReq;
@@ -21,8 +22,8 @@ public class BattleController {
 
     //배틀 등록
     @ApiOperation(value = "배틀 등록", notes = "배틀을 등록합니다.")
-    @PostMapping("/")
-    public ResponseEntity<?> insertBattle(BattleCreateReq battleCreateReq) {
+    @PostMapping("")
+    public ResponseEntity<?> insertBattle(@RequestBody BattleCreateReq battleCreateReq) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.insertBattle(battleCreateReq))
         );
@@ -46,15 +47,19 @@ public class BattleController {
     //댓글 작성
     @ApiOperation(value="댓글 작성", notes = "댓글 작성")
     @PostMapping("/comment")
-    public ResponseEntity<?> insertComment(CommentCreateReq commentCreateReq) {
+    public ResponseEntity<ApiResult<Res>> insertComment(@RequestBody CommentCreateReq commentCreateReq) {
+
+        //TODO 본인 ID 헤더에서 가져오기
+        String memberId = "testId1";
+
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, commentService.insertComment(commentCreateReq))
+                new ApiResult<>(SUCCESS, commentService.insertComment(memberId, commentCreateReq))
         );
     }
     //댓글 리스트 조회
     @ApiOperation(value="댓글 리스트 조회", notes = "배틀의 댓글 리스트를 조회합니다.")
     @GetMapping("/{battleId}/comment")
-    public ResponseEntity<?> selectAllComment(@PathVariable Long battleId) {
+    public ResponseEntity<ApiResult<Res>> selectAllComment(@PathVariable Long battleId) {
         return ResponseEntity.ok().body(
           new ApiResult<>(SUCCESS, commentService.selectAllComment(battleId))
         );
