@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
+import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
@@ -68,6 +69,14 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    public MemberRes login(LoginReq loginReq) {
+        Member member=memberRepository.findById(loginReq.getId())
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        return toDto(member);
+    }
+
+    @Override
     public List<ItemRes> selectAllItemsByMemberId(String memberId) {
         return null;
     }
@@ -87,6 +96,8 @@ public class MemberServiceImpl implements MemberService{
     public Object selectOneFriend(String friendNickName) {
         return null;
     }
+
+
 
     Member toEntity(MemberCreateReq memberCreateReq){
         return Member.builder()
