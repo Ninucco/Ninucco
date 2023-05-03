@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
+import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,9 +56,13 @@ public class MemberServiceImpl implements MemberService{
         Member member=memberRepository.findById(memberUpdateNicknameReq.getId())
                 .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
 
-        member.updateNickname(memberUpdateNicknameReq.getNickname());
+        if(checkMemberNickname(memberUpdateNicknameReq.getNickname()).isSuccess()){
+            member.updateNickname(memberUpdateNicknameReq.getNickname());
+            return new BooleanRes(true);
+        }
 
-        return new BooleanRes(true);
+        return new BooleanRes(false);
+
     }
 
     @Override
@@ -66,6 +72,26 @@ public class MemberServiceImpl implements MemberService{
 
         return toDto(member);
     }
+
+    @Override
+    public MemberRes login(LoginReq loginReq) {
+        Member member=memberRepository.findById(loginReq.getId())
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        return toDto(member);
+    }
+
+    @Override
+    public List<MemberRes> findByNicknameKeyword(String keyword){
+        ArrayList<MemberRes> nicknames=new ArrayList<>();
+        List<Member> members=memberRepository.findMembersByNicknameContaining(keyword);
+        for(Member member:members){
+            nicknames.add(toDto(member));
+        }
+
+        return nicknames;
+    }
+
 
     @Override
     public List<ItemRes> selectAllItemsByMemberId(String memberId) {
@@ -87,6 +113,8 @@ public class MemberServiceImpl implements MemberService{
     public Object selectOneFriend(String friendNickName) {
         return null;
     }
+
+
 
     Member toEntity(MemberCreateReq memberCreateReq){
         return Member.builder()
