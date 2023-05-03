@@ -5,12 +5,12 @@ import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
-import co.ninuc.ninucco.api.dto.response.BooleanRes;
-import co.ninuc.ninucco.api.dto.response.ItemRes;
-import co.ninuc.ninucco.api.dto.response.MemberIdRes;
-import co.ninuc.ninucco.api.dto.response.MemberRes;
+import co.ninuc.ninucco.api.dto.response.*;
 import co.ninuc.ninucco.common.exception.CustomException;
+import co.ninuc.ninucco.db.entity.Item;
 import co.ninuc.ninucco.db.entity.Member;
+import co.ninuc.ninucco.db.entity.MemberItem;
+import co.ninuc.ninucco.db.repository.MemberItemRepository;
 import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,7 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
+    private final MemberItemRepository memberItemRepository;
 
     @Transactional
     @Override
@@ -82,14 +83,33 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public List<MemberRes> findByNicknameKeyword(String keyword){
+    public MemberListRes findByNicknameKeyword(String keyword){
         ArrayList<MemberRes> nicknames=new ArrayList<>();
         List<Member> members=memberRepository.findMembersByNicknameContaining(keyword);
         for(Member member:members){
             nicknames.add(toDto(member));
         }
 
-        return nicknames;
+        MemberListRes memberListRes=new MemberListRes(nicknames);
+//        memberListRes.setMemberList(nicknames);
+        return memberListRes;
+    }
+
+    @Override
+    public ItemListRes findItemByMember(String memberId){
+        Member member=memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
+        ArrayList<ItemRes> itemResArrayList=new ArrayList<>();
+        List<MemberItem> memberItems=memberItemRepository.findMemberItemByMember(member);
+        for(MemberItem memberItem:memberItems){
+            ItemRes itemRes=toDtoItem(memberItem);
+            itemResArrayList.add(itemRes);
+        }
+
+        ItemListRes itemListRes=new ItemListRes(itemResArrayList);
+
+        return itemListRes;
     }
 
 
@@ -132,7 +152,22 @@ public class MemberServiceImpl implements MemberService{
                 .winCount(member.getWinCount())
                 .loseCount(member.getLoseCount())
                 .point(member.getPoint())
-                .rate(member.getRate())
+                .elo(member.getElo())
+                .build();
+    }
+
+    ItemRes toDtoItem(MemberItem memberItem){
+        Item item=memberItem.getItem();
+        Member member=memberItem.getMember();
+        return ItemRes.builder()
+                .itemId(item.getId())
+                .itemName(item.getName())
+                .itemUrl(item.getUrl())
+                .itemDescription(item.getDescription())
+                .amount(memberItem.getAmount())
+                .memberId(member.getId())
+                .memberNickname(member.getNickname())
+                .memberUrl(member.getUrl())
                 .build();
     }
 

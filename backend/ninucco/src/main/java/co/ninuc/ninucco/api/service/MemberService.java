@@ -4,10 +4,7 @@ import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
-import co.ninuc.ninucco.api.dto.response.BooleanRes;
-import co.ninuc.ninucco.api.dto.response.ItemRes;
-import co.ninuc.ninucco.api.dto.response.MemberIdRes;
-import co.ninuc.ninucco.api.dto.response.MemberRes;
+import co.ninuc.ninucco.api.dto.response.*;
 
 import java.util.List;
 
@@ -22,7 +19,9 @@ public interface MemberService {
     Long insertMemberFriend(String friendId);
     List<MemberRes> selectAllFriendsByMemberId(String memberId);
     Object selectOneFriend(String friendNickName);
-    List<MemberRes> findByNicknameKeyword(String keyword);
+    MemberListRes findByNicknameKeyword(String keyword);
 
     MemberRes login(LoginReq loginReq);
+
+    ItemListRes findItemByMember(String memberId);
 }
