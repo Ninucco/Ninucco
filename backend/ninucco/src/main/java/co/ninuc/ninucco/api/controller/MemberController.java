@@ -5,6 +5,7 @@ import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.*;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
+import co.ninuc.ninucco.db.repository.MemberRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberFriendService memberFriendService;
     private final boolean SUCCESS = true;
+    private final MemberRepository memberRepository;
 
     @ApiOperation(value = "로그인",notes="파이버베이스 키(PK)를 주면 해당 유저의 정보를 반환합니다.")
     @PostMapping("/login")
@@ -34,6 +36,14 @@ public class MemberController {
                 new ApiResult<>(SUCCESS, memberService.insertMember(memberCreateReq))
         );
     }
+
+    @ApiOperation(value = "키워드로 멤버 찾기", notes="멤버 닉네임에 키워드가 포함되어 있으면 검색해 줍니다.")
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<ApiResult<?>> searchMember(@PathVariable String keyword){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.findByNicknameKeyword(keyword))
+        );
+    }
     
     @ApiOperation(value = "멤버 사진 업데이트", notes="멤버 사진주소를 업데이트 합니다.")
     @PatchMapping("/photo")
@@ -42,6 +52,7 @@ public class MemberController {
                 new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoReq))
         );
     }
+
 
     @ApiOperation(value = "멤버 닉네임 업데이트", notes="멤버 닉네임을 업데이트 합니다.")
     @PatchMapping("/nickname")

@@ -22,6 +22,7 @@ public interface MemberService {
     Long insertMemberFriend(String friendId);
     List<MemberRes> selectAllFriendsByMemberId(String memberId);
     Object selectOneFriend(String friendNickName);
+    List<MemberRes> findByNicknameKeyword(String keyword);
 
     MemberRes login(LoginReq loginReq);
 }
