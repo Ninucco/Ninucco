@@ -16,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,16 +64,23 @@ public class BattleServiceImpl implements BattleService{
 
     // toEntity, toRes
     Battle toEntity(BattleCreateReq battleCreateReq){
+        Member applicant = memberRepository.findById(battleCreateReq.getApplicantId())
+                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+        Member opponent = memberRepository.findById(battleCreateReq.getOpponentId())
+                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+
         return Battle.builder()
                 .title(battleCreateReq.getTitle())
-                .applicant(memberRepository.findById(battleCreateReq.getApplicantId())
-                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER)))
-                .opponent(memberRepository.findById(battleCreateReq.getOpponentId())
-                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER)))
+                .applicant(applicant)
+                .opponent(opponent)
+                .applicantNickname(applicant.getNickname())
+                .opponentNickname(opponent.getNickname())
                 .applicantUrl(battleCreateReq.getApplicantUrl())
                 .opponentUrl(battleCreateReq.getOpponentUrl())
                 .applicantOdds(1.0)
-                .opponentOdds(1.0).build();
+                .opponentOdds(1.0)
+                .finishAt(LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1))
+                .build();
     }
     Betting toEntity(BettingCreateReq bettingCreateReq){
         return Betting.builder()
@@ -81,12 +92,10 @@ public class BattleServiceImpl implements BattleService{
                 .betMoney(bettingCreateReq.getBetMoney()).build();
     }
     BattleRes toRes(Battle battle){
-        Member applicant = battle.getApplicant();
-        Member opponent = battle.getOpponent();
         return BattleRes.builder()
                 .battleId(battle.getId())
-                .applicantName(applicant.getNickname())
-                .opponentName(opponent.getNickname())
+                .applicantName(battle.getApplicantNickname())
+                .opponentName(battle.getOpponentNickname())
                 .title(battle.getTitle())
                 .applicantUrl(battle.getApplicantUrl())
                 .opponentUrl(battle.getOpponentUrl())

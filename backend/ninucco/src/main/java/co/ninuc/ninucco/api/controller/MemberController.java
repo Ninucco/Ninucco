@@ -104,4 +104,14 @@ public class MemberController {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend("testId1")));
     }
+
+    @ApiOperation(value = "친구 삭제", notes = "친구를 삭제합니다.")
+    @DeleteMapping("/friend/{friendId}")
+    public ResponseEntity<ApiResult<Res>> deleteMemberFriend(@PathVariable String friendId) {
+
+        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
+        String memberId = "testId1";
+
+        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, memberFriendService.deleteMemberFriend(memberId, friendId)));
+    }
 }
