@@ -32,13 +32,11 @@ public class InterServiceCommunicationProvider {
         Optional<String> respBody = getRequestToUrlGetString(url);
         return respBody.map(JSONObject::new);
     }
-
-    public Optional<String> postRequestToUrlGetString(String url, Headers headers, Object o){
-        RequestBody body = RequestBody.create(new JSONObject(o).toString().getBytes());
+    public Optional<String> postRequestSendRequestbodyGetString(String url, Headers headers, RequestBody requestBody){
         Request request = new Request.Builder()
                 .url(url)
                 .headers(headers)
-                .post(body)
+                .post(requestBody)
                 .build();
         try(Response response = client.newCall(request).execute()){
             if(response.isSuccessful()){
@@ -55,8 +53,16 @@ public class InterServiceCommunicationProvider {
             throw new RuntimeException(ex);
         }
     }
-    public Optional<JSONObject> postRequestToUrlGetJsonObject(String url, Headers headers, Object o){
-        Optional<String> respBody = postRequestToUrlGetString(url, headers, o);
+    public Optional<JSONObject> postRequestSendRequestbodyGetJsonObject(String url, Headers headers, RequestBody requestBody){
+        Optional<String> respBody = postRequestSendJsonGetString(url, headers, requestBody);
+        return respBody.map(JSONObject::new);
+    }
+    public Optional<String> postRequestSendJsonGetString(String url, Headers headers, Object o){
+        RequestBody body = RequestBody.create(new JSONObject(o).toString().getBytes());
+        return postRequestSendRequestbodyGetString(url, headers,body);
+    }
+    public Optional<JSONObject> postRequestSendJsonGetJsonObject(String url, Headers headers, Object o){
+        Optional<String> respBody = postRequestSendJsonGetString(url, headers, o);
         return respBody.map(JSONObject::new);
     }
 }
