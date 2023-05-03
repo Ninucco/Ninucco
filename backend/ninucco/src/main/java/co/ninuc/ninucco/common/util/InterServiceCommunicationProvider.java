@@ -32,6 +32,7 @@ public class InterServiceCommunicationProvider {
         Optional<String> respBody = getRequestToUrlGetString(url);
         return respBody.map(JSONObject::new);
     }
+    //request body->string
     public Optional<String> postRequestSendRequestbodyGetString(String url, Headers headers, RequestBody requestBody){
         Request request = new Request.Builder()
                 .url(url)
@@ -53,10 +54,12 @@ public class InterServiceCommunicationProvider {
             throw new RuntimeException(ex);
         }
     }
+    //request body->json
     public Optional<JSONObject> postRequestSendRequestbodyGetJsonObject(String url, Headers headers, RequestBody requestBody){
-        Optional<String> respBody = postRequestSendJsonGetString(url, headers, requestBody);
+        Optional<String> respBody = postRequestSendRequestbodyGetString(url, headers, requestBody);
         return respBody.map(JSONObject::new);
     }
+    //json->string
     public Optional<String> postRequestSendJsonGetString(String url, Headers headers, Object o){
         RequestBody body = RequestBody.create(new JSONObject(o).toString().getBytes());
         return postRequestSendRequestbodyGetString(url, headers,body);

@@ -3,11 +3,9 @@ package co.ninuc.ninucco.api.service;
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
-import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.LambdaService;
-//import co.ninuc.ninucco.common.util.S3Uploader;
 import co.ninuc.ninucco.common.util.StabilityAIService;
 import co.ninuc.ninucco.db.entity.Keyword;
 import co.ninuc.ninucco.db.repository.KeywordRepository;
@@ -15,19 +13,14 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,11 +49,7 @@ public class FaceServiceImpl {
         //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
 //        String picBase64 = similarityReq.getPicBase64();
 //        byte[] picByteArray = Base64.decodeBase64(picBase64);
-//        StringBuilder picBinaryStringBiulder = new StringBuilder();
-//        for(byte by: picByteArray){
-//            picBinaryStringBiulder.append(Integer.toBinaryString(by & 0xFF));
-//        }
-//        String picBinaryString = picBinaryStringBiulder.toString();
+//
 //        //파일이 사진인지 검사한다
 //        String[] picBase64Tokens = picBase64.split(",");
 //        String extension;
@@ -96,19 +85,19 @@ public class FaceServiceImpl {
                 .append("sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render")
                 .toString();
         //4. 무슨 수를 써서 이미지를 얻어온다.
-        byte[] fileBytes;
+        byte[] inputImgByteArray;
         try{
-            fileBytes = inputImg.getBytes();
+            inputImgByteArray = inputImg.getBytes();
         }catch(IOException e){
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
-
-        byte[] picByte = stabilityAIService.getByteArrayImgToImg(fileBytes, prompt);
+        byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
         //S3에 저장
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(picByte);
+        //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(byteArrayInputStream.available());
-        String fileName = UUID.nameUUIDFromBytes(picByte).toString();
+        String fileName = UUID.nameUUIDFromBytes(resultImgByteArray)+".png";
         amazonS3Client.putObject(
                 bucket,
                 fileName,
