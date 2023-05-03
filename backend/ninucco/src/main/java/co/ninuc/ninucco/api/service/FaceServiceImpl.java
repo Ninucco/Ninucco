@@ -52,7 +52,7 @@ public class FaceServiceImpl {
         return keywordRepository.findAll();
     }
 
-    public SimilarityResultRes generateAnimal(MultipartFile multipartFile){
+    public SimilarityResultRes generateAnimal(MultipartFile inputImg){
         //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
 //        String picBase64 = similarityReq.getPicBase64();
 //        byte[] picByteArray = Base64.decodeBase64(picBase64);
@@ -98,7 +98,7 @@ public class FaceServiceImpl {
         //4. 무슨 수를 써서 이미지를 얻어온다.
         byte[] fileBytes;
         try{
-            fileBytes = multipartFile.getBytes();
+            fileBytes = inputImg.getBytes();
         }catch(IOException e){
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
