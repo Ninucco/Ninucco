@@ -7,8 +7,8 @@ class AuthProvider with ChangeNotifier {
   User? get user => _user;
 
   void setUser(User? user) {
-    _user = user;
     notifyListeners();
+    _user = user;
   }
 
   Future<UserCredential> signInWithGoogle() async {

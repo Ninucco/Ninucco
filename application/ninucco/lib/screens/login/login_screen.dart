@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
 import 'package:ninucco/providers/auth_provider.dart';
-// import 'package:ninucco/screens/login/login_google_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
-  // final Future<List<UserRankInfoModel>> userRanks =
+class LoginScreen extends StatefulWidget {
+  final RouteSettings settings;
+  const LoginScreen({super.key, required this.settings});
+
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyStatefulWidget(),
-    );
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
   }
-}
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key});
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget>
-    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    final authProvider = AuthProvider();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(
         appBar: AppBar(
@@ -87,7 +82,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                       padding: const EdgeInsets.only(bottom: 12),
                       child: ElevatedButton(
                         onPressed: () async {
-                          await authProvider.signInWithGoogle();
+                          final navigator = Navigator.of(context);
+                          await authProvider.signIn();
+                          navigator.pushNamed(
+                            '/',
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
