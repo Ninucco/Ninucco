@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class CommentRes implements Res {
     Long commentId;
     String profileImage;
+    String nickname;
     String content;
     LocalDateTime createdAt;
 }
