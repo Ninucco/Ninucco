@@ -22,4 +22,6 @@ public interface MemberService {
     MemberListRes findByNicknameKeyword(String keyword);
 
     MemberRes login(LoginReq loginReq);
+
+    ItemListRes findItemByMember(String memberId);
 }

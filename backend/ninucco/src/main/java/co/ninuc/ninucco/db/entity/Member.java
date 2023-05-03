@@ -40,7 +40,7 @@ public class Member {
     @ColumnDefault("0")
     long point;
 
-    @Column(name="rate", nullable = false)
+    @Column(name="elo", nullable = false)
     @ColumnDefault("1000")
     int elo;
 

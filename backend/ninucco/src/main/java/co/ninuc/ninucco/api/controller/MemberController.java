@@ -3,6 +3,7 @@ package co.ninuc.ninucco.api.controller;
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.*;
+import co.ninuc.ninucco.api.dto.response.ItemListRes;
 import co.ninuc.ninucco.api.dto.response.MemberListRes;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
@@ -54,6 +55,13 @@ public class MemberController {
         );
     }
 
+    @ApiOperation(value = "멤버가 가진 아이템 확인", notes="멤버가 소유한 아이템을 확인합니다.")
+    @GetMapping("/{memberId}/item")
+    public ResponseEntity<ApiResult<ItemListRes>> memberItem(@PathVariable String memberId){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.findItemByMember(memberId))
+        );
+    }
 
     @ApiOperation(value = "멤버 닉네임 업데이트", notes="멤버 닉네임을 업데이트 합니다.")
     @PatchMapping("/nickname")
