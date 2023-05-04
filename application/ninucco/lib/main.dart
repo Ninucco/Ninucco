@@ -73,14 +73,15 @@ class Layout extends StatelessWidget {
       ),
       // resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: showFloatButton
-          ? Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 8),
-                width: 64,
-                height: 72,
-                child: FloatingActionButton(
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          padding: const EdgeInsets.only(bottom: 8),
+          width: 64,
+          height: 72,
+          child: !showFloatButton
+              ? null
+              : FloatingActionButton(
                   backgroundColor: const Color(0xff7E81FB),
                   onPressed: () {},
                   child: Padding(
@@ -90,9 +91,8 @@ class Layout extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            )
-          : null,
+        ),
+      ),
       bottomNavigationBar:
           Provider.of<NavProvider>(context).show ? const BottomNav() : null,
     );
