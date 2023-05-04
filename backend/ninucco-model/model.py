@@ -1,9 +1,10 @@
 from dotenv import load_dotenv
 import os
-# import s3fs
+import s3fs
 import tensorflow
 # from pathlib import Path
 import numpy as np
+import tempfile
 
 # load .env
 load_dotenv()
@@ -14,24 +15,35 @@ BUCKET_NAME = os.environ.get('BUCKET_NAME')
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
-# def get_s3fs():
-#     return s3fs.S3FileSystem(key=AWS_ACCESS_KEY, secret=AWS_SECRET_KEY)
+model = []
+classes = []
 
-# def s3_get_keras_model():
-#     return tensorflow.keras.models.load_model('keras_model.h5')
-def main():
-    lables_path = f"{DIR_PATH}/labels.txt"
-    lables_file = open(lables_path, encoding='UTF-8')
+def get_s3fs():
+    return s3fs.S3FileSystem(key=AWS_ACCESS_KEY, secret=AWS_SECRET_KEY)
 
-    classes = []
-    line = lables_file.readline()
-    while line:
-        classes.append(line.split(' ', 1)[1].rstrip())
+def s3_set_keras_model_and_classes(model_type: str):
+    global model
+    global classes
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        s3fs = get_s3fs()
+        s3fs.get(f"{BUCKET_NAME}/model/{model_type}/", f"{tempdir}/model/{model_type}/", recursive=True)
+        model = tensorflow.keras.models.load_model(f"{tempdir}/model/{model_type}/keras_model.h5", compile=False)
+
+        lables_path = f"{tempdir}/model/{model_type}/labels.txt"
+        lables_file = open(lables_path, encoding='UTF-8')
+
+        classes = []
         line = lables_file.readline()
-    lables_file.close()
+        while line:
+            classes.append(line.split(' ', 1)[1].rstrip())
+            line = lables_file.readline()
+        lables_file.close()
+def main():
+    global model
+    global classes
 
-    model_path = f"{DIR_PATH}/keras_model.h5"
-    model = tensorflow.keras.models.load_model(model_path, compile=False)
+    s3_set_keras_model_and_classes("animal")
 
     image = tensorflow.keras.utils.load_img('10241024.jpg', target_size=(224,224))
     input_arr = tensorflow.keras.utils.img_to_array(image)
