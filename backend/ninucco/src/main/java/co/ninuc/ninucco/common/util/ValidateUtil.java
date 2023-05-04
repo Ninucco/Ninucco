@@ -23,6 +23,17 @@ public class ValidateUtil {
         return memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
     }
 
+    public void memberConflictCheckById(String memberId) {
+        log.info("memberConflictCheckById : {}", memberId);
+        if(memberRepository.existsById(memberId))
+            throw new CustomException(ErrorRes.CONFLICT_MEMBER);
+    }
+
+    public boolean memberExistByNickname(String nickname) {
+        log.info("memberExistByNickname : {}", nickname);
+        return memberRepository.existsByNickname(nickname);
+    }
+
     public Battle battleValidateById(Long battleId) {
         log.info("battleValidateById : {}", battleId);
         return battleRepository.findById(battleId).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_BATTLE));

@@ -12,7 +12,7 @@ import lombok.Getter;
 @Builder
 public class BettingRes implements Res {
 
-    boolean isExist;
+    Boolean isExist;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     BetSide betSide;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
