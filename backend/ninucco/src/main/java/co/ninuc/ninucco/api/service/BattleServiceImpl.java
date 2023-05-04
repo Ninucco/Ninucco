@@ -8,6 +8,7 @@ import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
 import co.ninuc.ninucco.api.dto.response.BettingRes;
 import co.ninuc.ninucco.common.exception.CustomException;
+import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Betting;
 import co.ninuc.ninucco.db.entity.Member;
@@ -31,6 +32,8 @@ public class BattleServiceImpl implements BattleService{
     private final BattleRepository battleRepository;
     private final MemberRepository memberRepository;
     private final BettingRepository bettingRepository;
+
+    private final ValidateUtil validateUtil;
 
     @Transactional
     @Override
@@ -60,12 +63,10 @@ public class BattleServiceImpl implements BattleService{
 
     @Override
     public BettingRes selectOneBetting(String memberId, Long battleId) {
-        if(!memberRepository.existsById(memberId))
-            throw new CustomException(ErrorRes.NOT_FOUND_MEMBER);
-        if(!battleRepository.existsById(battleId))
-            throw new CustomException(ErrorRes.NOT_FOUND_BATTLE);
+        validateUtil.memberValidateById(memberId);
+        validateUtil.battleValidateById(battleId);
 
-        Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattle_Id(memberId, battleId);
+        Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(memberId, battleId);
         BettingRes bettingRes;
 
         /* 본인이 해당 배틀에 베팅했었다면 isExist를 true로 설정하고

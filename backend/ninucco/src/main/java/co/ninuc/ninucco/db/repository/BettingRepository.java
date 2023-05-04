@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface BettingRepository extends JpaRepository<Betting, Long> {
     Long countByBattleId(Long battleId);
 
-    Optional<Betting> findByMemberIdAndBattle_Id(String memberId, Long battleId);
+    Optional<Betting> findByMemberIdAndBattleId(String memberId, Long battleId);
 }
