@@ -6,10 +6,10 @@ import co.ninuc.ninucco.api.dto.response.BooleanRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendListRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendRes;
 import co.ninuc.ninucco.common.exception.CustomException;
+import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.MemberFriend;
 import co.ninuc.ninucco.db.repository.MemberFriendRepository;
-import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,17 +21,16 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MemberFriendServiceImpl implements MemberFriendService{
-
-    private final MemberRepository memberRepository;
     private final MemberFriendRepository memberFriendRepository;
+    private final ValidateUtil validateUtil;
 
     @Transactional
     @Override
     public MemberFriendRes insertMemberFriend(String memberId, String friendId) {
         log.info("memberId : {}, friendId : {}", memberId, friendId);
         
-        Member member = memberValidateById(memberId);
-        Member friend = memberValidateById(friendId);
+        Member member = validateUtil.memberValidateById(memberId);
+        Member friend = validateUtil.memberValidateById(friendId);
 
         if(memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(memberId, friendId)) {
             throw new CustomException(ErrorRes.CONFLICT_FRIEND);
@@ -48,15 +47,15 @@ public class MemberFriendServiceImpl implements MemberFriendService{
 
     @Override
     public BooleanRes selectOneMemberFriend(String memberId, String friendId) {
-        memberValidateById(memberId);
-        memberValidateById(friendId);
+        validateUtil.memberValidateById(memberId);
+        validateUtil.memberValidateById(friendId);
 
         return new BooleanRes(memberFriendRepository.findMemberFriendByMember_IdAndFriend_Id(memberId, friendId).isPresent());
     }
 
     @Override
     public MemberFriendListRes selectAllMemberFriend(String memberId) {
-        memberValidateById(memberId);
+        validateUtil.memberValidateById(memberId);
 
         return new MemberFriendListRes(memberFriendRepository.findAllByMember_Id(memberId).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
     }
@@ -64,8 +63,8 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     @Transactional
     @Override
     public BooleanRes deleteMemberFriend(String memberId, String friendId) {
-        memberValidateById(memberId);
-        memberValidateById(friendId);
+        validateUtil.memberValidateById(memberId);
+        validateUtil.memberValidateById(friendId);
 
         if(memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(memberId, friendId)
                 && memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(friendId, memberId)) {
@@ -77,12 +76,6 @@ public class MemberFriendServiceImpl implements MemberFriendService{
         }
 
         return new BooleanRes(true);
-    }
-
-
-    public Member memberValidateById(String memberId) {
-        log.info("memberFriendAuthorization : {}", memberId);
-        return memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
     }
 
     MemberFriend toEntity(Member member, Member friend) {
@@ -100,7 +93,7 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     }
 
     FriendListInfo toMemberFriendListRes(MemberFriend memberFriend) {
-        Member friend = memberRepository.findById(memberFriend.getFriend().getId()).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+        Member friend = validateUtil.memberValidateById(memberFriend.getFriend().getId());
 
         return FriendListInfo.builder()
                 .profileImage(friend.getUrl())
