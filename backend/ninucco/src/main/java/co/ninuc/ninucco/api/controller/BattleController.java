@@ -2,8 +2,8 @@ package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
-import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
+import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.request.CommentCreateReq;
 import co.ninuc.ninucco.api.service.BattleService;
 import co.ninuc.ninucco.api.service.CommentService;
@@ -65,13 +65,23 @@ public class BattleController {
         );
     }
     //배팅하기
-    @ApiOperation(value="배팅하기", notes = "배팅 신청")
+    @ApiOperation(value="베팅하기", notes = "베팅 신청")
     @PostMapping("/bet")
-    public ResponseEntity<?> insertBetting(@RequestBody BettingCreateReq bettingCreateReq) {
+    public ResponseEntity<ApiResult<Res>> insertBetting(@RequestBody BettingCreateReq bettingCreateReq) {
         return ResponseEntity.ok().body(
           new ApiResult<>(SUCCESS, battleService.insertBetting(bettingCreateReq))
         );
     }
+
+    @ApiOperation(value = "배팅 여부 조회", notes = "본인이 해당 배틀에 배팅을 했는지")
+    @GetMapping("/{battleId}/bet")
+    public ResponseEntity<ApiResult<Res>> selectOneBetting(@PathVariable Long battleId) {
+
+        //TODO 헤더에서 memberId 가져오기
+        String memberId = "testId1";
+        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, battleService.selectOneBetting(memberId, battleId)));
+    }
+
     //배틀 결과 조회: 끝난 배틀 조회
     @ApiOperation(value="배틀 결과 조회", notes = "끝난 배틀")
     @GetMapping("/battle/{battleId}/result")
