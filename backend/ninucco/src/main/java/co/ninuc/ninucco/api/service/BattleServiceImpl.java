@@ -8,7 +8,6 @@ import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
 import co.ninuc.ninucco.api.dto.response.BettingRes;
 import co.ninuc.ninucco.common.exception.CustomException;
-import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Betting;
 import co.ninuc.ninucco.db.entity.Member;
@@ -32,8 +31,6 @@ public class BattleServiceImpl implements BattleService{
     private final BattleRepository battleRepository;
     private final MemberRepository memberRepository;
     private final BettingRepository bettingRepository;
-
-    private final ValidateUtil validateUtil;
 
     @Transactional
     @Override
@@ -63,8 +60,11 @@ public class BattleServiceImpl implements BattleService{
 
     @Override
     public BettingRes selectOneBetting(String memberId, Long battleId) {
-        validateUtil.memberValidateById(memberId);
-        validateUtil.battleValidateById(battleId);
+        if(!memberRepository.existsById(memberId))
+            throw new CustomException(ErrorRes.NOT_FOUND_MEMBER);
+        if(!battleRepository.existsById(battleId))
+            throw new CustomException(ErrorRes.NOT_FOUND_BATTLE);
+
 
         Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(memberId, battleId);
         BettingRes bettingRes;
