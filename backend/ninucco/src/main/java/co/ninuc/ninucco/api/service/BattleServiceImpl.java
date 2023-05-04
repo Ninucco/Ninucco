@@ -6,6 +6,7 @@ import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.response.BattleListRes;
 import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
+import co.ninuc.ninucco.api.dto.response.BettingRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Betting;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,9 +54,37 @@ public class BattleServiceImpl implements BattleService{
 
     @Transactional
     @Override
-    public Long insertBetting(BettingCreateReq bettingCreateReq){
-        return bettingRepository.save(toEntity(bettingCreateReq)).getId();
+    public BettingRes insertBetting(BettingCreateReq bettingCreateReq){
+        return toBettingRes(true, bettingRepository.save(toEntity(bettingCreateReq)));
     }
+
+    @Override
+    public BettingRes selectOneBetting(String memberId, Long battleId) {
+        if(!memberRepository.existsById(memberId))
+            throw new CustomException(ErrorRes.NOT_FOUND_MEMBER);
+        if(!battleRepository.existsById(battleId))
+            throw new CustomException(ErrorRes.NOT_FOUND_BATTLE);
+
+
+        Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(memberId, battleId);
+        BettingRes bettingRes;
+
+        /* 본인이 해당 배틀에 베팅했었다면 isExist를 true로 설정하고
+           베팅 정보를 Response에 전달한다.
+           베팅을 하지 않았다면 isExist를 false로 설정하고,
+           Response로 isExist만을 전달한다.
+        */
+        if(optionalBetting.isPresent()) {
+            Betting betting = optionalBetting.get();
+            bettingRes = toBettingRes(true, betting) ;
+        }
+        else {
+            bettingRes = toBettingRes(false, new Betting());
+        }
+
+        return bettingRes;
+    }
+
 
     //TODO: 배틀 결과 조회 필요?
     @Override
@@ -105,5 +135,13 @@ public class BattleServiceImpl implements BattleService{
                 .applicantOdds(battle.getApplicantOdds())
                 .opponentOdds(battle.getOpponentOdds())
                 .finishTime(battle.getFinishAt()).build();
+    }
+
+    BettingRes toBettingRes(boolean isExist, Betting betting) {
+        return BettingRes.builder()
+                .isExist(isExist)
+                .betSide(betting.getBetSide())
+                .betMoney(betting.getBetMoney())
+                .build();
     }
 }

@@ -5,6 +5,7 @@ import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.response.BattleListRes;
 import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
+import co.ninuc.ninucco.api.dto.response.BettingRes;
 
 public interface BattleService {
     BattleRes insertBattle(BattleCreateReq battleCreateReq);
@@ -13,7 +14,9 @@ public interface BattleService {
 
     BattleRes selectOneBattle(Long battleId);
 
-    Long insertBetting(BettingCreateReq battleCreateReq);
+    BettingRes insertBetting(BettingCreateReq battleCreateReq);
+
+    BettingRes selectOneBetting(String memberId, Long battleId);
 
     BattleResultRes selectOneBattleResult(Long battleId);
 }
