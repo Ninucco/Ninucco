@@ -4,12 +4,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 class NoonLoopingDemo extends StatelessWidget {
   final imgList = [
-    "assets/images/scan_items/1.png",
-    "assets/images/scan_items/2.png",
-    "assets/images/scan_items/3.png",
-    "assets/images/scan_items/4.png",
-    "assets/images/scan_items/5.png",
-    "assets/images/scan_items/6.png",
+    "assets/images/dummy/jamminhyeok.png",
+    "assets/images/dummy/jamminhyeok.png",
+    "assets/images/dummy/jamminhyeok.png",
+    "assets/images/dummy/jamminhyeok.png",
+    "assets/images/dummy/jamminhyeok.png",
+    "assets/images/dummy/jamminhyeok.png",
   ];
 
   late List<Widget> imageSliders = imgList
@@ -38,13 +38,23 @@ class NoonLoopingDemo extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.symmetric(
                         vertical: 10.0, horizontal: 20.0),
-                    child: Text(
-                      'No. ${imgList.indexOf(item)} image',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          '누가 더 잼민이 같나요?',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${imgList.indexOf(item)} 명이 배팅했어요',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -65,7 +75,6 @@ class NoonLoopingDemo extends StatelessWidget {
           aspectRatio: 2.0,
           enlargeCenterPage: true,
           enableInfiniteScroll: true,
-          autoPlay: true,
         ),
         items: imageSliders,
       ),
@@ -80,7 +89,11 @@ class BasicDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     List<int> list = [1, 2, 3, 4, 5, 6];
     return CarouselSlider(
-      options: CarouselOptions(viewportFraction: 1, autoPlay: true),
+      options: CarouselOptions(
+          viewportFraction: 1,
+          autoPlay: true,
+          autoPlayInterval: const Duration(seconds: 5),
+          autoPlayAnimationDuration: const Duration(seconds: 1)),
       items: list
           .map((item) => Stack(
                 children: [
