@@ -146,7 +146,7 @@ public class MemberServiceImpl implements MemberService{
 
     MemberRes toDto(Member member){
         return MemberRes.builder()
-                .url(member.getId())
+                .url(member.getUrl())
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .winCount(member.getWinCount())
