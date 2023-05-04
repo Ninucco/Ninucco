@@ -221,6 +221,7 @@ class HomeSliverAppBar extends StatelessWidget {
       elevation: 0,
       forceElevated: true,
       backgroundColor: Colors.white.withOpacity(0.6),
+      leadingWidth: 0,
       title: Padding(
         padding: const EdgeInsets.all(4.0),
         child: Column(
