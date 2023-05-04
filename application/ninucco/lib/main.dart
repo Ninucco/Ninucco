@@ -3,17 +3,26 @@ import 'package:ninucco/navigators/battle_navigator.dart';
 import 'package:ninucco/navigators/home_navigator.dart';
 import 'package:ninucco/navigators/profile_navigator.dart';
 import 'package:ninucco/navigators/rank_navigator.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/providers/test_provider.dart';
+import 'package:ninucco/providers/tutorial_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   KakaoSdk.init(
     nativeAppKey: '27f1506378a113d853b372bfa95cc5b1',
     javaScriptAppKey: 'e27d0aa411109cb9f5344f538b5a5282',
   );
+
   runApp(const App());
 }
 
@@ -22,20 +31,22 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TestProvider()),
+        ChangeNotifierProvider(create: (_) => NavProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => TutorialProvider()),
+      ],
+      child: MaterialApp(
       title: 'ninucco',
       theme: ThemeData().copyWith(
         scaffoldBackgroundColor: Colors.white,
         colorScheme:
             ThemeData().colorScheme.copyWith(primary: const Color(0xff9BA0FC)),
       ),
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => TestProvider()),
-          ChangeNotifierProvider(create: (_) => NavProvider()),
-        ],
-        child: const Layout(),
-      ),
+      home: const Layout(),
+      )
     );
   }
 }
