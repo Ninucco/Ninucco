@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ninucco/screens/home/face_scan.dart';
 import 'package:ninucco/screens/home/home.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
+import 'package:ninucco/screens/home/search.dart';
 import 'package:ninucco/screens/login/login_screen.dart';
 
 class HomeNavigator extends StatelessWidget {
@@ -22,6 +23,8 @@ class HomeNavigator extends StatelessWidget {
                 return FaceScan(settings: settings);
               case "/ScanResult":
                 return ScanResult(settings: settings);
+              case "/Search":
+                return SearchScreen(settings: settings);
               case "/Login":
                 return LoginScreen(settings: settings);
               default:
