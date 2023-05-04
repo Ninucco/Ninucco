@@ -1,175 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
-class NoonLoopingDemo extends StatelessWidget {
-  final imgList = [
-    "assets/images/scan_items/1.png",
-    "assets/images/scan_items/2.png",
-    "assets/images/scan_items/3.png",
-    "assets/images/scan_items/4.png",
-    "assets/images/scan_items/5.png",
-    "assets/images/scan_items/6.png",
-  ];
-
-  late List<Widget> imageSliders = imgList
-      .map(
-        (item) => Container(
-          margin: const EdgeInsets.all(5.0),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-            child: Stack(
-              children: <Widget>[
-                Image.asset(item, fit: BoxFit.cover, width: 1000.0),
-                Positioned(
-                  bottom: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(200, 0, 0, 0),
-                          Color.fromARGB(0, 0, 0, 0)
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 20.0),
-                    child: Text(
-                      'No. ${imgList.indexOf(item)} image',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      )
-      .toList();
-
-  NoonLoopingDemo({super.key});
+class CategoryScreen extends StatefulWidget {
+  const CategoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: CarouselSlider(
-        options: CarouselOptions(
-          aspectRatio: 2.0,
-          enlargeCenterPage: true,
-          enableInfiniteScroll: true,
-          autoPlay: true,
-        ),
-        items: imageSliders,
-      ),
-    );
-  }
+  State<CategoryScreen> createState() => _CategoryScreenState();
 }
 
-class BasicDemo extends StatelessWidget {
-  const BasicDemo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    List<int> list = [1, 2, 3, 4, 5, 6];
-    return CarouselSlider(
-      options: CarouselOptions(viewportFraction: 1, autoPlay: true),
-      items: list
-          .map((item) => Stack(
-                children: [
-                  Image.asset(
-                    'assets/images/scan_items/card_$item.png',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(36),
-                    child: Row(
-                      mainAxisAlignment: item == 1
-                          ? MainAxisAlignment.end
-                          : item == 3
-                              ? MainAxisAlignment.start
-                              : MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: item == 1
-                              ? CrossAxisAlignment.end
-                              : item == 3
-                                  ? CrossAxisAlignment.start
-                                  : CrossAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "나는 어떤 동물을 닮았을지",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      offset: Offset(2, 2),
-                                    ),
-                                  ]),
-                            ),
-                            Text(
-                              "검사해보세요!",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      offset: Offset(2, 2),
-                                    ),
-                                  ]),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 16,
-                    right: 16,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(const CircleBorder()),
-                        padding:
-                            MaterialStateProperty.all(const EdgeInsets.all(8)),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                      ),
-                      child: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  )
-                ],
-              ))
-          .toList(),
-    );
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
+class _CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     final scanList = ScanUtility().scanTitleList;
@@ -191,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
             image: AssetImage('assets/images/bg/bg.png'),
             fit: BoxFit.cover,
           )),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: CustomScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
@@ -205,26 +46,95 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              const SliverToBoxAdapter(
-                child: BasicDemo(),
+              SliverGrid.builder(
+                itemCount: 6,
+                gridDelegate: SliverQuiltedGridDelegate(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  repeatPattern: QuiltedGridRepeatPattern.inverted,
+                  pattern: [
+                    const QuiltedGridTile(2, 1),
+                    const QuiltedGridTile(1, 1),
+                    const QuiltedGridTile(1, 1),
+                  ],
+                ),
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/FaceScan',
+                        arguments: index,
+                      );
+                    },
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Image.asset(
+                            'assets/images/scan_items/${index + 1}.png',
+                            scale: 0.1,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                            horizontal: 10,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                scanList[index][0],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                scanList[index][1],
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 6.0,
+                                      color: Colors.black12,
+                                      offset: Offset(2, 2),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                scanList[index][2],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               SliverToBoxAdapter(
                 child: Container(
                   padding: const EdgeInsets.only(bottom: 12, top: 36),
                   child: const Text(
                     "오늘의 배틀",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: NoonLoopingDemo(),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  padding: const EdgeInsets.only(bottom: 12, top: 36),
-                  child: const Text(
-                    "랭킹",
                     style: TextStyle(fontSize: 16),
                   ),
                 ),

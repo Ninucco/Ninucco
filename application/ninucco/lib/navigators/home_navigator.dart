@@ -18,7 +18,7 @@ class HomeNavigator extends StatelessWidget {
           builder: (context) {
             switch (settings.name) {
               case "/":
-                return const HomePage();
+                return const HomeScreen();
               case "/FaceScan":
                 return FaceScan(settings: settings);
               case "/ScanResult":
