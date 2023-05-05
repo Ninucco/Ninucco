@@ -4,6 +4,7 @@ import s3fs
 import tensorflow
 import numpy as np
 import tempfile
+from operator import itemgetter
 
 # load .env
 load_dotenv()
@@ -55,12 +56,11 @@ def predict(img_dir, _model, _class):
 
     result = _model.predict(input_arr)[0]
 
-    similarity_result = {}
+    result_list = []
     for i in range(0, len(result)):
-        similarity_result[_class[i]] = result[i]
-    similarity_result = {k: v for k, v in sorted(
-        similarity_result.items(), key=lambda item: item[1], reverse=True)}
-    return similarity_result
+        result_list.append({'key': _class[i], 'value': result[i]})
+    result_list = sorted(result_list, key=itemgetter('value'), reverse=True)
+    return result_list
 
 
 def main():
@@ -68,9 +68,9 @@ def main():
     classes = {}
 
     models, classes = get_models_and_classes()
-    similarity_result = predict(
-        '10241024.png', models['job'], classes['job'])
-    print(similarity_result)
+    result_list = predict(
+        '10241024.png', models['animal'], classes['animal'])
+    print(result_list)
 
 
 if __name__ == '__main__':
