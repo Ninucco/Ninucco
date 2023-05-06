@@ -32,22 +32,22 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => TestProvider()),
-        ChangeNotifierProvider(create: (_) => NavProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => TutorialProvider()),
-      ],
-      child: MaterialApp(
-      title: 'ninucco',
-      theme: ThemeData().copyWith(
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme:
-            ThemeData().colorScheme.copyWith(primary: const Color(0xff9BA0FC)),
-      ),
-      home: const Layout(),
-      )
-    );
+        providers: [
+          ChangeNotifierProvider(create: (_) => TestProvider()),
+          ChangeNotifierProvider(create: (_) => NavProvider()),
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => TutorialProvider()),
+        ],
+        child: MaterialApp(
+          title: 'ninucco',
+          theme: ThemeData(fontFamily: 'NexonGothic').copyWith(
+            scaffoldBackgroundColor: Colors.white,
+            colorScheme: ThemeData().colorScheme.copyWith(
+                  primary: const Color(0xff9BA0FC),
+                ),
+          ),
+          home: const Layout(),
+        ));
   }
 }
 
@@ -147,7 +147,10 @@ class BottomNav extends StatelessWidget {
                       url: 'assets/icons/home',
                       selected: navProvider.index == 0,
                     ),
-                    const BottomNavLabel(text: "HOME")
+                    BottomNavLabel(
+                      text: "HOME",
+                      selected: navProvider.index == 0,
+                    )
                   ],
                 ),
               ),
@@ -162,7 +165,10 @@ class BottomNav extends StatelessWidget {
                     url: 'assets/icons/rank',
                     selected: navProvider.index == 1,
                   ),
-                  const BottomNavLabel(text: "RANK")
+                  BottomNavLabel(
+                    text: "RANK",
+                    selected: navProvider.index == 1,
+                  )
                 ]),
               ),
             ),
@@ -177,7 +183,10 @@ class BottomNav extends StatelessWidget {
                     url: 'assets/icons/battle',
                     selected: navProvider.index == 2,
                   ),
-                  const BottomNavLabel(text: "BATTLE")
+                  BottomNavLabel(
+                    text: "BATTLE",
+                    selected: navProvider.index == 2,
+                  )
                 ]),
               ),
             ),
@@ -191,7 +200,10 @@ class BottomNav extends StatelessWidget {
                     url: 'assets/icons/profile',
                     selected: navProvider.index == 3,
                   ),
-                  const BottomNavLabel(text: "PROFILE")
+                  BottomNavLabel(
+                    text: "PROFILE",
+                    selected: navProvider.index == 3,
+                  )
                 ]),
               ),
             ),
@@ -222,18 +234,21 @@ class BottomNavIcon extends StatelessWidget {
 
 class BottomNavLabel extends StatelessWidget {
   final String text;
+  final bool selected;
   const BottomNavLabel({
     super.key,
     required this.text,
+    required this.selected,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         color: Colors.white,
-        fontSize: 12,
+        fontSize: 10,
+        fontWeight: selected ? FontWeight.bold : FontWeight.normal,
       ),
     );
   }
