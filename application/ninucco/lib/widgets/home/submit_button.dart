@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
 
@@ -22,21 +20,21 @@ class SubmitButton extends StatelessWidget {
   });
 
   Future fetchScanResult() async {
-    Uint8List imagebytes = await image.readAsBytes();
-    String base64string = base64.encode(imagebytes);
-    print(base64string);
-    var body = json.encode({"similarityReq": base64string});
+    var url = Uri.parse('https://k8a605.p.ssafy.io/api/face/animal');
+    var request = http.MultipartRequest("POST", url);
+    request.fields['user'] = 'someone@somewhere.com';
+    request.files.add(await http.MultipartFile.fromPath(
+      'inputImg',
+      image.path,
+      // contentType: MediaType('application', 'x-tar'),
+    ));
 
-    final response = await http.post(
-      Uri.parse('https://k8a605.p.ssafy.io/api/face/dummy'),
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );  
+    var response = await request.send();
+    final respStr = await response.stream.bytesToString();
 
-    var jsonData = jsonDecode(response.body)['data'];
+    var jsonData = jsonDecode(respStr)['data'];
     var list = jsonData['resultPercentages'] as List;
-    List<AnalyticItem> analyticItemList =
-        list.map((i) => AnalyticItem.fromJson(i)).toList();
+    var analyticItemList = list.map((i) => AnalyticItem.fromJson(i)).toList();
     return ResultData(
       type: type,
       resultTitle: jsonData['resultTitle'],
