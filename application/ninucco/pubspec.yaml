@@ -1,10 +1,10 @@
 name: ninucco
 description: A new Flutter project.
-publish_to: "none"
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.19.6-417.0.dev <4.0.0"
+  sdk: '>=2.19.6-417.0.dev <4.0.0'
 
 dependencies:
   flutter:
@@ -23,6 +23,7 @@ dependencies:
   kakao_flutter_sdk: ^1.4.2
   image_cropper: ^3.0.3
   carousel_slider: ^4.2.1
+  dio: ^4.0.6
 
 dev_dependencies:
   flutter_test:
@@ -31,12 +32,24 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
   assets:
     - assets/images/dummy/
-    - assets/fonts/dummy.md
     - assets/images/dummy.md
     - assets/images/scan_items/
     - assets/images/bg/
     - assets/images/
     - assets/icons/
+    - assets/fonts/
+
+  fonts:
+    - family: NexonGothic
+      fonts:
+        - asset: assets/fonts/NEXONLv1GothicLight.ttf
+          weight: 300
+        - asset: assets/fonts/NEXONLv1GothicRegular.ttf
+          weight: 500
+        - asset: assets/fonts/NEXONLv1GothicBold.ttf
+          weight: 700
+    - family: milkyway
+      fonts:
+        - asset: assets/fonts/TAEBAEK.otf
