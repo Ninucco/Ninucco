@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ninucco/utilities/scan_list_data.dart';
 
 class NoonLoopingDemo extends StatelessWidget {
   final imgList = [
@@ -83,7 +83,8 @@ class NoonLoopingDemo extends StatelessWidget {
 }
 
 class BasicDemo extends StatelessWidget {
-  const BasicDemo({super.key});
+  final scanList = ScanUtility().scanTitlePreviewList;
+  BasicDemo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -95,80 +96,103 @@ class BasicDemo extends StatelessWidget {
           autoPlayInterval: const Duration(seconds: 5),
           autoPlayAnimationDuration: const Duration(seconds: 1)),
       items: list
-          .map((item) => Stack(
-                children: [
-                  Image.asset(
-                    'assets/images/scan_items/card_$item.png',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(36),
-                    child: Row(
-                      mainAxisAlignment: item == 1
-                          ? MainAxisAlignment.end
-                          : item == 3
-                              ? MainAxisAlignment.start
-                              : MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: item == 1
-                              ? CrossAxisAlignment.end
-                              : item == 3
-                                  ? CrossAxisAlignment.start
-                                  : CrossAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "나는 어떤 동물을 닮았을지",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      offset: Offset(2, 2),
-                                    ),
-                                  ]),
-                            ),
-                            Text(
-                              "검사해보세요!",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      offset: Offset(2, 2),
-                                    ),
-                                  ]),
-                            ),
-                          ],
+          .map((item) => GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/FaceScan',
+                    arguments: item - 1,
+                  );
+                },
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      'assets/images/scan_items/card_$item.png',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(36),
+                      child: Row(
+                        mainAxisAlignment: item == 1
+                            ? MainAxisAlignment.end
+                            : item == 3
+                                ? MainAxisAlignment.start
+                                : MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: item == 1
+                                ? CrossAxisAlignment.end
+                                : item == 3
+                                    ? CrossAxisAlignment.start
+                                    : CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                scanList[item - 1][0],
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                scanList[item - 1][1],
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 28,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        offset: Offset(2, 2),
+                                      ),
+                                    ]),
+                              ),
+                              Text(
+                                scanList[item - 1][2],
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 28,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        offset: Offset(2, 2),
+                                      ),
+                                    ]),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 16,
+                      right: 16,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/FaceScan',
+                            arguments: item - 1,
+                          );
+                        },
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all(const CircleBorder()),
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.all(8)),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
                         ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 16,
-                    right: 16,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(const CircleBorder()),
-                        padding:
-                            MaterialStateProperty.all(const EdgeInsets.all(8)),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
+                        child: const Icon(
+                          Icons.chevron_right,
+                          color: Colors.black87,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ))
           .toList(),
     );
@@ -185,8 +209,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final scanList = ScanUtility().scanTitleList;
-
     final searchController = TextEditingController();
 
     @override
@@ -211,22 +233,57 @@ class _HomeScreenState extends State<HomeScreen> {
               const SliverToBoxAdapter(child: SizedBox(height: 12)),
               SliverToBoxAdapter(
                 child: Container(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: const Text(
-                    "나의 닮은꼴 찾기",
-                    style: TextStyle(fontSize: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "나의 닮은꼴 찾기",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      TextButton(
+                          onPressed: () {},
+                          child: const Row(
+                            children: [
+                              Text(
+                                "전체보기",
+                                style: TextStyle(color: Colors.black87),
+                              ),
+                              Icon(Icons.chevron_right, color: Colors.black54)
+                            ],
+                          ))
+                    ],
                   ),
                 ),
               ),
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: BasicDemo(),
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 24),
               ),
               SliverToBoxAdapter(
                 child: Container(
-                  padding: const EdgeInsets.only(bottom: 12, top: 36),
-                  child: const Text(
-                    "오늘의 배틀",
-                    style: TextStyle(fontSize: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "인기 배틀",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      TextButton(
+                          onPressed: () {},
+                          child: const Row(
+                            children: [
+                              Text(
+                                "전체보기",
+                                style: TextStyle(color: Colors.black87),
+                              ),
+                              Icon(Icons.chevron_right, color: Colors.black54)
+                            ],
+                          ))
+                    ],
                   ),
                 ),
               ),
