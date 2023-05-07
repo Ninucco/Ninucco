@@ -242,7 +242,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(fontSize: 16),
                       ),
                       TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/Category');
+                          },
                           child: const Row(
                             children: [
                               Text(
