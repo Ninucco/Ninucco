@@ -26,8 +26,6 @@ public class FaceController {
     @ApiOperation(value = "나와 닮은 것 찾기", notes="나와 닮은 것 찾기를 합니다.")
     @PostMapping(value = "", consumes = {"multipart/form-data"})
     public ResponseEntity<?> generateAnimal(@RequestPart String modelType, @RequestPart MultipartFile img) {
-        log.info(modelType.toString());
-        log.info(img.getOriginalFilename());
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, faceService.generate(modelType, img))
         );
