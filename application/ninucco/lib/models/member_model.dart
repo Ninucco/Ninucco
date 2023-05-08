@@ -1,5 +1,3 @@
-import 'package:ninucco/providers/auth_provider.dart';
-
 class MemberModel {
   final String id, nickname, url;
   final BigInt winCount, loseCount, point, elo;
