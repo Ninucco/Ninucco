@@ -8,7 +8,7 @@ import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/providers/test_provider.dart';
 import 'package:ninucco/providers/tutorial_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -16,6 +16,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  KakaoSdk.init(
+    nativeAppKey: '27f1506378a113d853b372bfa95cc5b1',
+    javaScriptAppKey: 'e27d0aa411109cb9f5344f538b5a5282',
   );
 
   runApp(const App());
@@ -27,14 +32,22 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => TestProvider()),
-        ChangeNotifierProvider(create: (_) => NavProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => TutorialProvider()),
-      ],
-      child: const MaterialApp(title: 'ninucco', home: Layout()),
-    );
+        providers: [
+          ChangeNotifierProvider(create: (_) => TestProvider()),
+          ChangeNotifierProvider(create: (_) => NavProvider()),
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => TutorialProvider()),
+        ],
+        child: MaterialApp(
+          title: 'ninucco',
+          theme: ThemeData(fontFamily: 'NexonGothic').copyWith(
+            scaffoldBackgroundColor: Colors.white,
+            colorScheme: ThemeData().colorScheme.copyWith(
+                  primary: const Color(0xff9BA0FC),
+                ),
+          ),
+          home: const Layout(),
+        ));
   }
 }
 
@@ -46,7 +59,8 @@ class Layout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavProvider navProvider = Provider.of<NavProvider>(context);
-
+    bool showFloatButton = Provider.of<NavProvider>(context).show &&
+        MediaQuery.of(context).viewInsets.bottom == 0;
     return Scaffold(
       body: Stack(
         children: [
@@ -70,15 +84,15 @@ class Layout extends StatelessWidget {
       ),
       // resizeToAvoidBottomInset: false,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Provider.of<NavProvider>(context).show &&
-              MediaQuery.of(context).viewInsets.bottom == 0
-          ? Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 8),
-                width: 64,
-                height: 72,
-                child: FloatingActionButton(
+      floatingActionButton: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          padding: const EdgeInsets.only(bottom: 8),
+          width: 64,
+          height: 72,
+          child: !showFloatButton
+              ? null
+              : FloatingActionButton(
                   backgroundColor: const Color(0xff7E81FB),
                   onPressed: () {},
                   child: Padding(
@@ -88,9 +102,8 @@ class Layout extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            )
-          : null,
+        ),
+      ),
       bottomNavigationBar:
           Provider.of<NavProvider>(context).show ? const BottomNav() : null,
     );
@@ -134,7 +147,10 @@ class BottomNav extends StatelessWidget {
                       url: 'assets/icons/home',
                       selected: navProvider.index == 0,
                     ),
-                    const BottomNavLabel(text: "HOME")
+                    BottomNavLabel(
+                      text: "HOME",
+                      selected: navProvider.index == 0,
+                    )
                   ],
                 ),
               ),
@@ -149,7 +165,10 @@ class BottomNav extends StatelessWidget {
                     url: 'assets/icons/rank',
                     selected: navProvider.index == 1,
                   ),
-                  const BottomNavLabel(text: "RANK")
+                  BottomNavLabel(
+                    text: "RANK",
+                    selected: navProvider.index == 1,
+                  )
                 ]),
               ),
             ),
@@ -164,7 +183,10 @@ class BottomNav extends StatelessWidget {
                     url: 'assets/icons/battle',
                     selected: navProvider.index == 2,
                   ),
-                  const BottomNavLabel(text: "BATTLE")
+                  BottomNavLabel(
+                    text: "BATTLE",
+                    selected: navProvider.index == 2,
+                  )
                 ]),
               ),
             ),
@@ -178,7 +200,10 @@ class BottomNav extends StatelessWidget {
                     url: 'assets/icons/profile',
                     selected: navProvider.index == 3,
                   ),
-                  const BottomNavLabel(text: "PROFILE")
+                  BottomNavLabel(
+                    text: "PROFILE",
+                    selected: navProvider.index == 3,
+                  )
                 ]),
               ),
             ),
@@ -209,18 +234,21 @@ class BottomNavIcon extends StatelessWidget {
 
 class BottomNavLabel extends StatelessWidget {
   final String text;
+  final bool selected;
   const BottomNavLabel({
     super.key,
     required this.text,
+    required this.selected,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         color: Colors.white,
-        fontSize: 12,
+        fontSize: 10,
+        fontWeight: selected ? FontWeight.bold : FontWeight.normal,
       ),
     );
   }
