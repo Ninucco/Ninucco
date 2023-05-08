@@ -24,6 +24,7 @@ dependencies:
   image_cropper: ^3.0.3
   carousel_slider: ^4.2.1
   dio: ^4.0.6
+  image: ^4.0.17
 
 dev_dependencies:
   flutter_test:
