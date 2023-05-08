@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ninucco/screens/battle/battle_create_detail_screen.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 
 class BattleCreateScreen extends StatefulWidget {
@@ -130,11 +131,11 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                           value: "누가 더 백엔드 개발자처럼 생겼나요?",
                           label: "누가 더 백엔드 개발자처럼 생겼나요?"),
                       DropdownMenuEntry(
-                          value: "누가 더 백엔드 개발자처럼 생겼나요?2",
-                          label: "누가 더 백엔드 개발자처럼 생겼나요?2"),
+                          value: "누가 더 피자를 좋아할 것처럼 생겼나요?",
+                          label: "누가 더 피자를 좋아할 것처럼 생겼나요?"),
                       DropdownMenuEntry(
-                          value: "누가 더 백엔드 개발자처럼 생겼나요?3",
-                          label: "누가 더 백엔드 개발자처럼 생겼나요?3"),
+                          value: "누가 더 빨리 부자가 될 것 같나요?",
+                          label: "누가 더 빨리 부자가 될 것 같나요?"),
                     ],
                     onSelected: (String? selectedQuestion) {
                       setState(
@@ -186,7 +187,20 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                     fontSize: 17,
                   ),
                 ),
-                onPressed: () => {},
+                onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BattleCreateDetailWidget(
+                        memberAId: 1,
+                        memberAImage:
+                            "https://pbs.twimg.com/media/E_-EPpcVUAcXgmU.jpg",
+                        memberANickname: "실험중입니당",
+                        question: categoryValue!,
+                      ),
+                    ),
+                  ),
+                },
               ),
             ),
           ],
