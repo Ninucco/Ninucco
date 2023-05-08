@@ -1,19 +1,18 @@
 package co.ninuc.ninucco.api.service;
 
-import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
 import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.response.BattleListRes;
 import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
-import co.ninuc.ninucco.common.exception.CustomException;
+import co.ninuc.ninucco.api.dto.response.BettingRes;
+import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Betting;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.type.BattleResult;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
-import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +21,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService{
     private final BattleRepository battleRepository;
-    private final MemberRepository memberRepository;
     private final BettingRepository bettingRepository;
+    private final ValidateUtil validateUtil;
 
     private static final int C = 20;
     @Transactional
@@ -48,15 +48,39 @@ public class BattleServiceImpl implements BattleService{
 
     @Override
     public BattleRes selectOneBattle(Long battleId){
-        return toRes(battleRepository.findById(battleId)
-                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_BATTLE)));
+        return toRes(validateUtil.battleValidateById(battleId));
     }
 
     @Transactional
     @Override
-    public Long insertBetting(BettingCreateReq bettingCreateReq){
-        return bettingRepository.save(toEntity(bettingCreateReq)).getId();
+    public BettingRes insertBetting(BettingCreateReq bettingCreateReq){
+        return toBettingRes(bettingRepository.save(toEntity(bettingCreateReq)));
     }
+
+    @Override
+    public BettingRes selectOneBetting(String memberId, Long battleId) {
+        validateUtil.memberValidateById(memberId);
+        validateUtil.battleValidateById(battleId);
+
+        Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(memberId, battleId);
+        BettingRes bettingRes;
+
+        /* 본인이 해당 배틀에 베팅했었다면 validate를 true로 설정하고
+           베팅 정보를 Response에 전달한다.
+           베팅을 하지 않았다면 validate를 false로 설정하고,
+           Response로 isExist만을 전달한다.
+        */
+        if(optionalBetting.isPresent()) {
+            Betting betting = optionalBetting.get();
+            bettingRes = toBettingRes(betting) ;
+        }
+        else {
+            bettingRes = toBettingNullRes(false);
+        }
+
+        return bettingRes;
+    }
+
 
     //TODO: 배틀 결과 조회 필요?
     @Override
@@ -104,10 +128,8 @@ public class BattleServiceImpl implements BattleService{
     }
     Betting toEntity(BettingCreateReq bettingCreateReq){
         return Betting.builder()
-                .battle(battleRepository.findById(bettingCreateReq.getBattleId())
-                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER)))
-                .member(memberRepository.findById(bettingCreateReq.getMemberId())
-                        .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER)))
+                .battle(validateUtil.battleValidateById(bettingCreateReq.getBattleId()))
+                .member(validateUtil.memberValidateById(bettingCreateReq.getMemberId()))
                 .betSide(bettingCreateReq.getBetSide())
                 .betMoney(bettingCreateReq.getBetMoney()).build();
     }

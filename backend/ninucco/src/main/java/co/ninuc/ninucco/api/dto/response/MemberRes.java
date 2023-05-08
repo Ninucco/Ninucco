@@ -1,35 +1,30 @@
 package co.ninuc.ninucco.api.dto.response;
 
 import co.ninuc.ninucco.api.dto.Res;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
 public class MemberRes implements Res {
+    Boolean validate;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String id;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String nickname;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String url;
-
-    int winCount;
-
-    int loseCount;
-
-    long point;
-
-    int elo;
-
-    @Builder
-    public MemberRes(String id, String nickname,String url, int winCount, int loseCount, long point, int elo){
-        this.id=id;
-        this.nickname=nickname;
-        this.url=url;
-        this.winCount=winCount;
-        this.loseCount=loseCount;
-        this.point=point;
-        this.elo=elo;
-    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Integer winCount;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Integer loseCount;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Long point;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Integer elo;
 }
