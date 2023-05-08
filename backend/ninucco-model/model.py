@@ -9,6 +9,8 @@ from operator import itemgetter
 # load .env
 load_dotenv()
 
+model_names = ["animal", "fruit", "highschool", "job"]
+
 AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
 BUCKET_NAME = os.environ.get('BUCKET_NAME')

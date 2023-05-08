@@ -1,20 +1,17 @@
 from fastapi import FastAPI, UploadFile
 import model
 import tempfile
-from pydantic import BaseModel
 from PIL import Image
 import uuid
-
-model_names = ["animal", "fruit", "highschool", "job"]
 
 app = FastAPI()
 models, classes = model.get_models_and_classes()
 
 
-@app.post("/{model_name}")
-async def animal(uploadfile: UploadFile, model_name: str):
-    print("hello world!")
-    if model_name in model_names and uploadfile.filename.lower().endswith('png'):    
+@app.post("/predict/{model_name}")
+async def predict(uploadfile: UploadFile, model_name: str):
+    print(model_name)
+    if model_name in model.model_names and uploadfile.filename.lower().endswith('png'):    
         with tempfile.TemporaryDirectory('r+') as tmpdir:
             path = get_image(uploadfile, tmpdir)
             print(path)
