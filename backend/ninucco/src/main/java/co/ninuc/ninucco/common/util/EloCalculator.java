@@ -21,8 +21,8 @@ public class EloCalculator {
         int rSum = mWin.getElo()+rLose;
         int d = (int)((double)C*2*rLose/rSum);
         if(d==0) d=1;
-        mWin.updateRate(mWin.getElo()+d);
-        mLose.updateRate(mLose.getElo()-d);
+        mWin.updateElo(mWin.getElo()+d);
+        mLose.updateElo(mLose.getElo()-d);
     }
     // 배당 구하기
     public static double[] calcOdds(Member m1, Member m2){

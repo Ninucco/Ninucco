@@ -1,11 +1,14 @@
 package co.ninuc.ninucco.api.service;
 
+import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
+import co.ninuc.ninucco.api.dto.request.BattleUpdateReq;
 import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.response.BattleListRes;
 import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
 import co.ninuc.ninucco.api.dto.response.BettingRes;
+import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Betting;
@@ -17,10 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,6 +36,18 @@ public class BattleServiceImpl implements BattleService{
     public BattleRes insertBattle(BattleCreateReq battleCreateReq){
         Battle battle = toEntity(battleCreateReq);
         battleRepository.save(battle);
+        return toRes(battle);
+    }
+
+    @Override
+    public BattleRes updateBattle(BattleUpdateReq battleUpdateReq) {
+        Battle battle = validateUtil.battleValidateById(battleUpdateReq.getBattleId());
+        Member applicant = validateUtil.memberValidateById(battle.getApplicant().getId());
+        Member opponent = validateUtil.memberValidateById(battle.getOpponent().getId());
+
+        double[] odds = calcOddsByElos(applicant.getElo(), opponent.getElo());
+        battle.updateBattle(battleUpdateReq.getOpponentUrl(), odds[0], odds[1]);
+
         return toRes(battle);
     }
 
@@ -91,8 +102,7 @@ public class BattleServiceImpl implements BattleService{
 
     //배틀이 끝나면 콜되는 함수
     private void finishBattle(Long battleId){
-        Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(()->new CustomException(ErrorRes.INTERNAL_SERVER_ERROR));
+        Battle battle = validateUtil.battleValidateById(battleId);
         /*배틀 결과 구하기
         * ...
         * */
@@ -108,11 +118,10 @@ public class BattleServiceImpl implements BattleService{
 
     // toEntity, toRes
     Battle toEntity(BattleCreateReq battleCreateReq){
-        Member applicant = memberRepository.findById(battleCreateReq.getApplicantId())
-                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
-        Member opponent = memberRepository.findById(battleCreateReq.getOpponentId())
-                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
-        double[] odds = calcOddsByElos(applicant.getElo(), opponent.getElo());
+        Member applicant = validateUtil.memberValidateById(battleCreateReq.getApplicantId());
+        Member opponent = validateUtil.memberValidateById(battleCreateReq.getOpponentId());
+
+//        double[] odds = calcOddsByElos(applicant.getElo(), opponent.getElo());
         return Battle.builder()
                 .title(battleCreateReq.getTitle())
                 .applicant(applicant)
@@ -120,10 +129,8 @@ public class BattleServiceImpl implements BattleService{
                 .applicantNickname(applicant.getNickname())
                 .opponentNickname(opponent.getNickname())
                 .applicantUrl(battleCreateReq.getApplicantUrl())
-                .opponentUrl(battleCreateReq.getOpponentUrl())
-                .applicantOdds(odds[0])
-                .opponentOdds(odds[1])
-                .finishAt(LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1))
+//                .applicantOdds(odds[0])
+//                .opponentOdds(odds[1])
                 .build();
     }
     Betting toEntity(BettingCreateReq bettingCreateReq){
@@ -146,7 +153,23 @@ public class BattleServiceImpl implements BattleService{
                 .opponentOdds(battle.getOpponentOdds())
                 .finishTime(battle.getFinishAt()).build();
     }
-    public void updateEloAndResultByResult(Battle battle, BattleResult winner){
+
+    BettingRes toBettingRes(Betting betting) {
+        return BettingRes.builder()
+                .validate(true)
+                .betSide(betting.getBetSide())
+                .betMoney(betting.getBetMoney())
+                .build();
+    }
+
+    BettingRes toBettingNullRes(boolean validate) {
+        return BettingRes.builder()
+                .validate(validate)
+                .betSide(null)
+                .betMoney(null)
+                .build();
+    }
+        public void updateEloAndResultByResult(Battle battle, BattleResult winner){
         if(winner==BattleResult.PROCEEDING)
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         Member mWin, mLose;
