@@ -67,7 +67,7 @@ public class Member {
     public void updateNickname(String nickname){
         this.nickname=nickname;
     }
-    public void updateRate(int elo){
+    public void updateElo(int elo){
         this.elo =elo;
     }
 }

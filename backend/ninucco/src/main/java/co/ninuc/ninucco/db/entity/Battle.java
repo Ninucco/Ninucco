@@ -47,6 +47,12 @@ public class Battle extends BaseEntity {
     LocalDateTime createdAt;
     LocalDateTime finishAt;
 
+    public void updateResult(BattleResult result){
+        this.result=result;
+    }
+    public void updateStatusTerminated(){
+        this.status=BattleStatus.TERMINATED;
+    }
     @Builder
     public Battle(String title, Member applicant, Member opponent, String applicantNickname, String opponentNickname, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime finishAt, Double opponentOdds){
         this.title=title;

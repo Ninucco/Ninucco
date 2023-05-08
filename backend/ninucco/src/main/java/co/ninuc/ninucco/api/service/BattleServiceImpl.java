@@ -10,6 +10,7 @@ import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Betting;
 import co.ninuc.ninucco.db.entity.Member;
+import co.ninuc.ninucco.db.entity.type.BattleResult;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class BattleServiceImpl implements BattleService{
     private final BettingRepository bettingRepository;
     private final ValidateUtil validateUtil;
 
+    private static final int C = 20;
     @Transactional
     @Override
     public BattleRes insertBattle(BattleCreateReq battleCreateReq){
@@ -86,13 +88,31 @@ public class BattleServiceImpl implements BattleService{
         return null;
     }
     //TODO: 시간마다 배틀 끝났는지 체크
-    //TODO: 시간 끝났으면 배틀 끝내고 플러터로 알림 보내기
+
+    //배틀이 끝나면 콜되는 함수
+    private void finishBattle(Long battleId){
+        Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(()->new CustomException(ErrorRes.INTERNAL_SERVER_ERROR));
+        /*배틀 결과 구하기
+        * ...
+        * */
+        BattleResult result = BattleResult.APPLICANT;
+        //배틀 결과에 따라 battleResult, 멤버들 elo업데이트
+        updateEloAndResultByResult(battle, result);
+
+        //배틀 상태 TERMINATED로 변경
+        battle.updateStatusTerminated();
+        //배틀 끝남 FCM보내기
+
+    }
 
     // toEntity, toRes
     Battle toEntity(BattleCreateReq battleCreateReq){
-        Member applicant = validateUtil.memberValidateById(battleCreateReq.getApplicantId());
-        Member opponent = validateUtil.memberValidateById(battleCreateReq.getOpponentId());
-
+        Member applicant = memberRepository.findById(battleCreateReq.getApplicantId())
+                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+        Member opponent = memberRepository.findById(battleCreateReq.getOpponentId())
+                .orElseThrow(()->new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+        double[] odds = calcOddsByElos(applicant.getElo(), opponent.getElo());
         return Battle.builder()
                 .title(battleCreateReq.getTitle())
                 .applicant(applicant)
@@ -101,8 +121,8 @@ public class BattleServiceImpl implements BattleService{
                 .opponentNickname(opponent.getNickname())
                 .applicantUrl(battleCreateReq.getApplicantUrl())
                 .opponentUrl(battleCreateReq.getOpponentUrl())
-                .applicantOdds(1.0)
-                .opponentOdds(1.0)
+                .applicantOdds(odds[0])
+                .opponentOdds(odds[1])
                 .finishAt(LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1))
                 .build();
     }
@@ -126,20 +146,29 @@ public class BattleServiceImpl implements BattleService{
                 .opponentOdds(battle.getOpponentOdds())
                 .finishTime(battle.getFinishAt()).build();
     }
-
-    BettingRes toBettingRes(Betting betting) {
-        return BettingRes.builder()
-                .validate(true)
-                .betSide(betting.getBetSide())
-                .betMoney(betting.getBetMoney())
-                .build();
+    public void updateEloAndResultByResult(Battle battle, BattleResult winner){
+        if(winner==BattleResult.PROCEEDING)
+            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        Member mWin, mLose;
+        if(winner==BattleResult.APPLICANT) {
+            mWin = battle.getApplicant();
+            mLose = battle.getOpponent();
+        } else{ //BattleResult.OPPONENT
+            mWin = battle.getOpponent();
+            mLose = battle.getApplicant();
+        }
+        int rLose = mLose.getElo();
+        int rSum = mWin.getElo()+rLose;
+        int d = (int)((double)C*2*rLose/rSum);
+        if(d==0) d=1;
+        mWin.updateElo(mWin.getElo()+d);
+        mLose.updateElo(rLose-d);
+        battle.updateResult(winner);
     }
-
-    BettingRes toBettingNullRes(boolean validate) {
-        return BettingRes.builder()
-                .validate(validate)
-                .betSide(null)
-                .betMoney(null)
-                .build();
+    private static double[] calcOddsByElos(int elo1, int elo2){
+        int eloSum = elo1+elo2;
+        double odd1 = 1+(double)2*elo2/eloSum;
+        double odd2 = 1+(double)2*elo1/eloSum;
+        return new double[] {odd1,odd2};
     }
 }
