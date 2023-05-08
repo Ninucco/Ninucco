@@ -9,11 +9,11 @@ import co.ninuc.ninucco.api.dto.response.*;
 import java.util.List;
 
 public interface MemberService {
-    MemberIdRes insertMember(MemberCreateReq memberCreateReq);
-    BooleanRes checkMemberNickname(String nickName);
+    MemberRes insertMember(MemberCreateReq memberCreateReq);
+    MemberRes checkMemberNickname(String nickname);
 
-    BooleanRes updateMemberUrl(MemberUpdatePhotoReq memberUpdatePhotoReq);
-    BooleanRes updateMemberNickname(MemberUpdateNicknameReq memberUpdateNicknameReq);
+    MemberRes updateMemberUrl(MemberUpdatePhotoReq memberUpdatePhotoReq);
+    MemberRes updateMemberNickname(MemberUpdateNicknameReq memberUpdateNicknameReq);
     MemberRes selectOneMember(String memberId);
     List<ItemRes> selectAllItemsByMemberId(String memberId);
     Long insertMemberFriend(String friendId);

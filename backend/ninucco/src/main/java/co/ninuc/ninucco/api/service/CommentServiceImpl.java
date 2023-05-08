@@ -1,16 +1,13 @@
 package co.ninuc.ninucco.api.service;
 
-import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.request.CommentCreateReq;
 import co.ninuc.ninucco.api.dto.response.CommentListRes;
 import co.ninuc.ninucco.api.dto.response.CommentRes;
-import co.ninuc.ninucco.common.exception.CustomException;
+import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Comment;
 import co.ninuc.ninucco.db.entity.Member;
-import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.CommentRepository;
-import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +19,14 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
-    private final MemberRepository memberRepository;
-    private final BattleRepository battleRepository;
+    private final ValidateUtil validateUtil;
 
     @Transactional
     @Override
     public CommentRes insertComment(String memberId, CommentCreateReq commentCreateReq) {
 
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
-        Battle battle = battleRepository.findById(commentCreateReq.getBattleId()).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_BATTLE));
+        Member member = validateUtil.memberValidateById(memberId);
+        Battle battle = validateUtil.battleValidateById(commentCreateReq.getBattleId());
 
         Comment comment = toEntity(member, battle, commentCreateReq.getContent());
         commentRepository.save(comment);
@@ -52,7 +48,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     CommentRes toCommentRes(Comment comment) {
-        Member member = memberRepository.findById(comment.getMember().getId()).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
+        Member member = validateUtil.memberValidateById(comment.getMember().getId());
         return CommentRes.builder()
                 .commentId(comment.getId())
                 .profileImage(member.getUrl())
