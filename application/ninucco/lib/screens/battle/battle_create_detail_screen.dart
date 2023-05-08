@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/screens/battle/battle_friend_search.dart';
 import 'package:ninucco/widgets/battle/battle_create_item_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 
@@ -54,7 +55,16 @@ class BattleCreateDetailWidget extends StatelessWidget {
                     fontSize: 17,
                   ),
                 ),
-                onPressed: () => {},
+                onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BattleFriendSearchScreen(
+                        keyword: "",
+                      ),
+                    ),
+                  )
+                },
               ),
             ),
             const SizedBox(
