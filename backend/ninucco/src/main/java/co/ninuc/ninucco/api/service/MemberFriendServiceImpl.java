@@ -42,21 +42,21 @@ public class MemberFriendServiceImpl implements MemberFriendService{
         memberFriendRepository.save(memberFriend);
         memberFriendRepository.save(friendMember);
 
-        return toMemberFriendRes(true, memberFriend);
+        return toMemberFriendRes(member, friend);
     }
 
     @Override
     public MemberFriendRes selectOneMemberFriend(String memberId, String friendId) {
-        validateUtil.memberValidateById(memberId);
-        validateUtil.memberValidateById(friendId);
+        Member member = validateUtil.memberValidateById(memberId);
+        Member friend = validateUtil.memberValidateById(friendId);
 
         MemberFriendRes memberFriendRes;
         Optional<MemberFriend> memberFriend = memberFriendRepository.findMemberFriendByMember_IdAndFriend_Id(memberId, friendId);
         if(memberFriend.isPresent()) {
-            memberFriendRes = toMemberFriendRes(true, memberFriend.get());
+            memberFriendRes = toMemberFriendRes(member, friend);
         }
         else {
-            memberFriendRes = toMemberFriendRes(false, new MemberFriend());
+            memberFriendRes = toMemberFriendNullRes(false);
         }
 
         return memberFriendRes;
@@ -84,7 +84,7 @@ public class MemberFriendServiceImpl implements MemberFriendService{
             throw new CustomException(ErrorRes.NOT_FOUND_MEMBER_FRIEND);
         }
 
-        return toMemberFriendRes(true, new MemberFriend());
+        return toMemberFriendNullRes(true);
     }
 
     MemberFriend toEntity(Member member, Member friend) {
@@ -94,11 +94,20 @@ public class MemberFriendServiceImpl implements MemberFriendService{
                 .build();
     }
 
-    MemberFriendRes toMemberFriendRes(boolean isExist, MemberFriend memberFriend) {
+    MemberFriendRes toMemberFriendRes(Member member, Member friend) {
+
         return MemberFriendRes.builder()
-                .isExist(isExist)
-                .memberNickname(memberFriend.getMember().getNickname())
-                .friendNickname(memberFriend.getFriend().getNickname())
+                .validate(true)
+                .memberNickname(member.getNickname())
+                .friendNickname(friend.getNickname())
+                .build();
+    }
+
+    MemberFriendRes toMemberFriendNullRes(boolean validate) {
+        return MemberFriendRes.builder()
+                .validate(validate)
+                .memberNickname(null)
+                .friendNickname(null)
                 .build();
     }
 

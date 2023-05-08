@@ -34,13 +34,13 @@ public class MemberServiceImpl implements MemberService{
         //닉네임 중복검사가 되어 있다고 가정(프론트에서 닉네임 중복검사 후 막기)
         validateUtil.memberConflictCheckById(memberCreateReq.getId());
 
-        return toMemberRes(true, memberRepository.save(toEntity(memberCreateReq)));
+        return toMemberRes(memberRepository.save(toEntity(memberCreateReq)));
     }
 
     @Override
     public MemberRes checkMemberNickname(String nickname){
 
-        return toMemberRes(validateUtil.memberExistByNickname(nickname), new Member());
+        return validateUtil.memberExistByNickname(nickname) ? toMemberNullRes(false) : toMemberNullRes(true);
     }
 
     @Transactional
@@ -51,34 +51,37 @@ public class MemberServiceImpl implements MemberService{
 
         member.updateUrl(memberUpdatePhotoReq.getUrl());
 
-        return toMemberRes(true, member);
+        return toMemberRes(member);
     }
 
     @Transactional
     @Override
     public MemberRes updateMemberNickname(MemberUpdateNicknameReq memberUpdateNicknameReq) {
         Member member = validateUtil.memberValidateById(memberUpdateNicknameReq.getId());
+        MemberRes memberRes;
 
-        boolean isExist = false;
         if(!validateUtil.memberExistByNickname(memberUpdateNicknameReq.getNickname())) {
             member.updateNickname(memberUpdateNicknameReq.getNickname());
-            isExist = true;
+            memberRes = toMemberRes(member);
+        }
+        else {
+            memberRes = toMemberNullRes(false);
         }
 
-        return toMemberRes(isExist, member);
+        return memberRes;
 
     }
 
     @Override
     public MemberRes selectOneMember(String memberId) {
 
-        return toMemberRes(true, validateUtil.memberValidateById(memberId));
+        return toMemberRes(validateUtil.memberValidateById(memberId));
     }
 
     @Override
     public MemberRes login(LoginReq loginReq) {
 
-        return toMemberRes(true, validateUtil.memberValidateById(loginReq.getId()));
+        return toMemberRes(validateUtil.memberValidateById(loginReq.getId()));
     }
 
     @Override
@@ -86,7 +89,7 @@ public class MemberServiceImpl implements MemberService{
         ArrayList<MemberRes> nicknames=new ArrayList<>();
         List<Member> members=memberRepository.findMembersByNicknameContaining(keyword);
         for(Member member:members){
-            nicknames.add(toMemberRes(true, member));
+            nicknames.add(toMemberRes(member));
         }
 
         //        memberListRes.setMemberList(nicknames);
@@ -140,9 +143,9 @@ public class MemberServiceImpl implements MemberService{
                 .build();
     }
 
-    MemberRes toMemberRes(boolean isExist, Member member){
+    MemberRes toMemberRes(Member member){
         return MemberRes.builder()
-                .isExist(isExist)
+                .validate(true)
                 .url(member.getUrl())
                 .id(member.getId())
                 .nickname(member.getNickname())
@@ -150,6 +153,19 @@ public class MemberServiceImpl implements MemberService{
                 .loseCount(member.getLoseCount())
                 .point(member.getPoint())
                 .elo(member.getElo())
+                .build();
+    }
+
+    MemberRes toMemberNullRes(boolean validate){
+        return MemberRes.builder()
+                .validate(validate)
+                .url(null)
+                .id(null)
+                .nickname(null)
+                .winCount(null)
+                .loseCount(null)
+                .point(null)
+                .elo(null)
                 .build();
     }
 

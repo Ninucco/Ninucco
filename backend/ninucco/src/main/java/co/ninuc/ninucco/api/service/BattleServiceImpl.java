@@ -52,7 +52,7 @@ public class BattleServiceImpl implements BattleService{
     @Transactional
     @Override
     public BettingRes insertBetting(BettingCreateReq bettingCreateReq){
-        return toBettingRes(true, bettingRepository.save(toEntity(bettingCreateReq)));
+        return toBettingRes(bettingRepository.save(toEntity(bettingCreateReq)));
     }
 
     @Override
@@ -63,17 +63,17 @@ public class BattleServiceImpl implements BattleService{
         Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(memberId, battleId);
         BettingRes bettingRes;
 
-        /* 본인이 해당 배틀에 베팅했었다면 isExist를 true로 설정하고
+        /* 본인이 해당 배틀에 베팅했었다면 validate를 true로 설정하고
            베팅 정보를 Response에 전달한다.
-           베팅을 하지 않았다면 isExist를 false로 설정하고,
+           베팅을 하지 않았다면 validate를 false로 설정하고,
            Response로 isExist만을 전달한다.
         */
         if(optionalBetting.isPresent()) {
             Betting betting = optionalBetting.get();
-            bettingRes = toBettingRes(true, betting) ;
+            bettingRes = toBettingRes(betting) ;
         }
         else {
-            bettingRes = toBettingRes(false, new Betting());
+            bettingRes = toBettingNullRes(false);
         }
 
         return bettingRes;
@@ -127,11 +127,19 @@ public class BattleServiceImpl implements BattleService{
                 .finishTime(battle.getFinishAt()).build();
     }
 
-    BettingRes toBettingRes(boolean isExist, Betting betting) {
+    BettingRes toBettingRes(Betting betting) {
         return BettingRes.builder()
-                .isExist(isExist)
+                .validate(true)
                 .betSide(betting.getBetSide())
                 .betMoney(betting.getBetMoney())
+                .build();
+    }
+
+    BettingRes toBettingNullRes(boolean validate) {
+        return BettingRes.builder()
+                .validate(validate)
+                .betSide(null)
+                .betMoney(null)
                 .build();
     }
 }

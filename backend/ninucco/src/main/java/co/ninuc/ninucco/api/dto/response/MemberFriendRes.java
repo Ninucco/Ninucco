@@ -11,9 +11,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class MemberFriendRes implements Res {
-    Boolean isExist;
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    Boolean validate;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String memberNickname;
-    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String friendNickname;
 }
