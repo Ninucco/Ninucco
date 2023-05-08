@@ -44,55 +44,37 @@ public class FaceServiceImpl {
         return keywordRepository.findAll();
     }
 
-    public SimilarityResultRes generateAnimal(MultipartFile inputImg){
-        //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
-//        String picBase64 = similarityReq.getPicBase64();
-//        byte[] picByteArray = Base64.decodeBase64(picBase64);
-//
-//        //파일이 사진인지 검사한다
-//        String[] picBase64Tokens = picBase64.split(",");
-//        String extension;
-//        switch(picBase64Tokens[0]){
-//            case "data:image/jpg;base64":
-//                extension = "jpg";
-//                break;
-//            case "data:image/jpeg;base64":
-//                extension = "jpeg";
-//                break;
-//            case "data:image/png;base64":
-//                extension = "png";
-//                break;
-//            default:
-//                //사진이 jpg, jpeg, png가 아님! 다시
-//                throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FILE_NOT_PICTURE);
-//        }
-//        String fileName = LocalDateTime.now().toString()+extension;
+    public SimilarityResultRes generate(String modelType, MultipartFile inputImg){
+        //1. 입력으로부터 유저 아이디를 받는다
+
+        //파일이 png인지 검사한다
+
+        //파일 bypeArray로 변환
         byte[] inputImgByteArray;
         try{
             inputImgByteArray = inputImg.getBytes();
         }catch(IOException e){
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
-        //2. 무슨 수를 써서 어딘가로부터 데이터 리스트를 받는다(keyword-value)
-        //List<SimilarityResult> animalSimilarityResultList = new ArrayList<>();
-        List<SimilarityResult> animalSimilarityResultList = similarityModelService.getList("animal", inputImgByteArray);
-        log.info("1");
+        //2. 데이터 리스트를 받는다(keyword-value)
+        List<SimilarityResult> animalSimilarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
         List<SimilarityResult> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
 
-        //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다(리스트 길이가 0이 아님이 보장되어야함)
+        //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
         String animalKeyword = animalSimilarityResultList.get(0).getKeyword();
         String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
 
+        //프롬프트 생성
+        String basePrompt = "sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render";
         String prompt=new StringBuilder().append("Cute small ")
                 .append(animalKeyword)
                 .append(personalityKeyword)
                 //기본 프롬프트
-                .append("sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render")
+                .append(basePrompt)
                 .toString();
-        //4. 무슨 수를 써서 이미지를 얻어온다.
 
+        //4. 이미지 생성
         byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
-        log.info("2");
         //S3에 저장
         //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
