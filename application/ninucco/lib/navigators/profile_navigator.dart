@@ -1,29 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:ninucco/screens/screen_a.dart';
-import 'package:ninucco/screens/screen_b.dart';
+import 'package:ninucco/screens/home/category.dart';
+import 'package:ninucco/screens/home/face_scan.dart';
+import 'package:ninucco/screens/home/home.dart';
+import 'package:ninucco/screens/home/scan_result.dart';
+import 'package:ninucco/screens/home/search.dart';
+import 'package:ninucco/screens/login/login_screen.dart';
+import 'package:ninucco/screens/profile/profile.dart';
 
 class ProfileNavigator extends StatelessWidget {
   const ProfileNavigator({super.key, required this.tabIndex});
   final int tabIndex;
-  Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
-    return {
-      "/": (context) => ScreenA(
-            tabIndex: tabIndex, //이거 말고는 변한게 없음!
-          ),
-      "/ScreenB": (context) => ScreenB(
-            tabIndex: tabIndex, //이거 말고는 변한게 없음!
-          ),
-    };
-  }
 
   @override
   Widget build(BuildContext context) {
-    final routeBuilder = _routeBuilder(context);
     return Navigator(
-      initialRoute: '/',
+      initialRoute: '/Profile',
       onGenerateRoute: ((settings) {
         return MaterialPageRoute(
-          builder: (context) => routeBuilder[settings.name!]!(context),
+          builder: (context) {
+            switch (settings.name) {
+              case "/":
+                return const HomeScreen();
+              case "/FaceScan":
+                return FaceScan(settings: settings);
+              case "/ScanResult":
+                return ScanResult(settings: settings);
+              case "/Search":
+                return SearchScreen(settings: settings);
+              case "/Login":
+                return LoginScreen(settings: settings);
+              case "/Category":
+                return const CategoryScreen();
+              case "/Profile":
+                return ProfileScreen(settings: settings);
+              default:
+                return const Placeholder();
+            }
+          },
         );
       }),
     );
