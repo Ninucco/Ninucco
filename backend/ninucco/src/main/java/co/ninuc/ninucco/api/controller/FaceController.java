@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
+import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.request.SimilarityReq;
@@ -19,20 +20,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/face")
 @RequiredArgsConstructor
-@Slf4j
 public class FaceController {
     private final FaceServiceImpl faceService;
     private final boolean SUCCESS = true;
     @ApiOperation(value = "나와 닮은 것 찾기", notes="나와 닮은 것 찾기를 합니다.")
     @PostMapping(value = "", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> generateAnimal(@RequestPart String modelType, @RequestPart MultipartFile img) {
+    public ResponseEntity<ApiResult<Res>> generateAnimal(@RequestPart String modelType, @RequestPart MultipartFile img) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, faceService.generate(modelType, img))
         );
     }
-    @ApiOperation(value = "얼굴인식 결과 조회", notes="배틀 리스트를 조회합니다.")
+    @ApiOperation(value = "더미 API", notes="더미 API")
     @PostMapping("/dummy")
-    public ResponseEntity<?> dummyResult(@RequestBody SimilarityReq similarityReq) {
+    public ResponseEntity<?> dummyResult() {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, SimilarityResultRes.builder()
                         .imgUrl("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png")
@@ -50,20 +50,4 @@ public class FaceController {
                         }))).build())
         );
     }
-    //얼굴인식 키워드 넣기용
-    @ApiOperation(value = "데이터용: 키워드 넣기", notes="카테고리: 0:PERSONALITY, 1:JOB, 2:ANIMAL")
-    @PostMapping("/keyword")
-    public ResponseEntity<?> saveKeyword(KeywordCreateReq keyword) {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.saveKeyword(keyword)
-                ));
-    }
-    @ApiOperation(value = "키워드 리스트 확인하기", notes="키워드 리스트 확인하기")
-    @GetMapping("/keyword/list")
-    public ResponseEntity<?> findAllKeywords() {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.findAllKeywords()
-                ));
-    }
-
 }
