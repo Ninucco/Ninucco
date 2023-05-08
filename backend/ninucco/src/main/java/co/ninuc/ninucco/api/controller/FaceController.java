@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
+import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.request.SimilarityReq;
@@ -8,6 +9,7 @@ import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.api.service.FaceServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +23,16 @@ import java.util.List;
 public class FaceController {
     private final FaceServiceImpl faceService;
     private final boolean SUCCESS = true;
-
-    @ApiOperation(value = "얼굴인식 결과 조회", notes="배틀 리스트를 조회합니다.")
+    @ApiOperation(value = "나와 닮은 것 찾기", notes="나와 닮은 것 찾기를 합니다.")
+    @PostMapping(value = "", consumes = {"multipart/form-data"})
+    public ResponseEntity<ApiResult<Res>> generateAnimal(@RequestPart String modelType, @RequestPart MultipartFile img) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, faceService.generate(modelType, img))
+        );
+    }
+    @ApiOperation(value = "더미 API", notes="더미 API")
     @PostMapping("/dummy")
-    public ResponseEntity<?> dummyResult(@RequestBody SimilarityReq similarityReq) {
+    public ResponseEntity<?> dummyResult() {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, SimilarityResultRes.builder()
                         .imgUrl("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/1.png")
@@ -40,29 +48,6 @@ public class FaceController {
                                 SimilarityResult.builder().keyword("고양이상").value(0.6).build(),
                                 SimilarityResult.builder().keyword("강아지상").value(0.2).build()
                         }))).build())
-        );
-    }
-    //얼굴인식 키워드 넣기용
-    @ApiOperation(value = "데이터용: 키워드 넣기", notes="카테고리: 0:PERSONALITY, 1:JOB, 2:ANIMAL")
-    @PostMapping("/keyword")
-    public ResponseEntity<?> saveKeyword(KeywordCreateReq keyword) {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.saveKeyword(keyword)
-                ));
-    }
-    @ApiOperation(value = "키워드 리스트 확인하기", notes="키워드 리스트 확인하기")
-    @GetMapping("/keyword/list")
-    public ResponseEntity<?> findAllKeywords() {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.findAllKeywords()
-                ));
-    }
-    //나와 닮은 동물 찾기(PERSONALITY + ANIMAL)
-    @ApiOperation(value = "나와 닮은 동물 찾기", notes="나와 닮은 동물 찾기를 합니다. 다 되면 FCM을 보냅니다.")
-    @PostMapping("/animal")
-    public ResponseEntity<?> generateAnimal(@RequestBody MultipartFile inputImg) {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.generateAnimal(inputImg))
         );
     }
 }
