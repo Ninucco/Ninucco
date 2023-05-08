@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
+import 'package:image/image.dart' as IMG;
+import 'package:http_parser/http_parser.dart';
 
 class SubmitButton extends StatelessWidget {
   final bool loading;
@@ -23,11 +25,20 @@ class SubmitButton extends StatelessWidget {
     var url = Uri.parse('https://k8a605.p.ssafy.io/api/face/animal');
     var request = http.MultipartRequest("POST", url);
     request.fields['user'] = 'someone@somewhere.com';
-    request.files.add(await http.MultipartFile.fromPath(
+
+    IMG.Image? img = IMG.decodeImage(image.readAsBytesSync());
+    IMG.Image resizedImg = IMG.copyResize(img!, width: 512, height: 512);
+
+   
+
+    var multipartFile = http.MultipartFile.fromBytes(
       'inputImg',
-      image.path,
-      // contentType: MediaType('application', 'x-tar'),
-    ));
+      IMG.encodePng(resizedImg),
+      filename: 'resized_image.png',
+      contentType: MediaType.parse('image/png'),
+    );
+
+    request.files.add(multipartFile);
 
     var response = await request.send();
     final respStr = await response.stream.bytesToString();
