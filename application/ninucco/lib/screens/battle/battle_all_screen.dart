@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/screens/battle/battle_create_screen.dart';
 import 'package:ninucco/services/user_rank_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_item_widget.dart';
 import 'package:ninucco/models/user_rank_info_model.dart';
 
 class BattleAllScreen extends StatelessWidget {
   BattleAllScreen({super.key});
-
-  // final Future<List<UserRankInfoModel>> userRanks =
-  //     UserRankApiService.getUserRanks();
 
   final Future<List<UserRankInfoModel>> userRanks =
       UserRankApiService.getUserRanks();
@@ -17,11 +15,6 @@ class BattleAllScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back_ios_new_outlined,
-        //       color: Colors.black),
-        //   onPressed: () => Navigator.of(context).pop(),
-        // ),
         elevation: 0,
         backgroundColor: Colors.white,
         centerTitle: true,
@@ -46,6 +39,19 @@ class BattleAllScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const BattleCreateScreen()),
+          );
+        },
+        backgroundColor: Colors.blue.shade600,
+        child: const Icon(
+          Icons.add,
+          size: 40,
+        ),
       ),
     );
   }
