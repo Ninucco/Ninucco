@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:ninucco/models/battle_comment_info_model.dart';
+import 'package:ninucco/models/battle_comment_post_model.dart';
 
 class BattleApiCommentService {
   static const String baseUrl = "https://k8a605.p.ssafy.io/api/battle";
@@ -22,5 +23,27 @@ class BattleApiCommentService {
       }
       yield battleInstances;
     }
+  }
+
+  static Future<BattleCommentInfoModel> postBattleComments(
+      BattleCommentPostModel battleCommentPost) async {
+    final url = Uri.parse('$baseUrl/comment');
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        "battleId": battleCommentPost.id,
+        "content": battleCommentPost.content,
+      }),
+    );
+    if (response.statusCode == 200) {
+      BattleCommentInfoModel comment = BattleCommentInfoModel.fromJson(
+        jsonDecode(response.body)["data"],
+      );
+      return comment;
+    }
+    throw Error();
   }
 }
