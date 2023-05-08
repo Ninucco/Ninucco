@@ -25,6 +25,7 @@ class _CameraButtonState extends State<CameraButton> {
     CroppedFile? croppedImage = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      compressFormat: ImageCompressFormat.png,
     );
     if (croppedImage == null) return null;
     return File(croppedImage.path);
