@@ -58,7 +58,7 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
                 .addFormDataPart("steps", "30")
                 .setType(MultipartBody.FORM)
             .build();
-        log.info(requestBody.contentType().toString()); //multipart/form-data; boundary=cdab4dcc-cba4-4ab7-a91b-9b1d35f42530
+        log.info(requestBody.contentType().toString());
 
         Optional<JSONObject> res = postRequestSendRequestbodyGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/image-to-image",
                 promptToImgHeaders,requestBody

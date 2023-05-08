@@ -5,7 +5,7 @@ import co.ninuc.ninucco.api.dto.SimilarityResult;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
-import co.ninuc.ninucco.common.util.LambdaService;
+import co.ninuc.ninucco.common.util.SimilarityModelService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
 import co.ninuc.ninucco.db.entity.Keyword;
 import co.ninuc.ninucco.db.repository.KeywordRepository;
@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class FaceServiceImpl {
-    private final LambdaService lambdaService;
+    private final SimilarityModelService similarityModelService;
     private final StabilityAIService stabilityAIService;
     private final KeywordRepository keywordRepository;
     private final AmazonS3Client amazonS3Client;
@@ -68,15 +67,21 @@ public class FaceServiceImpl {
 //                throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FILE_NOT_PICTURE);
 //        }
 //        String fileName = LocalDateTime.now().toString()+extension;
-
+        byte[] inputImgByteArray;
+        try{
+            inputImgByteArray = inputImg.getBytes();
+        }catch(IOException e){
+            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        }
         //2. 무슨 수를 써서 어딘가로부터 데이터 리스트를 받는다(keyword-value)
         //List<SimilarityResult> animalSimilarityResultList = new ArrayList<>();
-        List<SimilarityResult> animalSimilarityResultList = lambdaService.getList();
-        List<SimilarityResult> personalisySimilarityResultList = new ArrayList<>();
+        List<SimilarityResult> animalSimilarityResultList = similarityModelService.getList("animal", inputImgByteArray);
+        log.info("1");
+        List<SimilarityResult> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
 
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다(리스트 길이가 0이 아님이 보장되어야함)
         String animalKeyword = animalSimilarityResultList.get(0).getKeyword();
-        String personalityKeyword = "encouraged";//"깐깐한";//personalisySimilarityResultList.get(0).getKeyword();
+        String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
 
         String prompt=new StringBuilder().append("Cute small ")
                 .append(animalKeyword)
@@ -85,13 +90,9 @@ public class FaceServiceImpl {
                 .append("sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render")
                 .toString();
         //4. 무슨 수를 써서 이미지를 얻어온다.
-        byte[] inputImgByteArray;
-        try{
-            inputImgByteArray = inputImg.getBytes();
-        }catch(IOException e){
-            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
-        }
+
         byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
+        log.info("2");
         //S3에 저장
         //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
