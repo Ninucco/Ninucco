@@ -49,7 +49,6 @@ class BattleItem extends StatelessWidget {
         );
       },
       child: Column(
-        // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             margin: const EdgeInsets.all(10),
@@ -72,6 +71,8 @@ class BattleItem extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
+                                  width: 150,
+                                  height: 150,
                                   margin: const EdgeInsets.all(10),
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
@@ -93,6 +94,8 @@ class BattleItem extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
+                                  width: 150,
+                                  height: 150,
                                   margin: const EdgeInsets.all(10),
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(

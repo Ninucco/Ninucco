@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_comment_info_model.dart';
+import 'package:ninucco/models/battle_comment_post_model.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/services/battle_comment_api_service.dart';
@@ -41,14 +42,12 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   late Future<BattleInfoModel> battle;
   late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();
-  final StreamController _streamController = StreamController();
 
   @override
   void initState() {
     super.initState();
     battle = BattleApiService.getBattlesById(widget.battleId);
     battleComments = BattleApiCommentService.getBattleComments(widget.battleId);
-    _streamController.add(battleComments);
   }
 
   @override
@@ -58,6 +57,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
         titleText: "이 배틀의 상황은?",
       ),
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: GestureDetector(
           onTap: () {
             widget.textFocus.unfocus();
@@ -126,6 +126,22 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                             Flexible(
                               flex: 4,
                               child: TextFormField(
+                                onFieldSubmitted: (value) => {
+                                  _textEditingController.notifyListeners(),
+                                  BattleApiCommentService.postBattleComments(
+                                      BattleCommentPostModel(
+                                          _textEditingController.value.text,
+                                          widget.battleId)),
+                                  _textEditingController.clear(),
+                                  setState(
+                                    () {
+                                      battleComments = BattleApiCommentService
+                                          .getBattleComments(widget.battleId);
+                                    },
+                                  ),
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode()),
+                                },
                                 focusNode: widget.textFocus,
                                 controller: _textEditingController,
                                 decoration: const InputDecoration(
@@ -158,13 +174,25 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                     onPressed: () {
                                       setState(
                                         () {
-                                          battleComments =
-                                              BattleApiCommentService
-                                                  .getBattleComments(
-                                                      widget.battleId);
                                           _textEditingController
                                               .notifyListeners();
-                                          _streamController.add(battleComments);
+                                          BattleApiCommentService
+                                              .postBattleComments(
+                                                  BattleCommentPostModel(
+                                                      _textEditingController
+                                                          .value.text,
+                                                      widget.battleId));
+                                          _textEditingController.clear();
+                                          setState(
+                                            () {
+                                              battleComments =
+                                                  BattleApiCommentService
+                                                      .getBattleComments(
+                                                          widget.battleId);
+                                            },
+                                          );
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
                                         },
                                       );
                                     },
@@ -177,15 +205,6 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        (_textEditingController.value.text.isEmpty)
-                            ? const SizedBox(height: 0)
-                            : BattleCommentItem(
-                                id: 1,
-                                profileImage:
-                                    "https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=0.752xw:1.00xh;0.175xw,0&resize=1200:*",
-                                nickname: "언제봐도 사랑스러운 코코짱",
-                                content: _textEditingController.value.text,
-                              ),
                         StreamBuilder(
                           stream: battleComments,
                           builder: (context, snapshot) {

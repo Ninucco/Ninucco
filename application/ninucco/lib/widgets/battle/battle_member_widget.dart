@@ -22,6 +22,8 @@ class BattleMemberWidget extends StatelessWidget {
         Flexible(
           flex: 3,
           child: Container(
+            width: 200,
+            height: 200,
             margin: const EdgeInsets.only(
               right: 10,
             ),
