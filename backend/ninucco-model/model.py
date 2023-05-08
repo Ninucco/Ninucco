@@ -13,11 +13,6 @@ AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
 BUCKET_NAME = os.environ.get('BUCKET_NAME')
 
-DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-
-model_names = ["animal", "fruit", "highschool", "job"]
-
-
 def get_s3fs():
     return s3fs.S3FileSystem(key=AWS_ACCESS_KEY, secret=AWS_SECRET_KEY)
 
@@ -60,17 +55,3 @@ def predict(img_dir, _model, _class):
     result_list = sorted(result_list, key=itemgetter('value'), reverse=True)
     
     return result_list
-
-
-def main():
-    models = {}
-    classes = {}
-
-    models, classes = get_models_and_classes()
-    result_list = predict(
-        '10241024.png', models['animal'], classes['animal'])
-    print(result_list)
-
-
-if __name__ == '__main__':
-    main()
