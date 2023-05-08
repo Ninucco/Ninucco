@@ -6,10 +6,16 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class InterServiceCommunicationProvider {
-    private final OkHttpClient client = new OkHttpClient();
+    private OkHttpClient client;
+    public InterServiceCommunicationProvider(){
+        client = new OkHttpClient.Builder()
+                .connectTimeout(Integer.MAX_VALUE, TimeUnit.MILLISECONDS)
+                .build();
+    }
     public Optional<String> getRequestToUrlGetString(String url){
         Request request = new Request.Builder()
                 .url(url)
