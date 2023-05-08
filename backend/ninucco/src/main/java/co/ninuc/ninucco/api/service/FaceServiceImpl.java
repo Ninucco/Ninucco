@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,11 +58,11 @@ public class FaceServiceImpl {
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
         //2. 데이터 리스트를 받는다(keyword-value)
-        List<SimilarityResult> animalSimilarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
+        List<SimilarityResult> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
         List<SimilarityResult> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
 
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
-        String animalKeyword = animalSimilarityResultList.get(0).getKeyword();
+        String animalKeyword = similarityResultList.get(0).getKeyword();
         String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
 
         //프롬프트 생성
@@ -105,10 +106,11 @@ public class FaceServiceImpl {
         //6. 유저 아이디로 FCM을 보낸다.
 
         //6. HTTPResponse로 보낸다.
+        List<SimilarityResult> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
         return SimilarityResultRes.builder()
                 .imgUrl(imgUrl)
                 .resultTitle(resultTitle)
                 .resultDescription(resultDescription)
-                .resultPercentages(animalSimilarityResultList).build();
+                .resultPercentages(listTop5).build();
     }
 }
