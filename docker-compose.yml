@@ -19,6 +19,8 @@ services:
     container_name: ninucco_back
     ports:
       - "8080:8080"
+    depends_on:
+      - model
     restart: always
   
   model:
