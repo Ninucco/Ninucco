@@ -53,13 +53,12 @@ def predict(img_dir, _model, _class):
         img_dir, target_size=(224, 224))
     input_arr = tensorflow.keras.utils.img_to_array(image)
     input_arr = np.array([input_arr])
-
     result = _model.predict(input_arr)[0]
-
     result_list = []
     for i in range(0, len(result)):
-        result_list.append({'key': _class[i], 'value': result[i]})
+        result_list.append({'key': _class[i], 'value': result[i].item()})
     result_list = sorted(result_list, key=itemgetter('value'), reverse=True)
+    
     return result_list
 
 
