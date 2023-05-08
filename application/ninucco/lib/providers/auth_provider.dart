@@ -1,14 +1,23 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ninucco/models/member_model.dart';
 
 class AuthProvider with ChangeNotifier {
   User? _user;
   User? get user => _user;
+  MemberModel? _member;
+  MemberModel? get member => _member;
 
-  void setUser(User? user) {
+  void setUser(User? user) async {
     notifyListeners();
     _user = user;
+  }
+
+  void setMember(MemberModel? member) {
+    notifyListeners();
+    _member = member;
   }
 
   Future<UserCredential> signInWithGoogle() async {
