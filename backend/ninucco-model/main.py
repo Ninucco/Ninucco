@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, Form, File
 import model
 import tempfile
 from PIL import Image
@@ -8,24 +8,23 @@ app = FastAPI()
 models, classes = model.get_models_and_classes()
 
 
-@app.post("/predict/{model_name}")
-async def predict(uploadfile: UploadFile, model_name: str):
-    print(model_name)
-    if model_name in model.model_names and uploadfile.filename.lower().endswith('png'):    
+@app.post("/predict")
+async def predict(modelName: str = Form(...), img: UploadFile = File(...)):
+    if modelName in model.model_names and img.filename.lower().endswith('png'):    
         with tempfile.TemporaryDirectory('r+') as tmpdir:
-            path = get_image(uploadfile, tmpdir)
+            path = get_image(img, tmpdir)
             print(path)
-            resultList = model.predict(path, models[model_name], classes[model_name])
+            resultList = model.predict(path, models[modelName], classes[modelName])
             return {"result_list": resultList}
     else:
         return {"message": "E401"}
         
-def get_image(uploadfile: UploadFile, dir:str):
-    if uploadfile.filename.lower().endswith('png'):
+def get_image(img: UploadFile, dir:str):
+    if img.filename.lower().endswith('png'):
         file_name = random_img_filename('png')
         path = f'{dir}\{file_name}'
         with open(path, 'wb') as file_object:
-            image = Image.open(uploadfile.file)
+            image = Image.open(img.file)
             image.save(file_object)
     return path
 
