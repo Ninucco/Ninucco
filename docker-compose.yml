@@ -20,6 +20,13 @@ services:
     ports:
       - "8080:8080"
     restart: always
+  
+  model:
+    image: ninucco_model:latest
+    container_name: ninucco_model
+    ports:
+      - "8000:8000"
+    restart: always
 
 volumes:
   nginx-certs:
