@@ -17,10 +17,12 @@ import java.util.Optional;
 
 @Component
 @Slf4j
-public class StabilityAIService extends InterServiceCommunicationProvider{
+public class StabilityAIService{
+    private final InterServiceCommunicationProvider isp;
     private final Headers promptToImgHeaders;
     private final Headers imgToImgHeaders;
     public StabilityAIService(@Value("${ai.stability.key}") String stabilityAIKey) {
+        this.isp = new InterServiceCommunicationProvider();
         this.promptToImgHeaders = Headers.of(
                 "Content-Type","application/json",
                 "Accept","application/json",
@@ -34,7 +36,7 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
     }
 
     private JSONObject getJsonObjectPromptToImg(String prompt){
-        Optional<JSONObject> res = postRequestSendJsonGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/text-to-image",
+        Optional<JSONObject> res = isp.postRequestSendJsonGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-xl-beta-v2-2-2/image-to-image",
                 promptToImgHeaders,
                 new PromptToImgReq(prompt));
         if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);
@@ -60,7 +62,7 @@ public class StabilityAIService extends InterServiceCommunicationProvider{
             .build();
         log.info(requestBody.contentType().toString());
 
-        Optional<JSONObject> res = postRequestSendRequestbodyGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/image-to-image",
+        Optional<JSONObject> res = isp.postRequestSendRequestbodyGetJsonObject("https://api.stability.ai/v1/generation/stable-diffusion-v1-5/image-to-image",
                 promptToImgHeaders,requestBody
                 );
         if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);

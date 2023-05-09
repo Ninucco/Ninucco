@@ -60,7 +60,7 @@ public class FaceServiceImpl {
         //2. 데이터 리스트를 받는다(keyword-value)
         List<SimilarityResult> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
         List<SimilarityResult> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
-
+        log.info("1. 데이터 리스트 받기 완료");
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
         String animalKeyword = similarityResultList.get(0).getKeyword();
         String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
@@ -76,6 +76,7 @@ public class FaceServiceImpl {
 
         //4. 이미지 생성
         byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
+        log.info("2. 이미지 생성 완료");
         //S3에 저장
         //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
@@ -88,6 +89,7 @@ public class FaceServiceImpl {
                 byteArrayInputStream,
                 objectMetadata
         );
+        log.info("3. s3에 이미지 저장 완료");
         String imgUrl =amazonS3Client.getResourceUrl(bucket, fileName);
         // 5. 무슨 수를 써서 resultTitle, resultDescription을 얻는다.
         /*
