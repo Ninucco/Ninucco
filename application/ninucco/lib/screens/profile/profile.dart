@@ -1,184 +1,172 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/services/user_service.dart';
 
-// import 'package:flutter/material.dart';
+class ProfileScreen extends StatefulWidget {
+  final RouteSettings settings;
+  const ProfileScreen({super.key, required this.settings});
 
-// class ProfileScreen extends StatefulWidget {
-//   final RouteSettings settings;
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
 
-//   const ProfileScreen({super.key, required this.settings});
+/// Todo
+/// [] settings에서 받아온 유저 데이터로 연결하기
+/// [] settings에서 받아온 유저와 provider의 유저와 비교해서 본인인지 확인
+/// [] 내가 아닌경우 친구신청
+/// [] 나인 경우 can edit
+///
 
-//   @override
-//   State<ProfileScreen> createState() => _ProfileScreenState();
-// }
+class _ProfileScreenState extends State<ProfileScreen>
+    with TickerProviderStateMixin {
+  final List<String> tabs = <String>['검사결과', '아이템', '배틀이력'];
+  late TabController _tabController = TabController(length: 3, vsync: this);
+  late Future<UserDetailData> _userData;
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _userData = UserService.getUserDetailById();
+  }
 
-// class _ProfileScreenState extends State<ProfileScreen>
-//     with TickerProviderStateMixin {
-//   ScrollController scrollController = ScrollController();
-//   late TabController _tabController;
+  @override
+  Widget build(BuildContext context) {
+    var myTabBar = TabBar(
+      controller: _tabController,
+      indicatorColor: Colors.teal,
+      labelColor: Colors.teal,
+      unselectedLabelColor: Colors.black54,
+      isScrollable: true,
+      tabs: tabs
+          .map(
+            (e) => SizedBox(
+              width: MediaQuery.of(context).size.width / 4,
+              child: Tab(
+                text: e,
+              ),
+            ),
+          )
+          .toList(),
+    );
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _tabController = TabController(length: 3, vsync: this);
-//   }
+    return DefaultTabController(
+      length: tabs.length, // This is the number of tabs.
+      child: SafeArea(
+        child: Scaffold(
+          body: NestedScrollView(
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) => [
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverPersistentHeader(
+                  pinned: true,
+                  delegate: HomeSliverAppBar(
+                    expandedHeight: 450.0,
+                    height: 96,
+                    tabbar: myTabBar,
+                    userData: _userData,
+                  ),
+                ),
+              ),
+            ],
+            body: TabBarView(
+                controller: _tabController,
+                children: tabs
+                    .map((name) => SafeArea(
+                          top: false,
+                          bottom: false,
+                          child: Builder(
+                            builder: (BuildContext context) {
+                              return CustomScrollView(
+                                key: PageStorageKey<String>(tabs[0]),
+                                slivers: [
+                                  SliverOverlapInjector(
+                                      handle: NestedScrollView
+                                          .sliverOverlapAbsorberHandleFor(
+                                              context)),
+                                  GridItems(
+                                    name: name,
+                                    userData: _userData,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ))
+                    .toList()),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-//   @override
-//   void dispose() {
-//     // TODO: implement dispose
-//     super.dispose();
-//     _tabController.dispose();
-//     scrollController.dispose();
-//   }
+class GridItems extends StatelessWidget {
+  final String name;
+  final Future<UserDetailData> userData;
+  const GridItems({
+    super.key,
+    required this.name,
+    required this.userData,
+  });
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return SafeArea(
-//       child: Container(
-//         decoration: const BoxDecoration(
-//             image: DecorationImage(
-//           image: AssetImage('assets/images/bg/bg2.png'),
-//           fit: BoxFit.cover,
-//         )),
-//         child: CustomScrollView(
-//           slivers: [
-//             const SliverPersistentHeader(
-//               pinned: true,
-//               delegate: HomeSliverAppBar(expandedHeight: 124.0),
-//             ),
-//             SliverList(
-//               delegate: SliverChildListDelegate(
-//                 [
-//                   const SizedBox(height: 150),
-// Row(
-//   mainAxisAlignment: MainAxisAlignment.center,
-//   children: [
-//     Expanded(
-//       child: Column(
-//         children: [
-//           Image.asset(
-//             'assets/icons/friends.png',
-//             color: Colors.black,
-//             fit: BoxFit.fitWidth,
-//             width: 48,
-//             height: 48,
-//           ),
-//           const SizedBox(height: 6),
-//           const Text(
-//             '4',
-//             style: TextStyle(
-//               fontWeight: FontWeight.bold,
-//               fontSize: 20,
-//             ),
-//           ),
-//           const SizedBox(height: 6),
-//           const Text('친구목록'),
-//         ],
-//       ),
-//     ),
-//     Container(
-//       width: 2,
-//       height: 124,
-//       color: Colors.black.withOpacity(0.2),
-//     ),
-//     Expanded(
-//       child: Column(
-//         children: [
-//           Image.asset(
-//             'assets/icons/battle_bubble.png',
-//             color: Colors.black,
-//             fit: BoxFit.fitWidth,
-//             width: 48,
-//             height: 48,
-//           ),
-//           const Text(
-//             '4',
-//             style: TextStyle(
-//               fontWeight: FontWeight.bold,
-//               fontSize: 20,
-//             ),
-//           ),
-//           const SizedBox(height: 12),
-//           const Text('진행중인 배틀'),
-//         ],
-//       ),
-//     ),
-//   ],
-// ),
-// TabBar(
-//   controller: _tabController,
-//   indicatorColor: Colors.teal,
-//   labelColor: Colors.teal,
-//  unselectedLabelColor: Colors.black54,
-//   isScrollable: true,
-//   tabs: const [
-//     Tab(
-//       text: "One",
-//     ),
-//     Tab(
-//       text: "Two",
-//     ),
-//     Tab(
-//       text: "Three",
-//     ),
-//   ],
-// ),
-//                   SizedBox(
-//                     height: MediaQuery.of(context).size.height -
-//                         AppBar().preferredSize.height -
-//                         MediaQuery.of(context).padding.top -
-//                         50 -
-//                         48,
-//                     child: TabBarView(
-//                       controller: _tabController,
-//                       children: <Widget>[
-//                         Container(
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(8.0),
-//                             color: Colors.blueAccent,
-//                           ),
-//                         ),
-//                         Container(
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(8.0),
-//                             color: Colors.orangeAccent,
-//                           ),
-//                           child: ListView.builder(
-//                             physics: const PageScrollPhysics(),
-//                             itemCount: 100,
-//                             itemBuilder: (context, index) {
-//                               return const Text("data");
-//                             },
-//                           ),
-//                         ),
-//                         Container(
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(8.0),
-//                             color: Colors.greenAccent,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(8.0),
+      sliver: FutureBuilder(
+          future: userData,
+          builder: (context, snapshot) {
+            return SliverGrid.count(
+              crossAxisCount: 3,
+              children: snapshot.hasData
+                  ? name == '검사결과'
+                      ? snapshot.data!.scanResultList
+                          .map(
+                            (e) => GestureDetector(
+                              onTap: () {},
+                              child: Image.network(e.imgUrl),
+                            ),
+                          )
+                          .toList()
+                      : name == '아이템'
+                          ? snapshot.data!.itemList
+                              .map(
+                                (e) => GestureDetector(
+                                  onTap: () {},
+                                  child: Image.network(e.imgUrl),
+                                ),
+                              )
+                              .toList()
+                          : snapshot.data!.prevBattleList
+                              .map(
+                                (e) => GestureDetector(
+                                  onTap: () {},
+                                  child: Image.network(e.imgUrl),
+                                ),
+                              )
+                              .toList()
+                  : [const Text("No Data")],
+            );
+          }),
+    );
+  }
+}
 
 class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
+  final Future<UserDetailData> userData;
   final double expandedHeight;
   final double height;
   final TabBar tabbar;
-  final List<String> tabs = <String>['Tab 1', 'Tab 2'];
-  HomeSliverAppBar(
-      {required this.expandedHeight,
-      required this.tabbar,
-      required this.height});
+
+  HomeSliverAppBar({
+    required this.userData,
+    required this.expandedHeight,
+    required this.tabbar,
+    required this.height,
+  });
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -187,6 +175,19 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
       clipBehavior: Clip.none,
       fit: StackFit.expand,
       children: [
+        Container(
+          height: 150,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16),
+            ),
+            image: DecorationImage(
+              image: AssetImage('assets/images/bg/bg2.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
         Positioned(
           width: MediaQuery.of(context).size.width,
           height: expandedHeight / 2.5 -
@@ -212,138 +213,193 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           ),
         ),
         // 스크롤 후 appbar
-        Positioned(
-          top: 16,
-          child: Opacity(
-            opacity: percentage,
-            child: const Row(
-              children: [
-                SizedBox(width: 16),
-                CircleAvatar(
-                  radius: 16,
-                  backgroundImage: NetworkImage(
-                      'https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg'),
-                ),
-                SizedBox(width: 16),
-                Text(
-                  '승송현\'s Profile',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        // scroll이전
-        Positioned(
-          top: 16 - shrinkOffset,
-          right: 0,
-          child: Opacity(
-            opacity: (1 - percentage),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    '승송현님 환영합니다',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      height: 1.6,
+        FutureBuilder(
+            future: userData,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                print("snapshotsnapshotsnapshotsnapshotsnapshot");
+
+                return Positioned(
+                  top: 16,
+                  child: Opacity(
+                    opacity: percentage,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        CircleAvatar(
+                          radius: 16,
+                          backgroundImage:
+                              NetworkImage(snapshot.data!.user.profileImage),
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          '${snapshot.data!.user.nickname}\'s Profile',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  // SizedBox(height: 32.0),
-                  const SizedBox(height: 16.0),
-                  Stack(
+                );
+              }
+              return Positioned(
+                top: 16,
+                child: Opacity(
+                  opacity: percentage,
+                  child: const Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 80,
-                        backgroundImage: NetworkImage(
-                            'https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg'),
+                      SizedBox(width: 16),
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundImage:
+                            AssetImage('assets/images/anonymous.png'),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: -6,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(8),
-                            backgroundColor: Colors.white, // <-- Button color
-                          ),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.black,
-                            size: 16,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 32.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/icons/friends.png',
-                              color: Colors.black,
-                              fit: BoxFit.fitWidth,
-                              width: 48,
-                              height: 48,
-                            ),
-                            const SizedBox(height: 6),
-                            const Text(
-                              '4',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            const Text('친구목록'),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 2,
-                        height: 124,
-                        color: Colors.black.withOpacity(0.2),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/icons/battle_bubble.png',
-                              color: Colors.black,
-                              fit: BoxFit.fitWidth,
-                              width: 48,
-                              height: 48,
-                            ),
-                            const Text(
-                              '4',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            const Text('진행중인 배틀'),
-                          ],
+                      SizedBox(width: 16),
+                      Text(
+                        '--- Profile',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
                         ),
                       ),
                     ],
                   ),
-                ],
+                ),
+              );
+            }),
+        // scroll이전
+        FutureBuilder(
+          future: userData,
+          builder: (context, snapshot) {
+            return Positioned(
+              top: 16 - shrinkOffset,
+              right: 0,
+              child: Opacity(
+                opacity: (1 - percentage),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${snapshot.hasData ? snapshot.data!.user.nickname : "---"} 환영합니다',
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          height: 1.6,
+                        ),
+                      ),
+                      // SizedBox(height: 32.0),
+                      const SizedBox(height: 16.0),
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 80,
+                            backgroundImage: NetworkImage(snapshot.hasData
+                                ? snapshot.data!.user.profileImage
+                                : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg"),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: -6,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(8),
+                                backgroundColor:
+                                    Colors.white, // <-- Button color
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                color: Colors.black,
+                                size: 16,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 32.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  'assets/icons/friends.png',
+                                  color: Colors.black,
+                                  fit: BoxFit.fitWidth,
+                                  width: 48,
+                                  height: 48,
+                                ),
+                                const SizedBox(height: 6),
+                                FutureBuilder(
+                                    future: userData,
+                                    builder: (context, snapshot) {
+                                      return Text(
+                                        snapshot.hasData
+                                            ? snapshot.data!.friendList.length
+                                                .toString()
+                                            : '-',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      );
+                                    }),
+                                const SizedBox(height: 6),
+                                const Text('친구목록'),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 2,
+                            height: 124,
+                            color: Colors.black.withOpacity(0.2),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  'assets/icons/battle_bubble.png',
+                                  color: Colors.black,
+                                  fit: BoxFit.fitWidth,
+                                  width: 48,
+                                  height: 48,
+                                ),
+                                FutureBuilder(
+                                    future: userData,
+                                    builder: (context, snapshot) {
+                                      return Text(
+                                        snapshot.hasData
+                                            ? snapshot
+                                                .data!.curBattleList.length
+                                                .toString()
+                                            : '-',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      );
+                                    }),
+                                const SizedBox(height: 12),
+                                const Text('진행중인 배틀'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
         // bottom tabbar
         Positioned(
@@ -351,6 +407,16 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
             child: Center(child: tabbar),
+          ),
+        ),
+        Positioned(
+          top: 8,
+          right: 16,
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_sharp),
+            color: Colors.black,
+            iconSize: 24,
           ),
         ),
       ],
@@ -365,141 +431,4 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
-}
-
-class ProfileScreen extends StatefulWidget {
-  final RouteSettings settings;
-  const ProfileScreen({super.key, required this.settings});
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen>
-    with TickerProviderStateMixin {
-  final List<String> tabs = <String>['Tab 1', 'Tab 2', 'Tab3'];
-
-  late TabController _tabController = TabController(length: 3, vsync: this);
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var myTabBar = TabBar(
-      controller: _tabController,
-      indicatorColor: Colors.teal,
-      labelColor: Colors.teal,
-      unselectedLabelColor: Colors.black54,
-      isScrollable: true,
-      tabs: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 4,
-          child: const Tab(
-            text: "검사결과",
-          ),
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 4,
-          child: const Tab(
-            text: "아이템",
-          ),
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width / 4,
-          child: const Tab(
-            text: "배틀이력",
-          ),
-        ),
-      ],
-    );
-
-    return DefaultTabController(
-      length: tabs.length, // This is the number of tabs.
-      child: SafeArea(
-        child: Scaffold(
-          body: NestedScrollView(
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              // These are the slivers that show up in the "outer" scroll view.
-              return <Widget>[
-                SliverOverlapAbsorber(
-                  handle:
-                      NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                  sliver: SliverPersistentHeader(
-                    pinned: true,
-                    delegate: HomeSliverAppBar(
-                      expandedHeight: 450.0,
-                      height: 96,
-                      tabbar: myTabBar,
-                    ),
-                  ),
-                ),
-              ];
-            },
-            body: TabBarView(
-              controller: _tabController,
-              children: tabs.map((String name) {
-                return SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: Builder(
-                    builder: (BuildContext context) {
-                      return CustomScrollView(
-                        key: PageStorageKey<String>(name),
-                        slivers: <Widget>[
-                          SliverOverlapInjector(
-                            handle:
-                                NestedScrollView.sliverOverlapAbsorberHandleFor(
-                                    context),
-                          ),
-                          SliverPadding(
-                              padding: const EdgeInsets.all(8.0),
-                              sliver: SliverGrid.count(
-                                crossAxisCount: 3,
-                                children: [
-                                  Image.asset(
-                                      'assets/images/dummy/jamminhyeok.png'),
-                                  Image.asset(
-                                      'assets/images/dummy/jamminhyeok.png'),
-                                  Image.asset(
-                                      'assets/images/dummy/jamminhyeok.png'),
-                                  Image.asset(
-                                      'assets/images/dummy/jamminhyeok.png'),
-                                  Image.asset(
-                                      'assets/images/dummy/jamminhyeok.png'),
-                                  Image.asset(
-                                      'assets/images/dummy/jamminhyeok.png'),
-                                  Image.asset(
-                                      'assets/images/dummy/jamminhyeok.png'),
-                                ],
-                              )
-                              // SliverFixedExtentList(
-
-                              // itemExtent: 48.0,
-                              // delegate: SliverChildBuilderDelegate(
-                              //   (BuildContext context, int index) {
-                              //     return ListTile(
-                              //       title: Text('Item $index'),
-                              //     );
-                              //   },
-                              //   childCount: 30,
-                              // ),
-                              // ),
-                              ),
-                        ],
-                      );
-                    },
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
