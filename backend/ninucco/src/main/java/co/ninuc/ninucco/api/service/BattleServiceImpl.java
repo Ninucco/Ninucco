@@ -14,6 +14,7 @@ import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Betting;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.type.BattleResult;
+import co.ninuc.ninucco.db.entity.type.BattleStatus;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,8 @@ public class BattleServiceImpl implements BattleService{
 
     @Override
     public BattleListRes selectAllBattle(String option) {
-        return new BattleListRes(battleRepository.findAll().stream()
+
+        return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(BattleStatus.PROCEEDING).stream()
                 .map(this::toRes).collect(Collectors.toList()));
     }
 
