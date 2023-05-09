@@ -8,7 +8,7 @@ RUN python --version
 RUN pip install --upgrade pip
 RUN pip install tensorflow==2.12.0
 RUN pip install tensorflow-estimator==2.12.0
-RUN pip install tensorflow-intel==2.12.0
+RUN pip install tensorflow-intel==2.11.0
 RUN pip install tensorflow-io-gcs-filesystem==0.31.0
 
 RUN pip install --no-cache-dir --upgrade -r /model/requirements.txt
