@@ -34,8 +34,8 @@ public class WebMVCConfig implements WebMvcConfigurer {
     public WebSecurityCustomizer webSecurityCustomizer() {
 //        return null;
 //        return (web) -> web.ignoring().antMatchers("/**");
-        return (web) -> web.ignoring().antMatchers("/user/nicknameCheck/**", "/user/register/**", "/user/userCheck/**");
-//        return (web) -> web.ignoring().antMatchers("/swagger-ui.html/**", "/user/**");
+        return (web) -> web.ignoring().antMatchers("/member/search/**", "/member/regist/**");
+//        return (web) -> web.ignoring().antMatchers("/api/swagger-ui.html/**", "/api/member/**");
     }
 
     @Bean
