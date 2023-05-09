@@ -52,6 +52,7 @@ public class Battle extends BaseEntity {
     BattleResult result;
     @CreatedDate
     LocalDateTime createdAt;
+    LocalDateTime updatedAt;
     LocalDateTime finishAt;
 
     public void updateResult(BattleResult result){
@@ -66,10 +67,11 @@ public class Battle extends BaseEntity {
         this.opponentOdds = opponentOdds;
         this.status = BattleStatus.PROCEEDING;
         this.result = BattleResult.PROCEEDING;
+        this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1);
     }
     @Builder
-    public Battle(String title, Member applicant, Member opponent, String applicantNickname, String opponentNickname, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime finishAt, Double opponentOdds){
+    public Battle(String title, Member applicant, Member opponent, String applicantNickname, String opponentNickname, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime updatedAt, LocalDateTime finishAt, Double opponentOdds){
         this.title=title;
         this.applicant=applicant;
         this.opponent=opponent;
@@ -79,6 +81,7 @@ public class Battle extends BaseEntity {
         this.opponentUrl=opponentUrl;
         this.applicantOdds=applicantOdds;
         this.opponentOdds=opponentOdds;
+        this.updatedAt=updatedAt;
         this.finishAt=finishAt;
         this.status=BattleStatus.WAITING;
         this.result=BattleResult.WAITING;
