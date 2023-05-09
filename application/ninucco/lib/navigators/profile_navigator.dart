@@ -6,6 +6,7 @@ import 'package:ninucco/screens/home/scan_result.dart';
 import 'package:ninucco/screens/home/search.dart';
 import 'package:ninucco/screens/login/login_screen.dart';
 import 'package:ninucco/screens/profile/profile.dart';
+import 'package:ninucco/screens/profile/profile_scan_result.dart';
 
 class ProfileNavigator extends StatelessWidget {
   const ProfileNavigator({super.key, required this.tabIndex});
@@ -33,6 +34,8 @@ class ProfileNavigator extends StatelessWidget {
                 return const CategoryScreen();
               case "/Profile":
                 return ProfileScreen(settings: settings);
+              case "/ProfileScanList":
+                return ProfileScanResult(settings: settings);
               default:
                 return const Placeholder();
             }
