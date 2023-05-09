@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -49,7 +50,9 @@ public class FaceServiceImpl {
         //1. 입력으로부터 유저 아이디를 받는다
 
         //파일이 png인지 검사한다
-
+        String contentType = inputImg.getContentType();
+        if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
+            throw new CustomException(ErrorRes.BAD_REQUEST);
         //파일 bypeArray로 변환
         byte[] inputImgByteArray;
         try{
