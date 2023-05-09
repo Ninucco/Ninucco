@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -124,10 +125,18 @@ class GridItems extends StatelessWidget {
               children: snapshot.hasData
                   ? name == '검사결과'
                       ? snapshot.data!.scanResultList
+                          .asMap()
+                          .entries
                           .map(
-                            (e) => GestureDetector(
-                              onTap: () {},
-                              child: Image.network(e.imgUrl),
+                            (data) => GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, "/ProfileScanList",
+                                    arguments: ProfileScanResultsArgs(
+                                      selectedId: data.key,
+                                      data: snapshot.data!.scanResultList,
+                                    ));
+                              },
+                              child: Image.network(data.value.imgUrl),
                             ),
                           )
                           .toList()
