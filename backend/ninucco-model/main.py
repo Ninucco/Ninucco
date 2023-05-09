@@ -1,12 +1,27 @@
+from dotenv import load_dotenv
+import os
 from fastapi import FastAPI, UploadFile, Form, File
+from fastapi.middleware.cors import CORSMiddleware
 import model
 import tempfile
 from PIL import Image
 import uuid
 
-app = FastAPI()
-models, classes = model.get_models_and_classes()
+load_dotenv()
 
+MAIN_SERVER_URL = os.environ.get('MAIN_SERVER_URL')
+MAIN_SERVER_PORT = os.environ.get('MAIN_SERVER_PORT')
+
+origins = [
+    f'{MAIN_SERVER_URL}:{MAIN_SERVER_PORT}'
+]
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins
+)
+models, classes = model.get_models_and_classes()
 
 @app.post("/predict")
 async def predict(modelName: str = Form(...), img: UploadFile = File(...)):
