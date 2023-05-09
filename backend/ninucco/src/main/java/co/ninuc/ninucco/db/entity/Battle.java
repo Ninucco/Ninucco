@@ -60,6 +60,8 @@ public class Battle extends BaseEntity {
         this.opponentUrl = opponentUrl;
         this.applicantOdds = applicantOdds;
         this.opponentOdds = opponentOdds;
+        this.status = BattleStatus.PROCEEDING;
+        this.result = BattleResult.PROCEEDING;
         this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1);
     }
     @Builder
@@ -74,7 +76,7 @@ public class Battle extends BaseEntity {
         this.applicantOdds=applicantOdds;
         this.opponentOdds=opponentOdds;
         this.finishAt=finishAt;
-        this.status=BattleStatus.PROCEEDING;
-        this.result=BattleResult.PROCEEDING;
+        this.status=BattleStatus.WAITING;
+        this.result=BattleResult.WAITING;
     }
 }

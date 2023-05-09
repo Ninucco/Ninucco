@@ -122,7 +122,6 @@ public class BattleServiceImpl implements BattleService{
         Member applicant = validateUtil.memberValidateById(battleCreateReq.getApplicantId());
         Member opponent = validateUtil.memberValidateById(battleCreateReq.getOpponentId());
 
-//        double[] odds = calcOddsByElos(applicant.getElo(), opponent.getElo());
         return Battle.builder()
                 .title(battleCreateReq.getTitle())
                 .applicant(applicant)
@@ -130,8 +129,6 @@ public class BattleServiceImpl implements BattleService{
                 .applicantNickname(applicant.getNickname())
                 .opponentNickname(opponent.getNickname())
                 .applicantUrl(battleCreateReq.getApplicantUrl())
-//                .applicantOdds(odds[0])
-//                .opponentOdds(odds[1])
                 .build();
     }
     Betting toEntity(BettingCreateReq bettingCreateReq){
