@@ -39,6 +39,7 @@ public class BattleServiceImpl implements BattleService{
         return toRes(battle);
     }
 
+    @Transactional
     @Override
     public BattleRes updateBattle(BattleUpdateReq battleUpdateReq) {
         Battle battle = validateUtil.battleValidateById(battleUpdateReq.getBattleId());
