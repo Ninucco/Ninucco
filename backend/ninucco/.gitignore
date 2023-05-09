@@ -5,9 +5,11 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-**/src/main/resources/*.properties
-**/src/main/resources/*.yml
-**/src/main/resources/*.yaml
+**/src/main/resources/**/*.properties
+**/src/main/resources/**/*.yml
+**/src/main/resources/**/*.yaml
+
+**/src/main/resources/**/*.json
 
 ### STS ###
 .apt_generated

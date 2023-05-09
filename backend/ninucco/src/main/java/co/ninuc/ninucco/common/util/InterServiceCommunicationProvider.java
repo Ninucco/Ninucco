@@ -1,16 +1,19 @@
 package co.ninuc.ninucco.common.util;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class InterServiceCommunicationProvider {
-    private OkHttpClient client;
+    private final OkHttpClient client;
     public InterServiceCommunicationProvider(){
         client = new OkHttpClient.Builder()
                 .connectTimeout(Integer.MAX_VALUE, TimeUnit.MILLISECONDS)

@@ -1,7 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
-import co.ninuc.ninucco.api.dto.SimilarityResult;
+import co.ninuc.ninucco.api.dto.Similarity;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
@@ -16,10 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,7 +50,9 @@ public class FaceServiceImpl {
         //1. 입력으로부터 유저 아이디를 받는다
 
         //파일이 png인지 검사한다
-
+        String contentType = inputImg.getContentType();
+        if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
+            throw new CustomException(ErrorRes.BAD_REQUEST);
         //파일 bypeArray로 변환
         byte[] inputImgByteArray;
         try{
@@ -57,11 +61,11 @@ public class FaceServiceImpl {
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
         //2. 데이터 리스트를 받는다(keyword-value)
-        List<SimilarityResult> animalSimilarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
-        List<SimilarityResult> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
-
+        List<Similarity> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
+        List<Similarity> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
+        log.info("1. 데이터 리스트 받기 완료");
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
-        String animalKeyword = animalSimilarityResultList.get(0).getKeyword();
+        String animalKeyword = similarityResultList.get(0).getKeyword();
         String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
 
         //프롬프트 생성
@@ -75,6 +79,7 @@ public class FaceServiceImpl {
 
         //4. 이미지 생성
         byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
+        log.info("2. 이미지 생성 완료");
         //S3에 저장
         //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
@@ -87,6 +92,7 @@ public class FaceServiceImpl {
                 byteArrayInputStream,
                 objectMetadata
         );
+        log.info("3. s3에 이미지 저장 완료");
         String imgUrl =amazonS3Client.getResourceUrl(bucket, fileName);
         // 5. 무슨 수를 써서 resultTitle, resultDescription을 얻는다.
         /*
@@ -105,10 +111,11 @@ public class FaceServiceImpl {
         //6. 유저 아이디로 FCM을 보낸다.
 
         //6. HTTPResponse로 보낸다.
+        List<Similarity> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
         return SimilarityResultRes.builder()
                 .imgUrl(imgUrl)
                 .resultTitle(resultTitle)
                 .resultDescription(resultDescription)
-                .resultPercentages(animalSimilarityResultList).build();
+                .resultList(listTop5).build();
     }
 }
