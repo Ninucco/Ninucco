@@ -13,9 +13,10 @@ public class FirebaseConfig {
     @PostConstruct
     public void init(){
         try{
-            FileInputStream serviceAccount = new FileInputStream("src/main/resources/firebaseAdminKey.json");
+            FileInputStream serviceAccount = new FileInputStream("src/main/resources/firebase/adminKey.json");
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setDatabaseUrl("https://?.asia-southeast1.firebasedatabase.app")
                     .build();
             FirebaseApp.initializeApp(options);
         }catch (Exception e){
