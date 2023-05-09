@@ -54,6 +54,7 @@ public class StabilityAIService{
                 .addFormDataPart("text_prompts[0][text]", prompt)
                 .addFormDataPart("init_image_mode", "IMAGE_STRENGTH")
                 .addFormDataPart("image_strength", "0.35")
+                .addFormDataPart("style_preset", "low-poly")
 //                .addFormDataPart("cfg_scale", "7")
                 .addFormDataPart("clip_guidance_preset", "FAST_BLUE")
                 .addFormDataPart("samples", "1")

@@ -1,7 +1,7 @@
 package co.ninuc.ninucco.common.util;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
-import co.ninuc.ninucco.api.dto.SimilarityResult;
+import co.ninuc.ninucco.api.dto.Similarity;
 import co.ninuc.ninucco.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +38,12 @@ public class SimilarityModelService{
         if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_SIMILARITY_MODEL);
         else return res.get();
     }
-    public List<SimilarityResult> getList(String modelType, byte[] imgByteArray){
+    public List<Similarity> getList(String modelType, byte[] imgByteArray){
         JSONArray jsonArray = (JSONArray) this.getJsonObject(modelType, imgByteArray).get("result_list");
-        List<SimilarityResult> resultList = new ArrayList<>();
+        List<Similarity> resultList = new ArrayList<>();
         for(Object o: jsonArray){
             JSONObject jsonObj = (JSONObject) o;
-            resultList.add(SimilarityResult.builder()
+            resultList.add(Similarity.builder()
                     .keyword((String)jsonObj.get("key"))
                     .value(Double.parseDouble(jsonObj.get("value").toString()))
                     .build());

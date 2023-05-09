@@ -1,7 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
-import co.ninuc.ninucco.api.dto.SimilarityResult;
+import co.ninuc.ninucco.api.dto.Similarity;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
@@ -61,8 +61,8 @@ public class FaceServiceImpl {
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
         //2. 데이터 리스트를 받는다(keyword-value)
-        List<SimilarityResult> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
-        List<SimilarityResult> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
+        List<Similarity> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
+        List<Similarity> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
         log.info("1. 데이터 리스트 받기 완료");
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
         String animalKeyword = similarityResultList.get(0).getKeyword();
@@ -111,11 +111,11 @@ public class FaceServiceImpl {
         //6. 유저 아이디로 FCM을 보낸다.
 
         //6. HTTPResponse로 보낸다.
-        List<SimilarityResult> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
+        List<Similarity> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
         return SimilarityResultRes.builder()
                 .imgUrl(imgUrl)
                 .resultTitle(resultTitle)
                 .resultDescription(resultDescription)
-                .resultPercentages(listTop5).build();
+                .resultList(listTop5).build();
     }
 }

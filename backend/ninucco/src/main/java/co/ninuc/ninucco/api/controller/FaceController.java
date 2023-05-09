@@ -2,14 +2,11 @@ package co.ninuc.ninucco.api.controller;
 
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
-import co.ninuc.ninucco.api.dto.SimilarityResult;
-import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
-import co.ninuc.ninucco.api.dto.request.SimilarityReq;
+import co.ninuc.ninucco.api.dto.Similarity;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.api.service.FaceServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,9 +41,9 @@ public class FaceController {
                                 "관찰형의 사람들은 실용적이고 현실적인 성격을 지니고 있습니다. 이들은 현재 발생하고 있거나 발생할 가능성이 매우 높은 일에 집중하는 경향이 있습니다.\n" +
                                 "\n" +
                                 "사고형의 사람들은 객관성과 합리성을 중시하며 논리에 집중하느라 감정을 간과할 때가 많습니다. 이들은 사회적 조화보다는 효율성이 더 중요하다고 생각하는 경향이 있습니다.")
-                        .resultPercentages(new ArrayList<>(List.of(new SimilarityResult[]{
-                                SimilarityResult.builder().keyword("고양이상").value(0.6).build(),
-                                SimilarityResult.builder().keyword("강아지상").value(0.2).build()
+                        .resultList(new ArrayList<>(List.of(new Similarity[]{
+                                Similarity.builder().keyword("고양이상").value(0.6).build(),
+                                Similarity.builder().keyword("강아지상").value(0.2).build()
                         }))).build())
         );
     }
