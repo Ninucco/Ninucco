@@ -63,6 +63,14 @@ public class BattleServiceImpl implements BattleService{
         return toRes(validateUtil.battleValidateById(battleId));
     }
 
+    @Override
+    public BattleRes deleteBattle(Long battleId) {
+        validateUtil.battleValidateById(battleId);
+        battleRepository.deleteById(battleId);
+        return toNullRes();
+    }
+
+
     @Transactional
     @Override
     public BettingRes insertBetting(BettingCreateReq bettingCreateReq){
@@ -87,7 +95,7 @@ public class BattleServiceImpl implements BattleService{
             bettingRes = toBettingRes(betting) ;
         }
         else {
-            bettingRes = toBettingNullRes(false);
+            bettingRes = toBettingNullRes();
         }
 
         return bettingRes;
@@ -105,8 +113,8 @@ public class BattleServiceImpl implements BattleService{
     private void finishBattle(Long battleId){
         Battle battle = validateUtil.battleValidateById(battleId);
         /*배틀 결과 구하기
-        * ...
-        * */
+         * ...
+         * */
         BattleResult result = BattleResult.APPLICANT;
         //배틀 결과에 따라 battleResult, 멤버들 elo업데이트
         updateEloAndResultByResult(battle, result);
@@ -140,16 +148,24 @@ public class BattleServiceImpl implements BattleService{
     }
     BattleRes toRes(Battle battle){
         return BattleRes.builder()
+                .validate(true)
                 .battleId(battle.getId())
                 .applicantName(battle.getApplicantNickname())
                 .opponentName(battle.getOpponentNickname())
                 .title(battle.getTitle())
                 .applicantUrl(battle.getApplicantUrl())
                 .opponentUrl(battle.getOpponentUrl())
-                .currentVotes(bettingRepository.countByBattleId(battle.getId()))
                 .applicantOdds(battle.getApplicantOdds())
                 .opponentOdds(battle.getOpponentOdds())
-                .finishTime(battle.getFinishAt()).build();
+                .finishTime(battle.getFinishAt())
+                .build();
+    }
+    BattleRes toNullRes() {
+        return BattleRes.builder()
+                .validate(true)
+                .applicantOdds(null)
+                .opponentOdds(null)
+                .build();
     }
 
     BettingRes toBettingRes(Betting betting) {
@@ -160,14 +176,14 @@ public class BattleServiceImpl implements BattleService{
                 .build();
     }
 
-    BettingRes toBettingNullRes(boolean validate) {
+    BettingRes toBettingNullRes() {
         return BettingRes.builder()
-                .validate(validate)
+                .validate(false)
                 .betSide(null)
                 .betMoney(null)
                 .build();
     }
-        public void updateEloAndResultByResult(Battle battle, BattleResult winner){
+    public void updateEloAndResultByResult(Battle battle, BattleResult winner){
         if(winner==BattleResult.PROCEEDING)
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         Member mWin, mLose;

@@ -5,6 +5,8 @@ import co.ninuc.ninucco.db.entity.type.BattleStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,10 +24,12 @@ import java.time.ZoneId;
 public class Battle extends BaseEntity {
     @Column(name = "title", nullable = false, length = 20)
     String title;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(referencedColumnName = "id", name="applicant_id")
     Member applicant;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(referencedColumnName = "id", name="opponent_id")
     Member opponent;
 
