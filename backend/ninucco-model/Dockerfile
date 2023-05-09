@@ -4,6 +4,7 @@ WORKDIR /model
 
 COPY . /model
 
+RUN python --version
 RUN pip install --upgrade pip
 RUN pip install tensorflow==2.12.0
 RUN pip install tensorflow-estimator==2.12.0
