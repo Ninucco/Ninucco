@@ -78,7 +78,7 @@ public class MemberController {
 
     @ApiOperation(value = "프로필 조회", notes="유저 아이디로 유저 정보를 불러옵니다.")
     @GetMapping("/{memberId}")
-    public ResponseEntity<ApiResult<Res>> updateMemberNickname(@PathVariable String memberId){
+    public ResponseEntity<ApiResult<Res>> selectUserPrifile(@PathVariable String memberId){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.selectOneMember(memberId))
         );

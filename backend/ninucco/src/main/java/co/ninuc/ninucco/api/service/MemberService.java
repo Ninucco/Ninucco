@@ -14,7 +14,7 @@ public interface MemberService {
 
     MemberRes updateMemberUrl(MemberUpdatePhotoReq memberUpdatePhotoReq);
     MemberRes updateMemberNickname(MemberUpdateNicknameReq memberUpdateNicknameReq);
-    MemberRes selectOneMember(String memberId);
+    MemberAllRes selectOneMember(String memberId);
     List<ItemRes> selectAllItemsByMemberId(String memberId);
     Long insertMemberFriend(String friendId);
     List<MemberRes> selectAllFriendsByMemberId(String memberId);
