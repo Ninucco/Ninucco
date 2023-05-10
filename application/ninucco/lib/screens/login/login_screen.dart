@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ninucco/providers/tutorial_provider.dart';
+import 'package:ninucco/services/member_api_service.dart';
 
 import 'package:provider/provider.dart';
 import 'package:ninucco/providers/auth_provider.dart';
@@ -22,7 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final tutorialProvider = Provider.of<TutorialProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final auth = FirebaseAuth.instance;
 
     return Scaffold(
         appBar: AppBar(
@@ -81,55 +86,91 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SliverToBoxAdapter(child: SizedBox(height: 40)),
                 SliverToBoxAdapter(
                   child: Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.only(bottom: 12),
-                      // child: Hero(
-                      //   tag: 'signInWithGoogleButton',
-                      //   child: FloatingActionButton.extended(
-                      //     onPressed: () async {
-                      //       final navigator = Navigator.of(context);
-                      //       await authProvider.signIn();
-                      //       navigator.pushNamed('/');
-                      //     },
-                      //     label: const Text(
-                      //       'Sign in with Google',
-                      //       style: TextStyle(fontSize: 18),
-                      //     ),
-                      //     icon: Image.asset(
-                      //       'assets/icons/google_logo.png',
-                      //       height: 20,
-                      //     ),
-                      //     backgroundColor: Colors.black,
-                      //   ),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          // final navigator = Navigator.of(context);
-                          await authProvider.signIn();
-                          // navigator.pushNamed(
-                          //   '/',
-                          // );
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 20)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Sign in with Google',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            const SizedBox(width: 8),
-                            Image.asset(
-                              'assets/icons/google_logo.png',
-                              height: 20,
-                            ),
-                          ],
-                        ),
-                      )),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ElevatedButton(
+                      onPressed: () async => {
+                        authProvider.signIn(),
+                        if (await MemberApiService.checkRegisted())
+                          {MemberApiService.login(context)}
+                        else
+                          {MemberApiService.regist(context)},
+                        tutorialProvider.setIsPassTutorial(true),
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 20)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Sign in with Google',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(width: 8),
+                          Image.asset(
+                            'assets/icons/google_logo.png',
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: ElevatedButton(
+                      onPressed: () async => {
+                        tutorialProvider.setIsPassTutorial(true),
+                        auth.signInAnonymously(),
+                        if (await MemberApiService.checkRegisted())
+                          {MemberApiService.login(context)}
+                        else
+                          {MemberApiService.regist(context)}
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 20)),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Just Start',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             )));
   }
 }
+
+
+// ElevatedButton(
+//                 onPressed: () async => {
+//                       tutorialProvider.setIsPassTutorial(true),
+//                       authProvider.signIn(),
+//                       if (await MemberApiService.checkRegisted())
+//                         {MemberApiService.login(context)}
+//                       else
+//                         {MemberApiService.regist(context)}
+//                     },
+//                 child: const Text('구글로 로그인하기')),
+//             ElevatedButton(
+//                 onPressed: () async => {
+//                       tutorialProvider.setIsPassTutorial(true),
+//                       _auth.signInAnonymously(),
+//                       if (await MemberApiService.checkRegisted())
+//                         {MemberApiService.login(context)}
+//                       else
+//                         {MemberApiService.regist(context)}
+//                     },
+//                 child: const Text('익명으로 로그인하기')),
+//           ],

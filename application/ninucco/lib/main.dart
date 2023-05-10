@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/navigators/battle_navigator.dart';
 import 'package:ninucco/navigators/home_navigator.dart';
