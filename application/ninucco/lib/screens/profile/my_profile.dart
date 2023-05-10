@@ -4,12 +4,11 @@ import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
 
-class ProfileScreen extends StatefulWidget {
-  final RouteSettings settings;
-  const ProfileScreen({super.key, required this.settings});
+class MyProfileScreen extends StatefulWidget {
+  const MyProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
 }
 
 /// Todo
@@ -19,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 /// [] 나인 경우 can edit
 ///
 
-class _ProfileScreenState extends State<ProfileScreen>
+class _MyProfileScreenState extends State<MyProfileScreen>
     with TickerProviderStateMixin {
   final List<String> tabs = <String>['검사결과', '배틀이력', '아이템'];
   late TabController _tabController = TabController(length: 3, vsync: this);
@@ -29,7 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void initState() {
     super.initState();
-    userId = widget.settings.arguments as String;
     _tabController = TabController(length: 3, vsync: this);
     _userData = UserService.getUserDetailById();
   }
@@ -239,13 +237,15 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
             future: userData,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                print("snapshotsnapshotsnapshotsnapshotsnapshot");
+
                 return Positioned(
                   top: 16,
                   child: Opacity(
                     opacity: percentage,
                     child: Row(
                       children: [
-                        const SizedBox(width: 64),
+                        const SizedBox(width: 16),
                         CircleAvatar(
                           radius: 16,
                           backgroundImage:
@@ -306,7 +306,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        '${snapshot.hasData ? snapshot.data!.user.nickname : "---"}님의 프로필',
+                        '${snapshot.hasData ? snapshot.data!.user.nickname : "---"} 환영합니다',
                         style: const TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -315,11 +315,33 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       ),
                       // SizedBox(height: 32.0),
                       const SizedBox(height: 16.0),
-                      CircleAvatar(
-                        radius: 80,
-                        backgroundImage: NetworkImage(snapshot.hasData
-                            ? snapshot.data!.user.profileImage
-                            : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg"),
+                      Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 80,
+                            backgroundImage: NetworkImage(snapshot.hasData
+                                ? snapshot.data!.user.profileImage
+                                : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg"),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: -6,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(8),
+                                backgroundColor:
+                                    Colors.white, // <-- Button color
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                color: Colors.black,
+                                size: 16,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                       const SizedBox(height: 32.0),
                       Row(
@@ -407,15 +429,12 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
             child: Center(child: tabbar),
           ),
         ),
-
         Positioned(
           top: 8,
-          left: 16,
+          right: 16,
           child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back_ios_sharp),
+            onPressed: () {},
+            icon: const Icon(Icons.notifications_sharp),
             color: Colors.black,
             iconSize: 24,
           ),

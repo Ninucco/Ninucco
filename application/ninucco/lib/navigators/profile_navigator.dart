@@ -5,6 +5,7 @@ import 'package:ninucco/screens/home/home.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
 import 'package:ninucco/screens/home/search.dart';
 import 'package:ninucco/screens/login/login_screen.dart';
+import 'package:ninucco/screens/profile/my_profile.dart';
 import 'package:ninucco/screens/profile/profile.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 
@@ -15,7 +16,7 @@ class ProfileNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      initialRoute: '/Profile',
+      initialRoute: '/MyProfile',
       onGenerateRoute: ((settings) {
         return MaterialPageRoute(
           builder: (context) {
@@ -34,6 +35,8 @@ class ProfileNavigator extends StatelessWidget {
                 return const CategoryScreen();
               case "/Profile":
                 return ProfileScreen(settings: settings);
+              case "/MyProfile":
+                return const MyProfileScreen();
               case "/ProfileScanList":
                 return ProfileScanResult(settings: settings);
               default:
