@@ -212,12 +212,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
 
-  Future<void> _loadData() async {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     final apiService = MemberApiService(authProvider);
 
