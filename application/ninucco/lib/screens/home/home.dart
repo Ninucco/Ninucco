@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
+import 'package:provider/provider.dart';
 
 class NoonLoopingDemo extends StatelessWidget {
   final imgList = [
@@ -375,6 +377,7 @@ class HomeSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var me = Provider.of<AuthProvider>(context).member;
     return SliverAppBar(
       toolbarHeight: 160,
       shape: ContinuousRectangleBorder(
@@ -389,16 +392,16 @@ class HomeSliverAppBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 16,
                   backgroundColor: Color(0xffFE9BB3),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Text(
-                  "안녕하세요, 송승현님!",
-                  style: TextStyle(
+                  "안녕하세요, ${me?.nickname ?? "???"}님!",
+                  style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
