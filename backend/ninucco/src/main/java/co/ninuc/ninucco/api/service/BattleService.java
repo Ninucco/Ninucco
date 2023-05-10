@@ -11,11 +11,15 @@ import co.ninuc.ninucco.api.dto.response.BettingRes;
 public interface BattleService {
     BattleRes insertBattle(BattleCreateReq battleCreateReq);
 
-    BattleRes updateBattle(BattleUpdateReq battleUpdateReq);
-
     BattleListRes selectAllBattle(String option);
 
+    BattleListRes selectAllMemberBattle(String memberId, String status);
+
+    BattleListRes selectAllReceivedBattle(String memberId);
+
     BattleRes selectOneBattle(Long battleId);
+
+    BattleRes updateBattle(BattleUpdateReq battleUpdateReq);
 
     BattleRes deleteBattle(Long battleId);
 

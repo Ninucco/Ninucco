@@ -18,12 +18,14 @@ import co.ninuc.ninucco.db.entity.type.BattleStatus;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService{
@@ -40,6 +42,46 @@ public class BattleServiceImpl implements BattleService{
         return toRes(battle);
     }
 
+    @Override
+    public BattleListRes selectAllBattle(String option) {
+
+        return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(BattleStatus.PROCEEDING).stream()
+                .map(this::toRes).collect(Collectors.toList()));
+    }
+
+    @Override
+    public BattleListRes selectAllMemberBattle(String memberId, String status) {
+        Member member = validateUtil.memberValidateById(memberId);
+        log.info("===> Request Status : {}", status);
+        BattleStatus battleStatus;
+        if(status.equals("TERMINATED")) {
+            log.info("===> TERMINATED");
+            battleStatus = BattleStatus.TERMINATED;
+        }
+        else if(status.equals("PROCEEDING")) {
+            log.info("===> PROCEEDING");
+            battleStatus = BattleStatus.PROCEEDING;
+        }
+        else {
+            throw new CustomException(ErrorRes.BAD_REQUEST);
+        }
+
+        List<Battle> battleList = battleRepository.findAllByStatus(member.getId(), member.getId(), battleStatus);
+        return new BattleListRes(battleList.stream().map(this::toRes).collect(Collectors.toList()));
+    }
+
+    @Override
+    public BattleListRes selectAllReceivedBattle(String memberId) {
+        Member member = validateUtil.memberValidateById(memberId);
+        List<Battle> battleList = battleRepository.findAllByStatusAndOpponentIdOrderByUpdatedAtDesc(BattleStatus.WAITING, member.getId());
+        return new BattleListRes(battleList.stream().map(this::toRes).collect(Collectors.toList()));
+    }
+
+    @Override
+    public BattleRes selectOneBattle(Long battleId){
+        return toRes(validateUtil.battleValidateById(battleId));
+    }
+
     @Transactional
     @Override
     public BattleRes updateBattle(BattleUpdateReq battleUpdateReq) {
@@ -51,18 +93,6 @@ public class BattleServiceImpl implements BattleService{
         battle.updateBattle(battleUpdateReq.getOpponentUrl(), odds[0], odds[1]);
 
         return toRes(battle);
-    }
-
-    @Override
-    public BattleListRes selectAllBattle(String option) {
-
-        return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(BattleStatus.PROCEEDING).stream()
-                .map(this::toRes).collect(Collectors.toList()));
-    }
-
-    @Override
-    public BattleRes selectOneBattle(Long battleId){
-        return toRes(validateUtil.battleValidateById(battleId));
     }
 
     @Override
