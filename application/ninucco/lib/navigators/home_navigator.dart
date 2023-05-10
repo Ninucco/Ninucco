@@ -28,8 +28,6 @@ class HomeNavigator extends StatelessWidget {
                 return ScanResult(settings: settings);
               case "/Search":
                 return SearchScreen(settings: settings);
-              case "/Login":
-                return LoginScreen(settings: settings);
               case "/Category":
                 return const CategoryScreen();
               case "/MyProfile":

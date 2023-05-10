@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/screens/battle/battle_create_screen.dart';
-import 'package:ninucco/services/user_rank_api_service.dart';
+import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_item_widget.dart';
-import 'package:ninucco/models/user_rank_info_model.dart';
 
 class BattleAllScreen extends StatelessWidget {
   BattleAllScreen({super.key});
 
-  final Future<List<UserRankInfoModel>> userRanks =
-      UserRankApiService.getUserRanks();
+  final Future<List<BattleInfoModel>> battles = BattleApiService.getBattles();
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +17,10 @@ class BattleAllScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.white,
         centerTitle: true,
+        flexibleSpace: const Image(
+          image: AssetImage('assets/images/bg/bg2.png'),
+          fit: BoxFit.cover,
+        ),
         title: const Text(
           '전체 배틀',
         ),
@@ -28,7 +31,7 @@ class BattleAllScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: FutureBuilder(
-        future: userRanks,
+        future: battles,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return Column(
@@ -56,7 +59,7 @@ class BattleAllScreen extends StatelessWidget {
     );
   }
 
-  ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
+  ListView makeList(AsyncSnapshot<List<BattleInfoModel>> snapshot) {
     return ListView.separated(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
@@ -65,15 +68,15 @@ class BattleAllScreen extends StatelessWidget {
         var userRank = snapshot.data![index];
         return BattleItem(
           memberAId: 1,
-          memberANickname: "무서운 갈라파고스 장인훅",
-          memberAImage: userRank.profileImage,
+          memberANickname: userRank.memberANickname,
+          memberAImage: userRank.memberAImage,
           memberBId: 1,
-          memberBNickname: "무서운 갈라파고스 하훈묵",
-          memberBImage: userRank.profileImage,
-          battleId: userRank.id,
-          question: "누가 더 백엔드 개발자처럼 생겼나요?",
-          ratioA: 3.0,
-          ratioB: 1.3,
+          memberBNickname: userRank.memberBNickname,
+          memberBImage: userRank.memberBImage,
+          battleId: userRank.battleId,
+          question: userRank.question,
+          ratioA: userRank.ratioA,
+          ratioB: userRank.ratioB,
         );
       },
       separatorBuilder: (context, index) => const SizedBox(width: 40),

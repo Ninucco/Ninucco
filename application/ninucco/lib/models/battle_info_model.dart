@@ -7,14 +7,14 @@ class BattleInfoModel {
       memberANickname,
       memberBNickname;
   BattleInfoModel.fromJson(Map<String, dynamic> json)
-      : battleId = json["id"],
-        memberAImage = json['image'],
-        memberBImage = json['image'],
-        ratioA = 3.0,
-        ratioB = 1.3,
-        memberAId = json['id'],
-        memberBId = json['id'],
-        question = json['firstName'] + " " + json['lastName'],
-        memberANickname = json['username'],
-        memberBNickname = json['username'];
+      : battleId = json["battleId"],
+        memberAImage = json['applicantUrl'],
+        memberBImage = json['opponentUrl'],
+        ratioA = json['applicantOdds'],
+        ratioB = json['opponentOdds'],
+        memberAId = 1,
+        memberBId = 1,
+        question = json['title'],
+        memberANickname = json['applicantName'],
+        memberBNickname = json['opponentName'];
 }

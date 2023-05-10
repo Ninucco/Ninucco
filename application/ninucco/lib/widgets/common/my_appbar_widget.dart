@@ -19,6 +19,10 @@ class MyAppbarWidget extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       backgroundColor: Colors.transparent,
       centerTitle: true,
+      flexibleSpace: const Image(
+        image: AssetImage('assets/images/bg/bg2.png'),
+        fit: BoxFit.cover,
+      ),
       title: Text(
         titleText,
       ),
