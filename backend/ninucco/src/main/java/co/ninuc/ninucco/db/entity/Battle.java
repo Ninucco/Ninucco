@@ -33,11 +33,6 @@ public class Battle extends BaseEntity {
     @JoinColumn(referencedColumnName = "id", name="opponent_id")
     Member opponent;
 
-    @Column(name="applicant_nickname", nullable = false)
-    String applicantNickname;
-    @Column(name="opponent_nickname", nullable = false)
-    String opponentNickname;
-
     @Column(name="applicant_url", nullable = false)
     String applicantUrl;
     @Column(name="opponent_url")
@@ -71,12 +66,10 @@ public class Battle extends BaseEntity {
         this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1);
     }
     @Builder
-    public Battle(String title, Member applicant, Member opponent, String applicantNickname, String opponentNickname, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime updatedAt, LocalDateTime finishAt, Double opponentOdds){
+    public Battle(String title, Member applicant, Member opponent, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime updatedAt, LocalDateTime finishAt, Double opponentOdds){
         this.title=title;
         this.applicant=applicant;
         this.opponent=opponent;
-        this.applicantNickname=applicantNickname;
-        this.opponentNickname=opponentNickname;
         this.applicantUrl=applicantUrl;
         this.opponentUrl=opponentUrl;
         this.applicantOdds=applicantOdds;
