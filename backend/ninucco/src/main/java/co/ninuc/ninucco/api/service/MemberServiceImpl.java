@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -95,6 +94,19 @@ public class MemberServiceImpl implements MemberService{
             "바다토끼", "비버술렁", "바다코뿔소", "사막고양이", "코끼리쥐",
             "코알라쥐", "물수리", "산호", "돌고래돌고래", "아기돼지",
     };
+
+    @Override
+    public MemberCheckRes checkMember(LoginReq loginReq){
+        MemberCheckRes memberCheckRes;
+        Member member=memberRepository.findById(loginReq.getId()).orElse(null);
+        if(member==null){
+            return memberCheckRes=MemberCheckRes.builder().check(false).build();
+        }
+        else{
+            return memberCheckRes=MemberCheckRes.builder().check(true).build();
+        }
+
+    }
 
     @Transactional
     @Override

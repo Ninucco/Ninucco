@@ -9,6 +9,8 @@ import co.ninuc.ninucco.api.dto.response.*;
 import java.util.List;
 
 public interface MemberService {
+    MemberCheckRes checkMember(LoginReq loginReq);
+
     MemberRes insertMember(MemberCreateReq memberCreateReq);
     MemberRes checkMemberNickname(String nickname);
 
