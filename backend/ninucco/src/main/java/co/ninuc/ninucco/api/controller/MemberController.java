@@ -23,6 +23,14 @@ public class MemberController {
     private final boolean SUCCESS = true;
     private final MemberRepository memberRepository;
 
+    @ApiOperation(value = "가입되었는지 확인",notes="파이버베이스 키(PK)를 주면 가입되었는지 확인합니다.")
+    @PostMapping("/checkRegisted")
+    public ResponseEntity<ApiResult<Res>> checkRegisted(@RequestBody LoginReq loginReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.checkMember(loginReq))
+        );
+    }
+
     @ApiOperation(value = "로그인",notes="파이버베이스 키(PK)를 주면 해당 유저의 정보를 반환합니다.")
     @PostMapping("/login")
     public ResponseEntity<ApiResult<Res>> login(@RequestBody LoginReq loginReq){
