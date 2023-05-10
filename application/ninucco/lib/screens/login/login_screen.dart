@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/providers/tutorial_provider.dart';
 import 'package:ninucco/services/member_api_service.dart';
@@ -27,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final tutorialProvider = Provider.of<TutorialProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
-    final auth = FirebaseAuth.instance;
+    final apiService = MemberApiService(authProvider);
 
     return Scaffold(
         appBar: AppBar(
@@ -90,11 +89,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: ElevatedButton(
                       onPressed: () async => {
-                        authProvider.signIn(),
+                        await authProvider.signIn(),
                         if (await MemberApiService.checkRegisted())
-                          {MemberApiService.login(context)}
+                          {await MemberApiService.login(apiService)}
                         else
-                          {MemberApiService.regist(context)},
+                          {await MemberApiService.regist(apiService)},
                         tutorialProvider.setIsPassTutorial(true),
                       },
                       style: ElevatedButton.styleFrom(
@@ -124,12 +123,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: ElevatedButton(
                       onPressed: () async => {
-                        tutorialProvider.setIsPassTutorial(true),
-                        auth.signInAnonymously(),
+                        await authProvider.signInAnonymous(),
                         if (await MemberApiService.checkRegisted())
-                          {MemberApiService.login(context)}
+                          {await MemberApiService.login(apiService)}
                         else
-                          {MemberApiService.regist(context)}
+                          {await MemberApiService.regist(apiService)},
+                        tutorialProvider.setIsPassTutorial(true),
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -151,26 +150,3 @@ class _LoginScreenState extends State<LoginScreen> {
             )));
   }
 }
-
-
-// ElevatedButton(
-//                 onPressed: () async => {
-//                       tutorialProvider.setIsPassTutorial(true),
-//                       authProvider.signIn(),
-//                       if (await MemberApiService.checkRegisted())
-//                         {MemberApiService.login(context)}
-//                       else
-//                         {MemberApiService.regist(context)}
-//                     },
-//                 child: const Text('구글로 로그인하기')),
-//             ElevatedButton(
-//                 onPressed: () async => {
-//                       tutorialProvider.setIsPassTutorial(true),
-//                       _auth.signInAnonymously(),
-//                       if (await MemberApiService.checkRegisted())
-//                         {MemberApiService.login(context)}
-//                       else
-//                         {MemberApiService.regist(context)}
-//                     },
-//                 child: const Text('익명으로 로그인하기')),
-//           ],

@@ -1,20 +1,22 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
-import 'package:provider/provider.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class MemberApiService {
   static const String baseUrl = "https://k8a605.p.ssafy.io/api/member";
+  final AuthProvider authProvider;
 
-  static Future<MemberModel> regist(BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final userToken = _auth.currentUser?.refreshToken;
+  MemberApiService(this.authProvider);
+
+  static Future<MemberModel> regist(MemberApiService apiService) async {
+    final authProvider = apiService.authProvider;
+
+    // final userToken = _auth.currentUser?.refreshToken;
     final uid = _auth.currentUser?.uid;
     final email = _auth.currentUser?.email;
     final photoURL = _auth.currentUser?.photoURL;
@@ -29,12 +31,12 @@ class MemberApiService {
     final response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $userToken',
+          // 'Authorization': 'Bearer $userToken',
         },
         body: json.encode(data));
 
     if (response.statusCode == 200) {
-      final member = jsonDecode(response.body)["data"];
+      final member = jsonDecode(response.body)['data'];
       final instance = MemberModel.fromJson(member);
       authProvider.setMember(instance);
       return instance;
@@ -42,9 +44,9 @@ class MemberApiService {
     throw Error();
   }
 
-  static Future<MemberModel> login(BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final userToken = _auth.currentUser?.refreshToken;
+  static Future<MemberModel> login(MemberApiService apiService) async {
+    final authProvider = apiService.authProvider;
+    // final userToken = _auth.currentUser?.refreshToken;
     final uid = _auth.currentUser?.uid;
 
     Map<String, String?> data = {
@@ -55,12 +57,12 @@ class MemberApiService {
     final response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $userToken',
+          // 'Authorization': 'Bearer $userToken',
         },
         body: json.encode(data));
 
     if (response.statusCode == 200) {
-      final loginInfo = jsonDecode(response.body)["data"];
+      final loginInfo = jsonDecode(response.body)['data'];
       final instance = MemberModel.fromJson(loginInfo);
       authProvider.setMember(instance);
       return instance;
@@ -83,7 +85,8 @@ class MemberApiService {
         body: json.encode(data));
 
     if (response.statusCode == 200) {
-      final bool isRegisted = jsonDecode(response.body)["check"];
+      final data = jsonDecode(response.body)['data'];
+      bool isRegisted = data['check'];
       return isRegisted;
     }
     throw Error();

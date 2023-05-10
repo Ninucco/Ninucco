@@ -51,6 +51,16 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> signInAnonymous() async {
+    try {
+      await _auth.signInAnonymously();
+      setLoginStatus(true);
+    } catch (error) {
+      // Handle the error here
+      debugPrint('Failed to sign in with Google: $error');
+    }
+  }
+
   Future<void> signOut() async {
     try {
       await _auth.signOut();
