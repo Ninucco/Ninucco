@@ -88,7 +88,7 @@ class BasicDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> list = [1, 2, 3, 4, 5, 6];
+    List<int> list = [1, 2, 3, 4];
     return CarouselSlider(
       options: CarouselOptions(
           viewportFraction: 1,
@@ -114,7 +114,7 @@ class BasicDemo extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(36),
                       child: Row(
-                        mainAxisAlignment: item == 1
+                        mainAxisAlignment: item == 1 || item == 4
                             ? MainAxisAlignment.end
                             : item == 3
                                 ? MainAxisAlignment.start
@@ -122,7 +122,7 @@ class BasicDemo extends StatelessWidget {
                         children: [
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: item == 1
+                            crossAxisAlignment: item == 1 || item == 4
                                 ? CrossAxisAlignment.end
                                 : item == 3
                                     ? CrossAxisAlignment.start
