@@ -11,28 +11,13 @@ import 'package:ninucco/widgets/battle/battle_member_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 
 class BattleDetailScreen extends StatefulWidget {
-  final int memberAId, memberBId, battleId;
-  final double ratioA, ratioB;
-  final String memberAImage,
-      memberBImage,
-      question,
-      memberANickname,
-      memberBNickname;
-  FocusNode textFocus = FocusNode();
-
+  final RouteSettings settings;
   BattleDetailScreen({
     super.key,
-    required this.battleId,
-    required this.memberAId,
-    required this.memberBId,
-    required this.ratioA,
-    required this.ratioB,
-    required this.memberAImage,
-    required this.memberBImage,
-    required this.memberANickname,
-    required this.memberBNickname,
-    required this.question,
+    required this.settings,
   });
+
+  FocusNode textFocus = FocusNode();
 
   @override
   State<BattleDetailScreen> createState() => _BattleDetailScreenState();
@@ -42,12 +27,15 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   late Future<BattleInfoModel> battle;
   late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();
+  late BattleInfoModel _resultData;
 
   @override
   void initState() {
     super.initState();
-    battle = BattleApiService.getBattlesById(widget.battleId);
-    battleComments = BattleApiCommentService.getBattleComments(widget.battleId);
+    _resultData = widget.settings.arguments as BattleInfoModel;
+    battle = BattleApiService.getBattlesById(_resultData.battleId);
+    battleComments =
+        BattleApiCommentService.getBattleComments(_resultData.battleId);
   }
 
   @override
@@ -85,7 +73,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                         child: Column(
                           children: [
                             Text(
-                              widget.question,
+                              _resultData.question,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 18),
                             ),
@@ -95,19 +83,19 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                             Column(
                               children: [
                                 BattleMemberWidget(
-                                  memberId: widget.memberAId,
-                                  nickname: widget.memberANickname,
-                                  profileImage: widget.memberAImage,
-                                  ratio: widget.ratioA,
+                                  memberId: _resultData.memberAId,
+                                  nickname: _resultData.memberANickname,
+                                  profileImage: _resultData.memberAImage,
+                                  ratio: _resultData.ratioA,
                                 ),
                                 const SizedBox(
                                   height: 20,
                                 ),
                                 BattleMemberWidget(
-                                  memberId: widget.memberBId,
-                                  nickname: widget.memberBNickname,
-                                  profileImage: widget.memberBImage,
-                                  ratio: widget.ratioB,
+                                  memberId: _resultData.memberBId,
+                                  nickname: _resultData.memberBNickname,
+                                  profileImage: _resultData.memberBImage,
+                                  ratio: _resultData.ratioB,
                                 ),
                               ],
                             ),
@@ -142,14 +130,14 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                               BattleCommentPostModel(
                                                   _textEditingController
                                                       .value.text,
-                                                  widget.battleId)),
+                                                  _resultData.battleId)),
                                       _textEditingController.clear(),
                                       setState(
                                         () {
                                           battleComments =
                                               BattleApiCommentService
                                                   .getBattleComments(
-                                                      widget.battleId);
+                                                      _resultData.battleId);
                                         },
                                       ),
                                       FocusScope.of(context)
@@ -195,14 +183,16 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                                       BattleCommentPostModel(
                                                           _textEditingController
                                                               .value.text,
-                                                          widget.battleId));
+                                                          _resultData
+                                                              .battleId));
                                               _textEditingController.clear();
                                               setState(
                                                 () {
                                                   battleComments =
                                                       BattleApiCommentService
                                                           .getBattleComments(
-                                                              widget.battleId);
+                                                              _resultData
+                                                                  .battleId);
                                                 },
                                               );
                                               FocusScope.of(context)

@@ -1,84 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ninucco/models/battle_info_model.dart';
+import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 
-class NoonLoopingDemo extends StatelessWidget {
-  final imgList = [
-    "assets/images/dummy/jamminhyeok.png",
-    "assets/images/dummy/jamminhyeok.png",
-    "assets/images/dummy/jamminhyeok.png",
-    "assets/images/dummy/jamminhyeok.png",
-    "assets/images/dummy/jamminhyeok.png",
-    "assets/images/dummy/jamminhyeok.png",
-  ];
+class NoonLoopingDemo extends StatefulWidget {
+  const NoonLoopingDemo({super.key});
 
-  late List<Widget> imageSliders = imgList
-      .map(
-        (item) => Container(
-          margin: const EdgeInsets.all(5.0),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-            child: Stack(
-              children: <Widget>[
-                Image.asset(item, fit: BoxFit.cover, width: 1000.0),
-                Positioned(
-                  bottom: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(200, 0, 0, 0),
-                          Color.fromARGB(0, 0, 0, 0)
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 20.0),
-                    child: Column(
-                      children: [
-                        const Text(
-                          '누가 더 잼민이 같나요?',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '${imgList.indexOf(item)} 명이 배팅했어요',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      )
-      .toList();
+  @override
+  State<NoonLoopingDemo> createState() => _NoonLoopingDemoState();
+}
 
-  NoonLoopingDemo({super.key});
+class _NoonLoopingDemoState extends State<NoonLoopingDemo> {
+  final Future<List<BattleInfoModel>> battles = BattleApiService.getBattles();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: CarouselSlider(
-        options: CarouselOptions(
-          aspectRatio: 2.0,
-          enlargeCenterPage: true,
-          enableInfiniteScroll: true,
-        ),
-        items: imageSliders,
-      ),
-    );
+    return FutureBuilder(
+        future: battles,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+              child: CarouselSlider(
+                options: CarouselOptions(
+                  aspectRatio: 2.0,
+                  enlargeCenterPage: true,
+                  enableInfiniteScroll: true,
+                ),
+                items: snapshot.data!
+                    .map(
+                      (item) => Container(
+                        margin: const EdgeInsets.all(5.0),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5.0)),
+                          child: Stack(
+                            children: <Widget>[
+                              Image.network(item.memberAImage,
+                                  fit: BoxFit.cover, width: 1000.0),
+                              Positioned(
+                                bottom: 0.0,
+                                left: 0.0,
+                                right: 0.0,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color.fromARGB(200, 0, 0, 0),
+                                        Color.fromARGB(0, 0, 0, 0)
+                                      ],
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 20.0),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        item.question,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            );
+          }
+          return const Text("LOADING...");
+        });
   }
 }
 
@@ -289,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
+              const SliverToBoxAdapter(
                 child: NoonLoopingDemo(),
               ),
               SliverToBoxAdapter(
