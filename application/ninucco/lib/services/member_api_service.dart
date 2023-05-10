@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -6,15 +7,17 @@ import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
 class MemberApiService {
   static const String baseUrl = "https://dummyjson.com";
 
   static Future<MemberModel> memberRegist(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final userToken = authProvider.user;
-    final uid = authProvider.user?.uid;
-    final email = authProvider.user?.email;
-    final photoURL = authProvider.user?.photoURL;
+    final userToken = _auth.currentUser?.refreshToken;
+    final uid = _auth.currentUser?.uid;
+    final email = _auth.currentUser?.email;
+    final photoURL = _auth.currentUser?.photoURL;
 
     Map<String, String?> data = {
       'id': uid,
@@ -41,8 +44,8 @@ class MemberApiService {
 
   static Future<MemberModel> memberLogin(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final userToken = authProvider.user;
-    final uid = authProvider.user?.uid;
+    final userToken = _auth.currentUser?.refreshToken;
+    final uid = _auth.currentUser?.uid;
 
     Map<String, String?> data = {
       'id': uid,
@@ -66,9 +69,8 @@ class MemberApiService {
   }
 
   static Future<MemberModel> getFriendList(BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final userToken = authProvider.user;
-    final uid = authProvider.user?.uid;
+    final userToken = _auth.currentUser?.refreshToken;
+    final uid = _auth.currentUser?.uid;
 
     Map<String, String?> data = {
       'id': uid,

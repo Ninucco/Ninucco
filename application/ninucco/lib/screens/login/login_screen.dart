@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  final RouteSettings settings;
-  const LoginScreen({super.key, required this.settings});
+  // final RouteSettings settings;
+  const LoginScreen({
+    super.key,
+    // required this.settings,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -80,13 +83,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.only(bottom: 12),
+                      // child: Hero(
+                      //   tag: 'signInWithGoogleButton',
+                      //   child: FloatingActionButton.extended(
+                      //     onPressed: () async {
+                      //       final navigator = Navigator.of(context);
+                      //       await authProvider.signIn();
+                      //       navigator.pushNamed('/');
+                      //     },
+                      //     label: const Text(
+                      //       'Sign in with Google',
+                      //       style: TextStyle(fontSize: 18),
+                      //     ),
+                      //     icon: Image.asset(
+                      //       'assets/icons/google_logo.png',
+                      //       height: 20,
+                      //     ),
+                      //     backgroundColor: Colors.black,
+                      //   ),
                       child: ElevatedButton(
                         onPressed: () async {
-                          final navigator = Navigator.of(context);
+                          // final navigator = Navigator.of(context);
                           await authProvider.signIn();
-                          navigator.pushNamed(
-                            '/',
-                          );
+                          // navigator.pushNamed(
+                          //   '/',
+                          // );
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
