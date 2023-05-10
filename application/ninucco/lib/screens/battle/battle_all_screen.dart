@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_info_model.dart';
-import 'package:ninucco/screens/battle/battle_create_screen.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_item_widget.dart';
 
@@ -30,24 +29,32 @@ class BattleAllScreen extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.white,
-      body: FutureBuilder(
-        future: battles,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Column(
-              children: [Expanded(child: makeList(snapshot))],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg2.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: FutureBuilder(
+          future: battles,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Column(
+                children: [Expanded(child: makeList(snapshot))],
+              );
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => const BattleCreateScreen()),
+            '/BattleCreateScreen',
           );
         },
         backgroundColor: Colors.blue.shade600,
