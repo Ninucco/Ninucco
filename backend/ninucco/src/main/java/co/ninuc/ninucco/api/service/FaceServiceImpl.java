@@ -1,11 +1,11 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
-import co.ninuc.ninucco.api.dto.SimilarityResult;
+import co.ninuc.ninucco.api.dto.Similarity;
 import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
-import co.ninuc.ninucco.common.util.LambdaService;
+import co.ninuc.ninucco.common.util.SimilarityModelService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
 import co.ninuc.ninucco.db.entity.Keyword;
 import co.ninuc.ninucco.db.repository.KeywordRepository;
@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -28,7 +29,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class FaceServiceImpl {
-    private final LambdaService lambdaService;
+    private final SimilarityModelService similarityModelService;
     private final StabilityAIService stabilityAIService;
     private final KeywordRepository keywordRepository;
     private final AmazonS3Client amazonS3Client;
@@ -45,53 +46,40 @@ public class FaceServiceImpl {
         return keywordRepository.findAll();
     }
 
-    public SimilarityResultRes generateAnimal(MultipartFile inputImg){
-        //1. 입력으로부터 유저 아이디, 유저 사진을 받는다
-//        String picBase64 = similarityReq.getPicBase64();
-//        byte[] picByteArray = Base64.decodeBase64(picBase64);
-//
-//        //파일이 사진인지 검사한다
-//        String[] picBase64Tokens = picBase64.split(",");
-//        String extension;
-//        switch(picBase64Tokens[0]){
-//            case "data:image/jpg;base64":
-//                extension = "jpg";
-//                break;
-//            case "data:image/jpeg;base64":
-//                extension = "jpeg";
-//                break;
-//            case "data:image/png;base64":
-//                extension = "png";
-//                break;
-//            default:
-//                //사진이 jpg, jpeg, png가 아님! 다시
-//                throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FILE_NOT_PICTURE);
-//        }
-//        String fileName = LocalDateTime.now().toString()+extension;
+    public SimilarityResultRes generate(String modelType, MultipartFile inputImg){
+        //1. 입력으로부터 유저 아이디를 받는다
 
-        //2. 무슨 수를 써서 어딘가로부터 데이터 리스트를 받는다(keyword-value)
-        //List<SimilarityResult> animalSimilarityResultList = new ArrayList<>();
-        List<SimilarityResult> animalSimilarityResultList = lambdaService.getList();
-        List<SimilarityResult> personalisySimilarityResultList = new ArrayList<>();
-
-        //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다(리스트 길이가 0이 아님이 보장되어야함)
-        String animalKeyword = animalSimilarityResultList.get(0).getKeyword();
-        String personalityKeyword = "encouraged";//"깐깐한";//personalisySimilarityResultList.get(0).getKeyword();
-
-        String prompt=new StringBuilder().append("Cute small ")
-                .append(animalKeyword)
-                .append(personalityKeyword)
-                //기본 프롬프트
-                .append("sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render")
-                .toString();
-        //4. 무슨 수를 써서 이미지를 얻어온다.
+        //파일이 png인지 검사한다
+        String contentType = inputImg.getContentType();
+        if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
+            throw new CustomException(ErrorRes.BAD_REQUEST);
+        //파일 bypeArray로 변환
         byte[] inputImgByteArray;
         try{
             inputImgByteArray = inputImg.getBytes();
         }catch(IOException e){
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
+        //2. 데이터 리스트를 받는다(keyword-value)
+        List<Similarity> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
+        List<Similarity> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
+        log.info("1. 데이터 리스트 받기 완료");
+        //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
+        String animalKeyword = similarityResultList.get(0).getKeyword();
+        String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
+
+        //프롬프트 생성
+        String basePrompt = "sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render";
+        String prompt=new StringBuilder().append("Cute small ")
+                .append(animalKeyword)
+                .append(personalityKeyword)
+                //기본 프롬프트
+                .append(basePrompt)
+                .toString();
+
+        //4. 이미지 생성
         byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
+        log.info("2. 이미지 생성 완료");
         //S3에 저장
         //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
@@ -104,6 +92,7 @@ public class FaceServiceImpl {
                 byteArrayInputStream,
                 objectMetadata
         );
+        log.info("3. s3에 이미지 저장 완료");
         String imgUrl =amazonS3Client.getResourceUrl(bucket, fileName);
         // 5. 무슨 수를 써서 resultTitle, resultDescription을 얻는다.
         /*
@@ -122,10 +111,11 @@ public class FaceServiceImpl {
         //6. 유저 아이디로 FCM을 보낸다.
 
         //6. HTTPResponse로 보낸다.
+        List<Similarity> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
         return SimilarityResultRes.builder()
                 .imgUrl(imgUrl)
                 .resultTitle(resultTitle)
                 .resultDescription(resultDescription)
-                .resultPercentages(animalSimilarityResultList).build();
+                .resultList(listTop5).build();
     }
 }

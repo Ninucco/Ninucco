@@ -9,7 +9,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "battle")
@@ -33,11 +36,11 @@ public class Battle extends BaseEntity {
 
     @Column(name="applicant_url", nullable = false)
     String applicantUrl;
-    @Column(name="opponent_url", nullable = false)
+    @Column(name="opponent_url")
     String opponentUrl;
-    @Column(name="applicant_odds", nullable = false)
+    @Column(name="applicant_odds")
     Double applicantOdds;
-    @Column(name="opponent_odds", nullable = false)
+    @Column(name="opponent_odds")
     Double opponentOdds;
     @Column(name="status", nullable = false)
     BattleStatus status;
@@ -47,6 +50,18 @@ public class Battle extends BaseEntity {
     LocalDateTime createdAt;
     LocalDateTime finishAt;
 
+    public void updateResult(BattleResult result){
+        this.result=result;
+    }
+    public void updateStatusTerminated(){
+        this.status=BattleStatus.TERMINATED;
+    }
+    public void updateBattle(String opponentUrl, Double applicantOdds, Double opponentOdds) {
+        this.opponentUrl = opponentUrl;
+        this.applicantOdds = applicantOdds;
+        this.opponentOdds = opponentOdds;
+        this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1);
+    }
     @Builder
     public Battle(String title, Member applicant, Member opponent, String applicantNickname, String opponentNickname, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime finishAt, Double opponentOdds){
         this.title=title;

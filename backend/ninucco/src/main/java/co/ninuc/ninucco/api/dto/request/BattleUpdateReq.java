@@ -5,9 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class BattleCreateReq {
-    String title;
-    String applicantId;
-    String opponentId;
-    String applicantUrl;
+public class BattleUpdateReq {
+    Long battleId;
+    String opponentUrl;
 }
