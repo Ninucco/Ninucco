@@ -21,7 +21,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
-  final List<String> tabs = <String>['검사결과', '아이템', '배틀이력'];
+  final List<String> tabs = <String>['검사결과', '배틀이력', '아이템'];
   late TabController _tabController = TabController(length: 3, vsync: this);
   late Future<UserDetailData> _userData;
   @override
@@ -84,13 +84,23 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 key: PageStorageKey<String>(tabs[0]),
                                 slivers: [
                                   SliverOverlapInjector(
-                                      handle: NestedScrollView
-                                          .sliverOverlapAbsorberHandleFor(
-                                              context)),
-                                  GridItems(
-                                    name: name,
-                                    userData: _userData,
+                                    handle: NestedScrollView
+                                        .sliverOverlapAbsorberHandleFor(
+                                            context),
                                   ),
+                                  name == '검사결과'
+                                      ? GridItems(
+                                          name: name,
+                                          userData: _userData,
+                                        )
+                                      : const SliverToBoxAdapter(
+                                          child: Column(
+                                            children: [
+                                              SizedBox(height: 32),
+                                              Text("준비중입니다"),
+                                            ],
+                                          ),
+                                        ),
                                 ],
                               );
                             },
