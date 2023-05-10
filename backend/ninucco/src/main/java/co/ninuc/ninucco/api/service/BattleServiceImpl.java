@@ -17,13 +17,20 @@ import co.ninuc.ninucco.db.entity.type.BattleResult;
 import co.ninuc.ninucco.db.entity.type.BattleStatus;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 @Slf4j
 @Service
@@ -32,8 +39,12 @@ public class BattleServiceImpl implements BattleService{
     private final BattleRepository battleRepository;
     private final BettingRepository bettingRepository;
     private final ValidateUtil validateUtil;
+    private final AmazonS3Client amazonS3Client;
 
     private static final int C = 20;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
     @Transactional
     @Override
     public BattleRes insertBattle(BattleCreateReq battleCreateReq){
@@ -90,7 +101,8 @@ public class BattleServiceImpl implements BattleService{
         Member opponent = validateUtil.memberValidateById(battle.getOpponent().getId());
 
         double[] odds = calcOddsByElos(applicant.getElo(), opponent.getElo());
-        battle.updateBattle(battleUpdateReq.getOpponentUrl(), odds[0], odds[1]);
+        log.info("===> updateBattle - opponentImage : {}", battleUpdateReq.getOpponentImage());
+        battle.updateBattle(putS3(battleUpdateReq.getOpponentImage()), odds[0], odds[1]);
 
         return toRes(battle);
     }
@@ -159,6 +171,7 @@ public class BattleServiceImpl implements BattleService{
 
     // toEntity, toRes
     Battle toEntity(BattleCreateReq battleCreateReq){
+        log.info("===> battleToEntity - applicantId : {} ", battleCreateReq.getApplicantId());
         Member applicant = validateUtil.memberValidateById(battleCreateReq.getApplicantId());
         Member opponent = validateUtil.memberValidateById(battleCreateReq.getOpponentId());
 
@@ -166,9 +179,7 @@ public class BattleServiceImpl implements BattleService{
                 .title(battleCreateReq.getTitle())
                 .applicant(applicant)
                 .opponent(opponent)
-                .applicantNickname(applicant.getNickname())
-                .opponentNickname(opponent.getNickname())
-                .applicantUrl(battleCreateReq.getApplicantUrl())
+                .applicantUrl(putS3(battleCreateReq.getApplicantImage()))
                 .build();
     }
     Betting toEntity(BettingCreateReq bettingCreateReq){
@@ -179,11 +190,13 @@ public class BattleServiceImpl implements BattleService{
                 .betMoney(bettingCreateReq.getBetMoney()).build();
     }
     BattleRes toRes(Battle battle){
+        Member applicant = validateUtil.memberValidateById(battle.getApplicant().getId());
+        Member opponent = validateUtil.memberValidateById(battle.getOpponent().getId());
         return BattleRes.builder()
                 .validate(true)
                 .battleId(battle.getId())
-                .applicantName(battle.getApplicantNickname())
-                .opponentName(battle.getOpponentNickname())
+                .applicantName(applicant.getNickname())
+                .opponentName(opponent.getNickname())
                 .title(battle.getTitle())
                 .applicantUrl(battle.getApplicantUrl())
                 .opponentUrl(battle.getOpponentUrl())
@@ -239,5 +252,27 @@ public class BattleServiceImpl implements BattleService{
         double odd1 = 1+(double)2*elo2/eloSum;
         double odd2 = 1+(double)2*elo1/eloSum;
         return new double[] {odd1,odd2};
+    }
+
+    public String putS3(MultipartFile multipartFile) {
+        log.info("===> putS3");
+        byte[] imgByteArray;
+        try{
+            imgByteArray = multipartFile.getBytes();
+        }catch(IOException e){
+            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        }
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imgByteArray);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(byteArrayInputStream.available());
+        String fileName = UUID.nameUUIDFromBytes(imgByteArray)+".png";
+        log.info("===> filename : {}", fileName);
+        amazonS3Client.putObject(
+                bucket,
+                fileName,
+                byteArrayInputStream,
+                objectMetadata
+        );
+        return amazonS3Client.getResourceUrl(bucket, fileName);
     }
 }
