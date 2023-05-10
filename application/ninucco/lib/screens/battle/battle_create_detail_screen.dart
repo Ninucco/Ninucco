@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:ninucco/screens/battle/battle_friend_search.dart';
 import 'package:ninucco/widgets/battle/battle_create_item_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 
-class BattleCreateDetailWidget extends StatelessWidget {
+class BattleCreateDetailWidget extends StatefulWidget {
   final int memberAId;
-  final String memberAImage, question, memberANickname;
+  final String question, memberANickname;
+  final File memberAImage;
 
   const BattleCreateDetailWidget({
     super.key,
@@ -13,6 +17,14 @@ class BattleCreateDetailWidget extends StatelessWidget {
     required this.question,
     required this.memberANickname,
   });
+
+  @override
+  State<BattleCreateDetailWidget> createState() =>
+      _BattleCreateDetailWidgetState();
+}
+
+class _BattleCreateDetailWidgetState extends State<BattleCreateDetailWidget> {
+  var result = "???";
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +39,11 @@ class BattleCreateDetailWidget extends StatelessWidget {
               height: 20,
             ),
             BattleCreateItem(
-              memberAId: memberAId,
-              memberAImage: memberAImage,
-              question: question,
-              memberANickname: memberANickname,
+              memberAId: widget.memberAId,
+              memberAImage: widget.memberAImage,
+              question: widget.question,
+              memberANickname: widget.memberANickname,
+              memberBNickname: result,
             ),
             Container(
               margin: const EdgeInsets.symmetric(
@@ -54,7 +67,20 @@ class BattleCreateDetailWidget extends StatelessWidget {
                     fontSize: 17,
                   ),
                 ),
-                onPressed: () => {},
+                onPressed: () async {
+                  var tmpResult = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BattleFriendSearchScreen(
+                        keyword: "",
+                      ),
+                    ),
+                  );
+
+                  setState(() {
+                    result = tmpResult;
+                  });
+                },
               ),
             ),
             const SizedBox(

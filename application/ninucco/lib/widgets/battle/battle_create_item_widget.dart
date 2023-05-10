@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class BattleCreateItem extends StatelessWidget {
   final int memberAId;
-  final String memberAImage, question, memberANickname;
+  final String question, memberANickname, memberBNickname;
+  final File memberAImage;
 
   const BattleCreateItem({
     super.key,
@@ -10,6 +13,7 @@ class BattleCreateItem extends StatelessWidget {
     required this.memberAImage,
     required this.question,
     required this.memberANickname,
+    required this.memberBNickname,
   });
 
   @override
@@ -45,7 +49,7 @@ class BattleCreateItem extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                   color: Colors.teal,
                                 ),
-                                child: Image.network(
+                                child: Image.file(
                                   memberAImage,
                                   fit: BoxFit.cover,
                                 ),
@@ -73,7 +77,7 @@ class BattleCreateItem extends StatelessWidget {
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                              const Text("???"),
+                              Text(memberBNickname),
                             ],
                           ),
                         ),

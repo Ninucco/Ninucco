@@ -12,10 +12,11 @@ class UserSearchApiService {
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final memberList = jsonDecode(response.body)["data"]['memberList'];
-
-      for (var member in memberList) {
-        final instance = UserModel.fromJson(member);
-        userList.add(instance);
+      if (memberList != null) {
+        for (var member in memberList) {
+          final instance = UserModel.fromJson(member);
+          userList.add(instance);
+        }
       }
       return userList;
     }
