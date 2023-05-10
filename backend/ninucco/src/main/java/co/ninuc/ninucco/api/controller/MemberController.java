@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/member")
@@ -49,7 +50,11 @@ public class MemberController {
     
     @ApiOperation(value = "멤버 사진 업데이트", notes="멤버 사진주소를 업데이트 합니다.")
     @PatchMapping("/photo")
-    public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestBody MemberUpdatePhotoReq memberUpdatePhotoReq){
+    public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestPart String memberId, @RequestPart MultipartFile img){
+        MemberUpdatePhotoReq memberUpdatePhotoReq= MemberUpdatePhotoReq.builder()
+                .id(memberId)
+                .img(img)
+                .build();
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoReq))
         );

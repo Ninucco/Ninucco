@@ -13,12 +13,19 @@ import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.MemberItem;
 import co.ninuc.ninucco.db.repository.MemberItemRepository;
 import co.ninuc.ninucco.db.repository.MemberRepository;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +34,10 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final MemberItemRepository memberItemRepository;
     private final ValidateUtil validateUtil;
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
 
     static String[] adverbs = {
@@ -111,9 +122,26 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public MemberRes updateMemberUrl(MemberUpdatePhotoReq memberUpdatePhotoReq) {
 
+        byte[] imgByteArray;
+        try{
+            imgByteArray = memberUpdatePhotoReq.getImg().getBytes();
+        }catch(IOException e){
+            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
+        }
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imgByteArray);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(byteArrayInputStream.available());
+        String fileName = UUID.nameUUIDFromBytes(imgByteArray)+".png";
+        amazonS3Client.putObject(
+                bucket,
+                fileName,
+                byteArrayInputStream,
+                objectMetadata
+        );
+
         Member member= validateUtil.memberValidateById(memberUpdatePhotoReq.getId());
 
-        member.updateUrl(memberUpdatePhotoReq.getUrl());
+        member.updateUrl(amazonS3Client.getResourceUrl(bucket,fileName));
 
         return toMemberRes(member);
     }
