@@ -91,9 +91,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () async => {
                         await authProvider.signIn(),
                         if (await MemberApiService.checkRegisted())
-                          {await MemberApiService.login(apiService)}
+                          {
+                            await MemberApiService.login(apiService),
+                          }
                         else
-                          {await MemberApiService.regist(apiService)},
+                          {
+                            await MemberApiService.regist(apiService),
+                          },
                         tutorialProvider.setIsPassTutorial(true),
                       },
                       style: ElevatedButton.styleFrom(
@@ -125,9 +129,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () async => {
                         await authProvider.signInAnonymous(),
                         if (await MemberApiService.checkRegisted())
-                          {await MemberApiService.login(apiService)}
+                          {
+                            await MemberApiService.login(apiService),
+                          }
                         else
-                          {await MemberApiService.regist(apiService)},
+                          {
+                            await MemberApiService.regist(apiService),
+                          },
                         tutorialProvider.setIsPassTutorial(true),
                       },
                       style: ElevatedButton.styleFrom(

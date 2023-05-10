@@ -7,11 +7,11 @@ import 'package:ninucco/models/member_model.dart';
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  MemberModel? _member;
-  MemberModel? get member => _member;
-
   late bool _isLogin = (_auth.currentUser == null) ? false : true;
   bool get loginStatus => _isLogin;
+
+  MemberModel? _member;
+  MemberModel? get member => _member;
 
   void setMember(MemberModel? member) {
     notifyListeners();

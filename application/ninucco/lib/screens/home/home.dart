@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/services/member_api_service.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:provider/provider.dart';
 
@@ -210,6 +211,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    final apiService = MemberApiService(authProvider);
+
+    if (await MemberApiService.checkRegisted()) {
+      await MemberApiService.login(apiService);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final searchController = TextEditingController();
