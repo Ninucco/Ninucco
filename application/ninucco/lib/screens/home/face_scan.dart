@@ -20,12 +20,14 @@ class FaceScan extends StatefulWidget {
 class _FaceScanState extends State<FaceScan> {
   final ScanUtility _scanUtility = ScanUtility();
   int type = 0;
+  String typeName = '';
   File? _image;
   bool _loading = false;
 
   @override
   void initState() {
     type = widget.settings.arguments as int;
+    typeName = _scanUtility.getTypeList[type];
     super.initState();
   }
 
@@ -71,6 +73,7 @@ class _FaceScanState extends State<FaceScan> {
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
+        title: Text(typeName),
         titleTextStyle: const TextStyle(
           color: Colors.black,
           fontSize: 20,
