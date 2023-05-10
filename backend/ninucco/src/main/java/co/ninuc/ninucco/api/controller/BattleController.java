@@ -59,6 +59,16 @@ public class BattleController {
         );
     }
 
+    // 신청받은 배틀 리스트 조회
+    @ApiOperation(value = "신청받은 배틀 리스트 조회", notes = "신청받은 배틀 리스트를 조회합니다.")
+    @GetMapping("/received-list")
+    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle() {
+        //TODO 헤더에서 멤버 ID 가져오기
+        String memberId = "testId1";
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.selectAllReceivedBattle(memberId)));
+    }
+
     //배틀 상세정보 조회
     @ApiOperation(value = "배틀 상세정보 조회", notes = "배틀 진행중의 상세정보를 조회합니다.")
     @GetMapping("/{battleId}")

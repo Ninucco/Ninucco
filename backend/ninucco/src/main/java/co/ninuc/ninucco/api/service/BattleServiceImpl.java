@@ -71,6 +71,13 @@ public class BattleServiceImpl implements BattleService{
     }
 
     @Override
+    public BattleListRes selectAllReceivedBattle(String memberId) {
+        Member member = validateUtil.memberValidateById(memberId);
+        List<Battle> battleList = battleRepository.findAllByStatusAndOpponentIdOrderByUpdatedAtDesc(BattleStatus.WAITING, member.getId());
+        return new BattleListRes(battleList.stream().map(this::toRes).collect(Collectors.toList()));
+    }
+
+    @Override
     public BattleRes selectOneBattle(Long battleId){
         return toRes(validateUtil.battleValidateById(battleId));
     }

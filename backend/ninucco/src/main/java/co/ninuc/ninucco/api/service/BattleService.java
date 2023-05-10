@@ -15,6 +15,8 @@ public interface BattleService {
 
     BattleListRes selectAllMemberBattle(String memberId, String status);
 
+    BattleListRes selectAllReceivedBattle(String memberId);
+
     BattleRes selectOneBattle(Long battleId);
 
     BattleRes updateBattle(BattleUpdateReq battleUpdateReq);
