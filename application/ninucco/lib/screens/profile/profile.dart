@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.initState();
     userId = widget.settings.arguments as String;
     _tabController = TabController(length: 3, vsync: this);
-    _userData = UserService.getUserDetailById();
+    _userData = UserService.getUserDetailById(userId);
   }
 
   @override
