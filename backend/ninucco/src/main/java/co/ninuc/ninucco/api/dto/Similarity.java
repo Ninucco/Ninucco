@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class SimilarityResult {
+public class Similarity {
     String keyword;
     Double value;
 }

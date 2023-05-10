@@ -3,6 +3,7 @@ package co.ninuc.ninucco.api.controller;
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
+import co.ninuc.ninucco.api.dto.request.BattleUpdateReq;
 import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.request.CommentCreateReq;
 import co.ninuc.ninucco.api.service.BattleService;
@@ -28,6 +29,14 @@ public class BattleController {
                 new ApiResult<>(SUCCESS, battleService.insertBattle(battleCreateReq))
         );
     }
+
+    // 배틀 수락 시 수정
+    @ApiOperation(value = "배틀 수락", notes = "배틀을 수락하면 해당 배틀 데이터를 수정합니다.")
+    @PatchMapping("")
+    public ResponseEntity<ApiResult<Res>> updateBattle(@RequestBody BattleUpdateReq battleUpdateReq) {
+        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, battleService.updateBattle(battleUpdateReq)));
+    }
+
     //배틀 리스트 조회
     @ApiOperation(value = "배틀 리스트 조회", notes="배틀 리스트를 조회합니다. option: latest(최신순), votes(투표수 높은 순)")
     @GetMapping("/list")
