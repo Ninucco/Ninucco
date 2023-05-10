@@ -17,6 +17,8 @@ public interface BattleService {
 
     BattleRes selectOneBattle(Long battleId);
 
+    BattleRes deleteBattle(Long battleId);
+
     BettingRes insertBetting(BettingCreateReq battleCreateReq);
 
     BettingRes selectOneBetting(String memberId, Long battleId);

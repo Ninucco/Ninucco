@@ -53,6 +53,16 @@ public class BattleController {
                 new ApiResult<>(SUCCESS, battleService.selectOneBattle(battleId))
         );
     }
+
+    //배틀 신청 거절
+    @ApiOperation(value = "배틀 신청 거절", notes = "배틀 신청 거절 시, 배틀 테이블에서 삭제합니다.")
+    @DeleteMapping("/{battleId}")
+    public ResponseEntity<ApiResult<Res>> deleteBattle (@PathVariable Long battleId) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.deleteBattle(battleId))
+        );
+    }
+
     //댓글 작성
     @ApiOperation(value="댓글 작성", notes = "댓글 작성")
     @PostMapping("/comment")
