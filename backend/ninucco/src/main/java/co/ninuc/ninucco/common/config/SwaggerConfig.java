@@ -92,6 +92,10 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
         return getDocket("face", Predicates.or(PathSelectors.regex("/face.*")));
     }
 
+    @Bean
+    public Docket rankApi() {
+        return getDocket("rank", Predicates.or(PathSelectors.regex("/rank.*")));
+    }
 
 
 }
