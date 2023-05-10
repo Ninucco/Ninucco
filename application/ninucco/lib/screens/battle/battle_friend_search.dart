@@ -4,10 +4,12 @@ import 'package:ninucco/services/search_by_nickname_service.dart';
 import 'package:ninucco/widgets/battle/battle_searched_member_item_widget.dart';
 
 class BattleFriendSearchScreen extends StatefulWidget {
-  final String keyword;
-  const BattleFriendSearchScreen({
+  // final String keyword;
+  RouteSettings settings;
+  BattleFriendSearchScreen({
     super.key,
-    required this.keyword,
+    // required this.keyword,
+    required this.settings,
   });
   @override
   State<BattleFriendSearchScreen> createState() =>
@@ -19,7 +21,7 @@ class _BattleFriendSearchScreenState extends State<BattleFriendSearchScreen> {
 
   @override
   void initState() {
-    _keyword = widget.keyword;
+    _keyword = widget.settings.arguments as String;
     super.initState();
   }
 

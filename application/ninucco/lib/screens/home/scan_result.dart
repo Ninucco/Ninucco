@@ -41,7 +41,7 @@ class ResultData {
     List<AnalyticItem> analyticItemList =
         list.map((i) => AnalyticItem.fromJson(i)).toList();
     return ResultData(
-      type: json['type'],
+      type: json['type'] ?? 1,
       resultTitle: json['resultTitle'],
       resultDescription: json['resultDescription'],
       imgUrl: json['imgUrl'],

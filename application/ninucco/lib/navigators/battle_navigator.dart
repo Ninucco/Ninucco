@@ -1,23 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/screens/battle/battle_all_screen.dart';
+import 'package:ninucco/screens/battle/battle_create_detail_screen.dart';
+import 'package:ninucco/screens/battle/battle_create_screen.dart';
+import 'package:ninucco/screens/battle/battle_detail_screen.dart';
+import 'package:ninucco/screens/battle/battle_friend_search.dart';
 
 class BattleNavigator extends StatelessWidget {
   const BattleNavigator({super.key, required this.tabIndex});
   final int tabIndex;
-  Map<String, WidgetBuilder> _routeBuilder(BuildContext context) {
-    return {
-      "/": (context) => BattleAllScreen(),
-    };
-  }
 
   @override
   Widget build(BuildContext context) {
-    final routeBuilder = _routeBuilder(context);
     return Navigator(
       initialRoute: '/',
       onGenerateRoute: ((settings) {
         return MaterialPageRoute(
-          builder: (context) => routeBuilder[settings.name!]!(context),
+          builder: (context) {
+            switch (settings.name) {
+              case "/":
+                return BattleAllScreen();
+              case "/BattleDetailScreen":
+                return BattleDetailScreen(settings: settings);
+              case "/BattleCreateScreen":
+                return const BattleCreateScreen();
+              case "/BattleCreateDetailScreen":
+                return BattleCreateDetailScreen(settings: settings);
+              case "/BattleFriendSearch":
+                return BattleFriendSearchScreen(settings: settings);
+              default:
+                return const Placeholder();
+            }
+          },
         );
       }),
     );
