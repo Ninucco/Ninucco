@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/navigators/battle_navigator.dart';
 import 'package:ninucco/navigators/home_navigator.dart';
@@ -7,8 +8,11 @@ import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/providers/test_provider.dart';
 import 'package:ninucco/providers/tutorial_provider.dart';
+import 'package:ninucco/screens/loading/loading_screen.dart';
+import 'package:ninucco/screens/login/login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
+import 'package:ninucco/screens/tutorial/tutorial_screen_demo.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -46,7 +50,22 @@ class App extends StatelessWidget {
                   primary: const Color(0xff9BA0FC),
                 ),
           ),
-          home: const Layout(),
+          home: Consumer2<TutorialProvider, AuthProvider>(
+            builder: (context, tutorialProvider, authProvider, _) {
+              // print('route by ${tutorialProvider.tutorialStatus}');
+              if (tutorialProvider.tutorialStatus == null) {
+                return const LoadingScreen(); // 여기에 로딩 추가
+              } else if (tutorialProvider.tutorialStatus!) {
+                if (authProvider.loginStatus) {
+                  return const Layout();
+                } else {
+                  return const LoginScreen();
+                }
+              } else {
+                return const TutorialScreen();
+              }
+            },
+          ),
         ));
   }
 }
@@ -59,6 +78,7 @@ class Layout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavProvider navProvider = Provider.of<NavProvider>(context);
+
     bool showFloatButton = Provider.of<NavProvider>(context).show &&
         MediaQuery.of(context).viewInsets.bottom == 0;
     return Scaffold(
