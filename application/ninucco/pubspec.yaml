@@ -26,7 +26,9 @@ dependencies:
   carousel_slider: ^4.2.1
   dio: ^4.0.6
   image: ^4.0.17
+  scrollable_positioned_list: ^0.3.8
   shared_preferences: ^2.1.0
+
 
 dev_dependencies:
   flutter_test:
