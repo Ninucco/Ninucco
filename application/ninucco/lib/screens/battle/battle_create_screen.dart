@@ -193,8 +193,7 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                     MaterialPageRoute(
                       builder: (context) => BattleCreateDetailWidget(
                         memberAId: 1,
-                        memberAImage:
-                            "https://pbs.twimg.com/media/E_-EPpcVUAcXgmU.jpg",
+                        memberAImage: _image!,
                         memberANickname: "실험중입니당",
                         question: categoryValue!,
                       ),

@@ -17,6 +17,10 @@ class BattleAllScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.white,
         centerTitle: true,
+        flexibleSpace: const Image(
+          image: AssetImage('assets/images/bg/bg2.png'),
+          fit: BoxFit.cover,
+        ),
         title: const Text(
           '전체 배틀',
         ),

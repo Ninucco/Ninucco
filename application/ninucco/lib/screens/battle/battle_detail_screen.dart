@@ -56,185 +56,201 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
       appBar: const MyAppbarWidget(
         titleText: "이 배틀의 상황은?",
       ),
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: GestureDetector(
-          onTap: () {
-            widget.textFocus.unfocus();
-          },
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/bg/bg2.png',
+              repeat: ImageRepeat.repeat,
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: GestureDetector(
+              onTap: () {
+                widget.textFocus.unfocus();
+              },
+              child: Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          widget.question,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Column(
+                        child: Column(
                           children: [
-                            BattleMemberWidget(
-                              memberId: widget.memberAId,
-                              nickname: widget.memberANickname,
-                              profileImage: widget.memberAImage,
-                              ratio: widget.ratioA,
+                            Text(
+                              widget.question,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                             const SizedBox(
                               height: 20,
                             ),
-                            BattleMemberWidget(
-                              memberId: widget.memberBId,
-                              nickname: widget.memberBNickname,
-                              profileImage: widget.memberBImage,
-                              ratio: widget.ratioB,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        const Row(
-                          children: [
-                            Text(
-                              "댓글",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        // 댓글 쓰기
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Flexible(
-                              flex: 4,
-                              child: TextFormField(
-                                onFieldSubmitted: (value) => {
-                                  _textEditingController.notifyListeners(),
-                                  BattleApiCommentService.postBattleComments(
-                                      BattleCommentPostModel(
-                                          _textEditingController.value.text,
-                                          widget.battleId)),
-                                  _textEditingController.clear(),
-                                  setState(
-                                    () {
-                                      battleComments = BattleApiCommentService
-                                          .getBattleComments(widget.battleId);
-                                    },
-                                  ),
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode()),
-                                },
-                                focusNode: widget.textFocus,
-                                controller: _textEditingController,
-                                decoration: const InputDecoration(
-                                  hintText: "댓글을 입력하세요..",
+                            Column(
+                              children: [
+                                BattleMemberWidget(
+                                  memberId: widget.memberAId,
+                                  nickname: widget.memberANickname,
+                                  profileImage: widget.memberAImage,
+                                  ratio: widget.ratioA,
                                 ),
-                                cursorColor: const Color(0xff9C9EFE),
-                              ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                BattleMemberWidget(
+                                  memberId: widget.memberBId,
+                                  nickname: widget.memberBNickname,
+                                  profileImage: widget.memberBImage,
+                                  ratio: widget.ratioB,
+                                ),
+                              ],
                             ),
-                            Flexible(
-                              flex: 1,
-                              child: Container(
-                                width: 50,
-                                height: 50,
-                                margin: const EdgeInsets.all(5),
-                                child: Ink(
-                                  decoration: ShapeDecoration(
-                                    color: const Color(0xff9C9EFE),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18),
-                                    ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            const Row(
+                              children: [
+                                Text(
+                                  "댓글",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.send,
-                                    ),
-                                    mouseCursor:
-                                        MaterialStateMouseCursor.clickable,
-                                    color: Colors.white,
-                                    tooltip: "댓글 달기",
-                                    onPressed: () {
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            // 댓글 쓰기
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Flexible(
+                                  flex: 4,
+                                  child: TextFormField(
+                                    onFieldSubmitted: (value) => {
+                                      _textEditingController.notifyListeners(),
+                                      BattleApiCommentService
+                                          .postBattleComments(
+                                              BattleCommentPostModel(
+                                                  _textEditingController
+                                                      .value.text,
+                                                  widget.battleId)),
+                                      _textEditingController.clear(),
                                       setState(
                                         () {
-                                          _textEditingController
-                                              .notifyListeners();
-                                          BattleApiCommentService
-                                              .postBattleComments(
-                                                  BattleCommentPostModel(
-                                                      _textEditingController
-                                                          .value.text,
-                                                      widget.battleId));
-                                          _textEditingController.clear();
-                                          setState(
-                                            () {
-                                              battleComments =
-                                                  BattleApiCommentService
-                                                      .getBattleComments(
-                                                          widget.battleId);
-                                            },
-                                          );
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
+                                          battleComments =
+                                              BattleApiCommentService
+                                                  .getBattleComments(
+                                                      widget.battleId);
                                         },
-                                      );
+                                      ),
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode()),
                                     },
+                                    focusNode: widget.textFocus,
+                                    controller: _textEditingController,
+                                    decoration: const InputDecoration(
+                                      hintText: "댓글을 입력하세요..",
+                                    ),
+                                    cursorColor: const Color(0xff9C9EFE),
                                   ),
                                 ),
-                              ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Container(
+                                    width: 50,
+                                    height: 50,
+                                    margin: const EdgeInsets.all(5),
+                                    child: Ink(
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xff9C9EFE),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18),
+                                        ),
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.send,
+                                        ),
+                                        mouseCursor:
+                                            MaterialStateMouseCursor.clickable,
+                                        color: Colors.white,
+                                        tooltip: "댓글 달기",
+                                        onPressed: () {
+                                          setState(
+                                            () {
+                                              _textEditingController
+                                                  .notifyListeners();
+                                              BattleApiCommentService
+                                                  .postBattleComments(
+                                                      BattleCommentPostModel(
+                                                          _textEditingController
+                                                              .value.text,
+                                                          widget.battleId));
+                                              _textEditingController.clear();
+                                              setState(
+                                                () {
+                                                  battleComments =
+                                                      BattleApiCommentService
+                                                          .getBattleComments(
+                                                              widget.battleId);
+                                                },
+                                              );
+                                              FocusScope.of(context)
+                                                  .requestFocus(FocusNode());
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            StreamBuilder(
+                              stream: battleComments,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: makeList(snapshot),
+                                      ),
+                                    ],
+                                  );
+                                }
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.pink.shade200,
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(
+                              height: 50,
+                            )
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        StreamBuilder(
-                          stream: battleComments,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Row(
-                                children: [
-                                  Expanded(
-                                    child: makeList(snapshot),
-                                  ),
-                                ],
-                              );
-                            }
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.pink.shade200,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(
-                          height: 50,
-                        )
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
