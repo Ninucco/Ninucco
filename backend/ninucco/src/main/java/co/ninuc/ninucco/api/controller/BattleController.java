@@ -30,13 +30,6 @@ public class BattleController {
         );
     }
 
-    // 배틀 수락 시 수정
-    @ApiOperation(value = "배틀 수락", notes = "배틀을 수락하면 해당 배틀 데이터를 수정합니다.")
-    @PatchMapping("")
-    public ResponseEntity<ApiResult<Res>> updateBattle(@RequestBody BattleUpdateReq battleUpdateReq) {
-        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, battleService.updateBattle(battleUpdateReq)));
-    }
-
     //배틀 리스트 조회
     @ApiOperation(value = "배틀 리스트 조회", notes="배틀 리스트를 조회합니다. option: latest(최신순), votes(투표수 높은 순)")
     @GetMapping("/list")
@@ -45,6 +38,37 @@ public class BattleController {
                 new ApiResult<>(SUCCESS, battleService.selectAllBattle(option))
         );
     }
+
+    // 내 배틀 리스트 조회
+    @ApiOperation(value = "나의 배틀 리스트 조회", notes = "로그인한 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
+    @GetMapping("/my-list")
+    public ResponseEntity<ApiResult<Res>> selectAllMyBattle(@RequestParam String status) {
+        // TODO 헤더에서 멤버 ID 가져오기
+        String memberId = "refactoringTestId3";
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
+        );
+    }
+
+    // 타사용자 배틀 리스트 조회
+    @ApiOperation(value = "타사용자의 배틀 리스트 조회", notes = "다른 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
+    @GetMapping("/other-list")
+    public ResponseEntity<ApiResult<Res>> selectAllOtherBattle(@RequestParam String id, @RequestParam String status) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(id, status))
+        );
+    }
+
+    // 신청받은 배틀 리스트 조회
+    @ApiOperation(value = "신청받은 배틀 리스트 조회", notes = "신청받은 배틀 리스트를 조회합니다.")
+    @GetMapping("/received-list")
+    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle() {
+        //TODO 헤더에서 멤버 ID 가져오기
+        String memberId = "testId1";
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.selectAllReceivedBattle(memberId)));
+    }
+
     //배틀 상세정보 조회
     @ApiOperation(value = "배틀 상세정보 조회", notes = "배틀 진행중의 상세정보를 조회합니다.")
     @GetMapping("/{battleId}")
@@ -53,6 +77,23 @@ public class BattleController {
                 new ApiResult<>(SUCCESS, battleService.selectOneBattle(battleId))
         );
     }
+
+    // 배틀 수락 시 수정
+    @ApiOperation(value = "배틀 수락", notes = "배틀을 수락하면 해당 배틀 데이터를 수정합니다.")
+    @PatchMapping("")
+    public ResponseEntity<ApiResult<Res>> updateBattle(@RequestBody BattleUpdateReq battleUpdateReq) {
+        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, battleService.updateBattle(battleUpdateReq)));
+    }
+
+    //배틀 신청 거절
+    @ApiOperation(value = "배틀 신청 거절", notes = "배틀 신청 거절 시, 배틀 테이블에서 삭제합니다.")
+    @DeleteMapping("/{battleId}")
+    public ResponseEntity<ApiResult<Res>> deleteBattle (@PathVariable Long battleId) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.deleteBattle(battleId))
+        );
+    }
+
     //댓글 작성
     @ApiOperation(value="댓글 작성", notes = "댓글 작성")
     @PostMapping("/comment")
