@@ -30,7 +30,7 @@ class RankNavigator extends StatelessWidget {
               case "/Search":
                 return SearchScreen(settings: settings);
               case "/Login":
-                return LoginScreen(settings: settings);
+                return const LoginScreen();
               case "/Category":
                 return const CategoryScreen();
               case "/Profile":
