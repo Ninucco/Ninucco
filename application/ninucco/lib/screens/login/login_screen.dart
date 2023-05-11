@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/providers/tutorial_provider.dart';
 import 'package:ninucco/services/member_api_service.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 
@@ -88,17 +91,47 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.center,
                     padding: const EdgeInsets.only(bottom: 12),
                     child: ElevatedButton(
-                      onPressed: () async => {
-                        await authProvider.signIn(),
-                        if (await MemberApiService.checkRegisted())
-                          {
-                            await MemberApiService.login(apiService),
-                          }
-                        else
-                          {
-                            await MemberApiService.regist(apiService),
-                          },
-                        tutorialProvider.setIsPassTutorial(true),
+                      onPressed: () async {
+                        var userData = await authProvider.signInWithGoogle();
+                        var user = userData.user;
+                        String baseUrl = "https://k8a605.p.ssafy.io/api/member";
+                        if (user?.uid == null) {
+                          return;
+                        }
+                        if (await MemberApiService.checkRegisted(user!.uid)) {
+                          // 로그인
+                          var url = Uri.parse('$baseUrl/login');
+                          Map<String, String?> req = {
+                            'id': user.uid,
+                          };
+                          var response = await http.post(
+                            url,
+                            headers: {'Content-Type': 'application/json'},
+                            body: json.encode(req),
+                          );
+                          final member = jsonDecode(response.body)['data'];
+                          final instance = MemberModel.fromJson(member);
+                          authProvider.setMember(instance);
+                        } else {
+                          // 회원가입
+                          var url = Uri.parse('$baseUrl/regist');
+
+                          Map<String, String?> data = {
+                            'id': user.uid,
+                            'nickname': user.email,
+                            'url': user.photoURL,
+                          };
+
+                          var response = await http.post(url,
+                              headers: {'Content-Type': 'application/json'},
+                              body: json.encode(data));
+
+                          final member = jsonDecode(response.body)['data'];
+                          final instance = MemberModel.fromJson(member);
+                          authProvider.setMember(instance);
+                        }
+                        authProvider.setLoginStatus(true);
+                        tutorialProvider.setIsPassTutorial(true);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -126,17 +159,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.center,
                     padding: const EdgeInsets.only(bottom: 12),
                     child: ElevatedButton(
-                      onPressed: () async => {
-                        await authProvider.signInAnonymous(),
-                        if (await MemberApiService.checkRegisted())
-                          {
-                            await MemberApiService.login(apiService),
-                          }
-                        else
-                          {
-                            await MemberApiService.regist(apiService),
-                          },
-                        tutorialProvider.setIsPassTutorial(true),
+                      onPressed: () async {
+                        var userData = await authProvider.signInAnonymous();
+                        var user = userData.user;
+
+                        String baseUrl = "https://k8a605.p.ssafy.io/api/member";
+                        var url = Uri.parse('$baseUrl/regist');
+
+                        Map<String, String?> data = {
+                          'id': user?.uid,
+                          'nickname': user?.email,
+                          'url': user?.photoURL,
+                        };
+
+                        var response = await http.post(url,
+                            headers: {'Content-Type': 'application/json'},
+                            body: json.encode(data));
+
+                        final member = jsonDecode(response.body)['data'];
+                        final instance = MemberModel.fromJson(member);
+                        authProvider.setMember(instance);
+                        authProvider.setLoginStatus(true);
+
+                        tutorialProvider.setIsPassTutorial(true);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,

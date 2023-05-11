@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/navigators/battle_navigator.dart';
 import 'package:ninucco/navigators/home_navigator.dart';
@@ -73,20 +74,36 @@ class App extends StatelessWidget {
   }
 }
 
-class Layout extends StatelessWidget {
+class Layout extends StatefulWidget {
   const Layout({
     super.key,
   });
 
   @override
+  State<Layout> createState() => _LayoutState();
+}
+
+class _LayoutState extends State<Layout> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  @override
+  void initState() {
+    // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      AuthProvider authProvider =
+          Provider.of<AuthProvider>(context, listen: false);
+      // authProvider.signOut();
+
+      final apiService = MemberApiService(authProvider);
+      if (authProvider.member == null && _auth.currentUser?.uid != null) {
+        MemberApiService.login(apiService);
+      }
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     NavProvider navProvider = Provider.of<NavProvider>(context);
-    AuthProvider authProvider = Provider.of<AuthProvider>(context);
-    final apiService = MemberApiService(authProvider);
-
-    if (authProvider.member == null) {
-      MemberApiService.login(apiService);
-    }
 
     bool showFloatButton = Provider.of<NavProvider>(context).show &&
         MediaQuery.of(context).viewInsets.bottom == 0;

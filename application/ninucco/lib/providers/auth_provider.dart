@@ -55,18 +55,9 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> signInAnonymous() async {
-    try {
-      await _auth.signInAnonymously();
-      setLoginStatus(true);
-    } on PlatformException catch (error) {
-      if (error.code == 'sign_in_canceled') {
-        debugPrint('Google Anonymous sign in was canceled');
-      }
-    } catch (error) {
-      // Handle the error here
-      debugPrint('Failed to sign in with Google: $error');
-    }
+  Future<UserCredential> signInAnonymous() async {
+    UserCredential data = await _auth.signInAnonymously();
+    return data;
   }
 
   Future<void> signOut() async {

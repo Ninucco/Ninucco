@@ -13,10 +13,11 @@ class MemberApiService {
 
   MemberApiService(this.authProvider);
 
-  static Future<MemberModel> regist(MemberApiService apiService) async {
+  static void regist(MemberApiService apiService) async {
+    if (_auth.currentUser?.uid == null) {
+      return null;
+    }
     final authProvider = apiService.authProvider;
-
-    // final userToken = _auth.currentUser?.refreshToken;
     final uid = _auth.currentUser?.uid;
     final email = _auth.currentUser?.email;
     final photoURL = _auth.currentUser?.photoURL;
@@ -29,24 +30,21 @@ class MemberApiService {
 
     final url = Uri.parse('$baseUrl/regist');
     final response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer $userToken',
-        },
-        body: json.encode(data));
+        headers: {'Content-Type': 'application/json'}, body: json.encode(data));
 
-    if (response.statusCode == 200) {
-      final member = jsonDecode(response.body)['data'];
-      final instance = MemberModel.fromJson(member);
-      authProvider.setMember(instance);
-      return instance;
-    }
+    final member = jsonDecode(response.body)['data'];
+    final instance = MemberModel.fromJson(member);
+    authProvider.setMember(instance);
+
     throw Error();
   }
 
-  static Future<MemberModel> login(MemberApiService apiService) async {
+  static void login(MemberApiService apiService) async {
+    if (_auth.currentUser?.uid == null) {
+      return null;
+    }
+
     final authProvider = apiService.authProvider;
-    // final userToken = _auth.currentUser?.refreshToken;
     final uid = _auth.currentUser?.uid;
 
     Map<String, String?> data = {
@@ -61,19 +59,13 @@ class MemberApiService {
         },
         body: json.encode(data));
 
-    if (response.statusCode == 200) {
-      final loginInfo = jsonDecode(response.body)['data'];
-      final instance = MemberModel.fromJson(loginInfo);
-      authProvider.setMember(instance);
-      return instance;
-    }
-    throw Error();
+    final loginInfo = jsonDecode(response.body)['data'];
+    final instance = MemberModel.fromJson(loginInfo);
+    authProvider.setMember(instance);
   }
 
-  static Future<bool> checkRegisted() async {
-    final uid = _auth.currentUser?.uid;
-
-    Map<String, String?> data = {
+  static Future<bool> checkRegisted(String uid) async {
+    Map<String, String?> req = {
       'id': uid,
     };
 
@@ -82,13 +74,10 @@ class MemberApiService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: json.encode(data));
+        body: json.encode(req));
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body)['data'];
-      bool isRegisted = data['check'];
-      return isRegisted;
-    }
-    throw Error();
+    final data = jsonDecode(response.body)['data'];
+    bool isRegisted = data['check'];
+    return isRegisted;
   }
 }
