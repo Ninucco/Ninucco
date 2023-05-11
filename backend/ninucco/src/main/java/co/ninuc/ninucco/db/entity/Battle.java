@@ -22,7 +22,7 @@ import java.time.ZoneId;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Battle extends BaseEntity {
-    @Column(name = "title", nullable = false, length = 20)
+    @Column(name = "title", nullable = false)
     String title;
     @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -45,9 +45,12 @@ public class Battle extends BaseEntity {
     BattleStatus status;
     @Column(name="result", nullable = false)
     BattleResult result;
+    @Column
     @CreatedDate
     LocalDateTime createdAt;
+    @Column
     LocalDateTime updatedAt;
+    @Column
     LocalDateTime finishAt;
 
     public void updateResult(BattleResult result){
