@@ -61,6 +61,8 @@ class ScanResult extends StatefulWidget {
 
 class _ScanResultState extends State<ScanResult> {
   ScanUtility? _scanUtility;
+  ScanUtility? get scanUtility => _scanUtility;
+
   late NavProvider _navProvider;
 
   ResultData _resultData = ResultData(
