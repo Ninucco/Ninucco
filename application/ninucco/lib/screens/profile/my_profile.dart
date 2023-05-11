@@ -5,7 +5,9 @@ import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
 
 class MyProfileScreen extends StatefulWidget {
-  const MyProfileScreen({super.key});
+  final String userId;
+
+  const MyProfileScreen({super.key, required this.userId});
 
   @override
   State<MyProfileScreen> createState() => _MyProfileScreenState();
@@ -29,7 +31,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _userData = UserService.getUserDetailById();
+    
+    _userData = UserService.getUserDetailById(widget.userId);
   }
 
   @override
