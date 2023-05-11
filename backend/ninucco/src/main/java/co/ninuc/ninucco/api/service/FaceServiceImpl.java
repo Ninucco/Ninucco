@@ -2,6 +2,7 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.Similarity;
+import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.SimilarityModelService;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,22 +37,22 @@ public class FaceServiceImpl {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public SimilarityResultRes generate(String memberId,String modelType, MultipartFile inputImg){
+    public SimilarityResultRes generate(SimilarityReq r){
         //유저 아이디 검증
-        validateUtil.memberValidateById(memberId);
+        validateUtil.memberValidateById(r.getMemberId());
         //파일이 png인지 검사한다
-        String contentType = inputImg.getContentType();
+        String contentType = r.getImg().getContentType();
         if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
             throw new CustomException(ErrorRes.BAD_REQUEST);
         //파일 bypeArray로 변환
         byte[] inputImgByteArray;
         try{
-            inputImgByteArray = inputImg.getBytes();
+            inputImgByteArray = r.getImg().getBytes();
         }catch(IOException e){
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
         //2. 데이터 리스트를 받는다(keyword-value)
-        List<Similarity> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
+        List<Similarity> similarityResultList = similarityModelService.getList(r.getModelType(), inputImgByteArray);
         List<Similarity> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
         log.info("1. 데이터 리스트 받기 완료");
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
@@ -106,8 +106,8 @@ public class FaceServiceImpl {
 
         similarityResultRepository.save(
                 SimilarityResult.builder()
-                        .memberId(memberId)
-                        .modelType(modelType)
+                        .memberId(r.getMemberId())
+                        .modelType(r.getModelType())
                         .imgUrl(imgUrl)
                         .resultTitle(resultTitle)
                         .resultDescription(resultDescription)
