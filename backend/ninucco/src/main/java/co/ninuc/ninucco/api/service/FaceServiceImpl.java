@@ -2,20 +2,16 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.Similarity;
-import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.SimilarityModelService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
-import co.ninuc.ninucco.db.entity.Keyword;
-import co.ninuc.ninucco.db.repository.KeywordRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,20 +27,10 @@ import java.util.UUID;
 public class FaceServiceImpl {
     private final SimilarityModelService similarityModelService;
     private final StabilityAIService stabilityAIService;
-    private final KeywordRepository keywordRepository;
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    @Transactional
-    public Long saveKeyword(KeywordCreateReq keyword){
-        return keywordRepository.save(Keyword.builder()
-                .category(keyword.getCategory())
-                .name(keyword.getName()).build()).getId();
-    }
-    public List<Keyword> findAllKeywords(){
-        return keywordRepository.findAll();
-    }
 
     public SimilarityResultRes generate(String modelType, MultipartFile inputImg){
         //1. 입력으로부터 유저 아이디를 받는다
