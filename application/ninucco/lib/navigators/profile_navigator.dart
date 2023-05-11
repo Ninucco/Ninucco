@@ -39,7 +39,7 @@ class ProfileNavigator extends StatelessWidget {
               case "/Profile":
                 return ProfileScreen(settings: settings);
               case "/MyProfile":
-                return const MyProfileScreen(userId: 'linga');
+                return const MyProfileScreen();
               case "/ProfileScanList":
                 return ProfileScanResult(settings: settings);
               default:

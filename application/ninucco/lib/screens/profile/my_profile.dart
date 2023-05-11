@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
+import 'package:provider/provider.dart';
 
 class MyProfileScreen extends StatefulWidget {
-  final String userId;
-
-  const MyProfileScreen({super.key, required this.userId});
+  const MyProfileScreen({super.key});
 
   @override
   State<MyProfileScreen> createState() => _MyProfileScreenState();
@@ -24,19 +24,21 @@ class _MyProfileScreenState extends State<MyProfileScreen>
     with TickerProviderStateMixin {
   final List<String> tabs = <String>['검사결과', '배틀이력', '아이템'];
   late TabController _tabController = TabController(length: 3, vsync: this);
-  late Future<UserDetailData> _userData;
   late String userId;
   late bool canGoBack;
   @override
   void initState() {
-    super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    
-    _userData = UserService.getUserDetailById(widget.userId);
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var me = Provider.of<AuthProvider>(context).member;
+    Future<UserDetailData> userData =
+        UserService.getUserDetailById(me?.id ?? "linga");
+
     var myTabBar = TabBar(
       controller: _tabController,
       indicatorColor: Colors.teal,
@@ -71,7 +73,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                     expandedHeight: 450.0,
                     height: 96,
                     tabbar: myTabBar,
-                    userData: _userData,
+                    userData: userData,
                   ),
                 ),
               ),
@@ -95,7 +97,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                   name == '검사결과'
                                       ? GridItems(
                                           name: name,
-                                          userData: _userData,
+                                          userData: userData,
                                         )
                                       : const SliverToBoxAdapter(
                                           child: Column(
@@ -434,7 +436,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
         ),
         Positioned(
           top: 8,
-          right: 16,
+          right: 8,
           child: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.notifications_sharp),
