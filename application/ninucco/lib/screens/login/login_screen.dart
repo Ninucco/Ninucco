@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/member_model.dart';
-import 'package:ninucco/providers/tutorial_provider.dart';
 import 'package:ninucco/services/member_api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -27,9 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tutorialProvider = Provider.of<TutorialProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
-    final apiService = MemberApiService(authProvider);
+    // final apiService = MemberApiService(authProvider);
 
     return Scaffold(
         appBar: AppBar(
@@ -131,7 +129,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           authProvider.setMember(instance);
                         }
                         authProvider.setLoginStatus(true);
-                        tutorialProvider.setIsPassTutorial(true);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -169,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Map<String, String?> data = {
                           'id': user?.uid,
                           'nickname': user?.email,
-                          'url': user?.photoURL,
+                          'url':
+                              'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/default.png',
                         };
 
                         var response = await http.post(url,
@@ -180,8 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         final instance = MemberModel.fromJson(member);
                         authProvider.setMember(instance);
                         authProvider.setLoginStatus(true);
-
-                        tutorialProvider.setIsPassTutorial(true);
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
