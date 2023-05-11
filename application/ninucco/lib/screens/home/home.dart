@@ -3,7 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/providers/auth_provider.dart';
-import 'package:ninucco/services/member_api_service.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:provider/provider.dart';
 
@@ -388,7 +387,12 @@ class HomeSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var me = Provider.of<AuthProvider>(context).member;
+    var authProvider = Provider.of<AuthProvider>(context);
+    var me = authProvider.member;
+
+    print("MEMEMEMEMEMEME");
+    print(me);
+
     return SliverAppBar(
       toolbarHeight: 160,
       shape: ContinuousRectangleBorder(
@@ -403,22 +407,20 @@ class HomeSliverAppBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Color(0xffFE9BB3),
+            Row(children: [
+              const CircleAvatar(
+                radius: 16,
+                backgroundColor: Color(0xffFE9BB3),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                "안녕하세요, ${me?.nickname ?? "???"}님!",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  "안녕하세요, ${me?.nickname ?? "???"}님!",
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                  ),
-                ),
-              )
+              ),
             ]),
             const SizedBox(height: 8),
             const Text(
