@@ -26,6 +26,10 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   late TabController _tabController = TabController(length: 3, vsync: this);
   late String userId;
   late bool canGoBack;
+
+  late UserDetailData _userDetailData;
+  late Future<UserDetailData> _initUserDetail;
+
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
@@ -33,11 +37,19 @@ class _MyProfileScreenState extends State<MyProfileScreen>
     super.initState();
   }
 
+  void updateUI() {
+    print("UI UPDATE");
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    var me = Provider.of<AuthProvider>(context).member;
+    var authProvider = Provider.of<AuthProvider>(context);
+    var me = authProvider.member;
     Future<UserDetailData> userData =
         UserService.getUserDetailById(me?.id ?? "linga");
+
+    print("REBUILD!");
 
     var myTabBar = TabBar(
       controller: _tabController,
@@ -74,6 +86,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                     height: 96,
                     tabbar: myTabBar,
                     userData: userData,
+                    update: updateUI,
                   ),
                 ),
               ),
@@ -86,28 +99,33 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           bottom: false,
                           child: Builder(
                             builder: (BuildContext context) {
-                              return CustomScrollView(
-                                key: PageStorageKey<String>(tabs[0]),
-                                slivers: [
-                                  SliverOverlapInjector(
-                                    handle: NestedScrollView
-                                        .sliverOverlapAbsorberHandleFor(
-                                            context),
-                                  ),
-                                  name == '검사결과'
-                                      ? GridItems(
-                                          name: name,
-                                          userData: userData,
-                                        )
-                                      : const SliverToBoxAdapter(
-                                          child: Column(
-                                            children: [
-                                              SizedBox(height: 32),
-                                              Text("준비중입니다"),
-                                            ],
+                              return RefreshIndicator(
+                                onRefresh: () async {
+                                  updateUI();
+                                },
+                                child: CustomScrollView(
+                                  key: PageStorageKey<String>(tabs[0]),
+                                  slivers: [
+                                    SliverOverlapInjector(
+                                      handle: NestedScrollView
+                                          .sliverOverlapAbsorberHandleFor(
+                                              context),
+                                    ),
+                                    name == '검사결과'
+                                        ? GridItems(
+                                            name: name,
+                                            userData: userData,
+                                          )
+                                        : const SliverToBoxAdapter(
+                                            child: Column(
+                                              children: [
+                                                SizedBox(height: 32),
+                                                Text("준비중입니다"),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                ],
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -182,11 +200,13 @@ class GridItems extends StatelessWidget {
 
 class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   final Future<UserDetailData> userData;
+  final Function update;
   final double expandedHeight;
   final double height;
   final TabBar tabbar;
 
   HomeSliverAppBar({
+    required this.update,
     required this.userData,
     required this.expandedHeight,
     required this.tabbar,
@@ -242,8 +262,6 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
             future: userData,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                print("snapshotsnapshotsnapshotsnapshotsnapshot");
-
                 return Positioned(
                   top: 16,
                   child: Opacity(
@@ -258,7 +276,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                         ),
                         const SizedBox(width: 16),
                         Text(
-                          '${snapshot.data!.user.nickname}\'s Profile',
+                          snapshot.data!.user.nickname,
                           style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
@@ -438,7 +456,9 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           top: 8,
           right: 8,
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              update();
+            },
             icon: const Icon(Icons.notifications_sharp),
             color: Colors.black,
             iconSize: 24,

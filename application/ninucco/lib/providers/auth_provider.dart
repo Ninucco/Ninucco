@@ -13,6 +13,14 @@ class AuthProvider with ChangeNotifier {
 
   MemberModel? _member;
   MemberModel? get member => _member;
+  bool _update = false;
+
+  void setUpdate() {
+    notifyListeners();
+    _update = !_update;
+  }
+
+  get update => _update;
 
   void setMember(MemberModel? member) {
     notifyListeners();
