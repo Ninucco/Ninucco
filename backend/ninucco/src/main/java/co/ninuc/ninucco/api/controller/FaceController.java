@@ -29,13 +29,13 @@ public class FaceController {
                 new ApiResult<>(SUCCESS, faceService.generate(memberId, modelType, img))
         );
     }
-    @ApiOperation(value = "내 닮은것 찾기 내역")
-    @GetMapping(value = "/{memberId}")
-    public ResponseEntity<?> findAllSimilarityResultsByMemberId(@PathVariable String memberId){
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, faceService.findSimilarityResultsByMemberId(memberId))
-        );
-    }
+//    @ApiOperation(value = "내 닮은것 찾기 내역")
+//    @GetMapping(value = "/{memberId}")
+//    public ResponseEntity<?> findAllSimilarityResultsByMemberId(@PathVariable String memberId){
+//        return ResponseEntity.ok().body(
+//                new ApiResult<>(SUCCESS, faceService.findSimilarityResultsByMemberId(memberId))
+//        );
+//    }
 
     @ApiOperation(value = "더미 API", notes="더미 API")
     @PostMapping("/dummy")

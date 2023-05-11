@@ -2,7 +2,6 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.Similarity;
-import co.ninuc.ninucco.api.dto.response.SimilarityResultListRes;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.SimilarityModelService;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -120,13 +118,13 @@ public class FaceServiceImpl {
                 .resultDescription(resultDescription)
                 .resultList(listTop5).build();
     }
-    public SimilarityResultListRes findSimilarityResultsByMemberId(String memberId){
-        return new SimilarityResultListRes(similarityResultRepository.findAllByMemberId(memberId).stream()
-                .map((r -> SimilarityResultRes.builder()
-                        .modelType(r.getModelType())
-                        .imgUrl(r.getImgUrl())
-                        .resultTitle(r.getResultTitle())
-                        .resultDescription(r.getResultDescription())
-                        .resultList(r.getResultList()).build())).collect(Collectors.toList()));
-    }
+//    public SimilarityResultListRes findSimilarityResultsByMemberId(String memberId){
+//        return new SimilarityResultListRes(similarityResultRepository.findAllByMemberId(memberId).stream()
+//                .map((r -> SimilarityResultRes.builder()
+//                        .modelType(r.getModelType())
+//                        .imgUrl(r.getImgUrl())
+//                        .resultTitle(r.getResultTitle())
+//                        .resultDescription(r.getResultDescription())
+//                        .resultList(r.getResultList()).build())).collect(Collectors.toList()));
+//    }
 }

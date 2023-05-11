@@ -1,7 +1,6 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
-import co.ninuc.ninucco.api.dto.Similarity;
 import co.ninuc.ninucco.api.dto.request.LoginReq;
 import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
 import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
@@ -14,6 +13,7 @@ import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.MemberItem;
 import co.ninuc.ninucco.db.repository.MemberItemRepository;
 import co.ninuc.ninucco.db.repository.MemberRepository;
+import co.ninuc.ninucco.db.repository.SimilarityResultRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +35,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberItemRepository memberItemRepository;
     private final ValidateUtil validateUtil;
     private final AmazonS3Client amazonS3Client;
+    private final SimilarityResultRepository similarityResultRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -112,10 +113,10 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public MemberRes insertMember(MemberCreateReq memberCreateReq) {
         StringBuilder randomNickname=new StringBuilder();
-        randomNickname.append(adverbs[(int)(Math.random()*70)]+" ");
-        randomNickname.append(words[(int)(Math.random()*70)]+" ");
-        randomNickname.append(animals[(int)(Math.random()*70)]+" ");
-        randomNickname.append(memberRepository.count());
+        randomNickname.append(adverbs[(int)(Math.random()*70)]).append(' ')
+                .append(words[(int)(Math.random()*70)]).append(' ')
+                .append(animals[(int)(Math.random()*70)]).append(' ')
+                .append(memberRepository.count());
         //랜덤 닉네임 생성 후 혹시 있을 중복 방지를 위해 memberRepository 자료 총 개수를 뒤에 붙임
 
         memberCreateReq.setNickname(randomNickname.toString());
@@ -182,59 +183,9 @@ public class MemberServiceImpl implements MemberService{
 
         MemberRes user=toMemberRes(validateUtil.memberValidateById(memberId));
 
-
-        List<ScanResultResDummy> scanResultResDummies=new ArrayList<>();
-        List<Similarity> similarities=new ArrayList<>();
-        Similarity similarity=Similarity.builder()
-                .keyword("고양이상")
-                .value(0.5)
-                .build();
-
-        Similarity similarity2=Similarity.builder()
-                .keyword("코끼리상")
-                .value(0.2)
-                .build();
-
-        Similarity similarity1=Similarity.builder()
-                .keyword("말상")
-                .value(0.15)
-                .build();
-
-        Similarity similarity3=Similarity.builder()
-                .keyword("망둥어상")
-                .value(0.1)
-                .build();
-
-        Similarity similarity4=Similarity.builder()
-                .keyword("곰상")
-                .value(0.05)
-                .build();
-
-        similarities.add(similarity);
-        similarities.add(similarity1);
-        similarities.add(similarity2);
-        similarities.add(similarity3);
-        similarities.add(similarity4);
-
-
-        ScanResultResDummy scanResultResDummy=ScanResultResDummy
-                .builder()
-                .resultTitle("1퍼센트의 오차도 허용하지 않는 깐깐한 고양이상")
-                .imgUrl("https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/946d0bc8-2c60-35c0-add9-721e42032938.png")
-                .resultDescription("장인은 대담하면서도 현실적인 성격으로, 모든 종류의 도구를 자유자재로 다루는 성격 유형입니다. \n\n내향형의 사람들은 소수의 사람들과 깊고 의미 있는 관계를 맺는 일을 선호하며, 차분한 환경을 원할 때가 많습니다.\n\n관찰형의 사람들은 실용적이고 현실적인 성격을 지니고 있습니다. 이들은 현재 발생하고 있거나 발생할 가능성이 매우 높은 일에 집중하는 경향이 있습니다.\n\n사고형의 사람들은 객관성과 합리성을 중시하며 논리에 집중하느라 감정을 간과할 때가 많습니다. 이들은 사회적 조화보다는 효율성이 더 중요하다고 생각하는 경향이 있습니다.")
-                .resultPercentages(similarities)
-                .build();
-
-        scanResultResDummies.add(scanResultResDummy);
-        scanResultResDummies.add(scanResultResDummy);
-        scanResultResDummies.add(scanResultResDummy);
-        scanResultResDummies.add(scanResultResDummy);
-        scanResultResDummies.add(scanResultResDummy);
-        scanResultResDummies.add(scanResultResDummy);
-
         MemberAllRes memberAllRes=MemberAllRes.builder()
                 .user(user)
-                .scanResults(scanResultResDummies)
+                .scanResults(similarityResultRepository.findAllByMemberId(memberId))
                 .build();
 
         return memberAllRes;
