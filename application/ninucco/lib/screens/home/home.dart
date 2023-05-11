@@ -402,25 +402,21 @@ class HomeSliverAppBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Color(0xffFE9BB3),
+            const Row(children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: Color(0xffFE9BB3),
+              ),
+              SizedBox(width: 16),
+              Text(
+                "안녕하세요,\n익명닉네임 님!",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
-                const SizedBox(width: 16),
-                Consumer<AuthProvider>(builder: (context, authProvider, _) {
-                  const Text(
-                    "안녕하세요,\n익명닉네임 님!",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  );
-                })
-              ],
-            ),
+              )
+            ]),
             const SizedBox(height: 8),
             const Text(
               "친구를 찾아서 경쟁해보세요!",
