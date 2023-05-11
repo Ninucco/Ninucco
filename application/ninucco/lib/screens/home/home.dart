@@ -387,11 +387,7 @@ class HomeSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var authProvider = Provider.of<AuthProvider>(context);
-    var me = authProvider.member;
-
-    print("MEMEMEMEMEMEME");
-    print(me);
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
 
     return SliverAppBar(
       toolbarHeight: 160,
@@ -414,11 +410,11 @@ class HomeSliverAppBar extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Text(
-                "안녕하세요, ${me?.nickname ?? "???"}님!",
+                "안녕하세요,\n${authProvider.member?.nickname ?? '익명의 사용자'}님!",
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                  fontSize: 18,
                 ),
               ),
             ]),
