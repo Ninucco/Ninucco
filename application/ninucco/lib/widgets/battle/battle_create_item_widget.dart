@@ -20,11 +20,11 @@ class BattleCreateItem extends StatelessWidget {
     return Column(
       children: [
         Container(
-          color: Colors.transparent,
           margin: const EdgeInsets.all(10),
           width: MediaQuery.of(context).size.width * 0.9,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
+            color: Colors.transparent,
           ),
           child: Column(
             children: [

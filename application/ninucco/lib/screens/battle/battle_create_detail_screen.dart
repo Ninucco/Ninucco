@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_create_model.dart';
+import 'package:ninucco/models/battle_post_model.dart';
+import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_create_item_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 
@@ -18,6 +20,7 @@ class BattleCreateDetailScreen extends StatefulWidget {
 
 class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
   var result = "???";
+  var resultId = "";
   late BattleCreateModel _resultData;
   @override
   void initState() {
@@ -69,11 +72,11 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                 onPressed: () async {
                   var tmpResult = await Navigator.pushNamed(
                       context, '/BattleFriendSearch',
-                      arguments: "");
+                      arguments: "") as List;
+
                   setState(() {
-                    if (tmpResult != null) {
-                      result = tmpResult.toString();
-                    }
+                    result = tmpResult[1] as String;
+                    resultId = tmpResult[0] as String;
                   });
                 },
               ),
@@ -102,6 +105,11 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                         ),
                       ),
                       onPressed: () async {
+                        BattleApiService.postBattle(BattlePostModel(
+                            _resultData.memberAImage,
+                            _resultData.memberAId,
+                            resultId,
+                            _resultData.question));
                         var tmpResult = await Navigator.pushNamed(
                             context, '/BattleAllScreen',
                             arguments: "");
