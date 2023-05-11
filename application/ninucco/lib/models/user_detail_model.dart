@@ -22,9 +22,10 @@ class UserDetailData {
     var list = json['scanResults'] as List;
     List<ResultData> scanResultList =
         list.map((i) => ResultData.fromJson(i)).toList();
-    var tempFriendList = json['friendList'] as List;
-    List<UserModel> friendList =
-        tempFriendList.map((i) => UserModel.fromJson(i)).toList();
+        
+    var tempFriendList = json['friendList'] ?? [];
+    List<dynamic> friendList =
+        tempFriendList?.map((i) => UserModel.fromJson(i)).toList();
 
     return UserDetailData(
       user: UserModel.fromJson(json['user']),

@@ -388,6 +388,7 @@ class HomeSliverAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var me = Provider.of<AuthProvider>(context).member;
     return SliverAppBar(
       toolbarHeight: 160,
       shape: ContinuousRectangleBorder(
@@ -402,18 +403,20 @@ class HomeSliverAppBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: Color(0xffFE9BB3),
-              ),
-              SizedBox(width: 16),
-              Text(
-                "안녕하세요,\n익명닉네임 님!",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Color(0xffFE9BB3),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  "안녕하세요, ${me?.nickname ?? "???"}님!",
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
                 ),
               )
             ]),
