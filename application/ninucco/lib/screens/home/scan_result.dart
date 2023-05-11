@@ -23,12 +23,14 @@ class AnalyticItem {
 
 class ResultData {
   final int type;
+  final String modelType;
   final String resultTitle;
   final String resultDescription;
   final String imgUrl;
   final List<AnalyticItem> resultPercentages;
 
   ResultData({
+    required this.modelType,
     required this.type,
     required this.resultTitle,
     required this.resultDescription,
@@ -41,6 +43,7 @@ class ResultData {
     List<AnalyticItem> analyticItemList =
         list.map((i) => AnalyticItem.fromJson(i)).toList();
     return ResultData(
+      modelType: json['modelType'],
       type: json['type'] ?? 1,
       resultTitle: json['resultTitle'],
       resultDescription: json['resultDescription'],
@@ -67,6 +70,7 @@ class _ScanResultState extends State<ScanResult> {
 
   ResultData _resultData = ResultData(
     type: 0,
+    modelType: 'animal',
     resultTitle: 'title',
     resultDescription: 'description',
     imgUrl: 'imageUrl',
@@ -258,6 +262,7 @@ class ShareButton extends StatefulWidget {
 class _ShareButtonState extends State<ShareButton> {
   ResultData _resultData = ResultData(
     type: 0,
+    modelType: 'animal',
     resultTitle: 'title',
     resultDescription: 'description',
     imgUrl: 'imageUrl',

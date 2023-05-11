@@ -66,6 +66,7 @@ class _SubmitButtonState extends State<SubmitButton> {
     var analyticItemList = list.map((i) => AnalyticItem.fromJson(i)).toList();
     return ResultData(
       type: widget.type,
+      modelType: typeName,
       resultTitle: jsonData['resultTitle'],
       resultDescription: jsonData['resultDescription'],
       imgUrl: jsonData['imgUrl'],
