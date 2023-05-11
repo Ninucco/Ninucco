@@ -85,12 +85,16 @@ class _SubmitButtonState extends State<SubmitButton> {
 
   @override
   Widget build(BuildContext context) {
-    var me = Provider.of<AuthProvider>(context).member;
+    var authProvider = Provider.of<AuthProvider>(context);
+    var me = authProvider.member;
     return Column(
       children: [
         const SizedBox(height: 32),
         GestureDetector(
-          onTap: () => handleSubmit(me!.id),
+          onTap: () {
+            authProvider.setUpdate();
+            handleSubmit(me!.id);
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: const BoxDecoration(
