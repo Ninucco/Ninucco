@@ -2,10 +2,13 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.Similarity;
+import co.ninuc.ninucco.api.dto.response.SimilarityResultListRes;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.SimilarityModelService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
+import co.ninuc.ninucco.db.entity.SimilarityResult;
+import co.ninuc.ninucco.db.repository.SimilarityResultRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +32,12 @@ public class FaceServiceImpl {
     private final SimilarityModelService similarityModelService;
     private final StabilityAIService stabilityAIService;
     private final AmazonS3Client amazonS3Client;
+    private final SimilarityResultRepository similarityResultRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public SimilarityResultRes generate(String modelType, MultipartFile inputImg){
+    public SimilarityResultRes generate(String memberId,String modelType, MultipartFile inputImg){
         //1. 입력으로부터 유저 아이디를 받는다
 
         //파일이 png인지 검사한다
@@ -98,10 +103,30 @@ public class FaceServiceImpl {
 
         //6. HTTPResponse로 보낸다.
         List<Similarity> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
+
+        similarityResultRepository.save(
+                SimilarityResult.builder()
+                        .memberId(memberId)
+                        .modelType(modelType)
+                        .imgUrl(imgUrl)
+                        .resultTitle(resultTitle)
+                        .resultDescription(resultDescription)
+                        .resultList(listTop5).build()
+        );
+
         return SimilarityResultRes.builder()
                 .imgUrl(imgUrl)
                 .resultTitle(resultTitle)
                 .resultDescription(resultDescription)
                 .resultList(listTop5).build();
+    }
+    public SimilarityResultListRes findSimilarityResultsByMemberId(String memberId){
+        return new SimilarityResultListRes(similarityResultRepository.findAllByMemberId(memberId).stream()
+                .map((r -> SimilarityResultRes.builder()
+                        .modelType(r.getModelType())
+                        .imgUrl(r.getImgUrl())
+                        .resultTitle(r.getResultTitle())
+                        .resultDescription(r.getResultDescription())
+                        .resultList(r.getResultList()).build())).collect(Collectors.toList()));
     }
 }
