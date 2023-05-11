@@ -22,7 +22,9 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
     final image = await picker.pickImage(source: imageSource);
 
     setState(() {
-      _image = File(image!.path);
+      if (image != null) {
+        _image = File(image.path);
+      }
     });
   }
 

@@ -78,6 +78,44 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                 },
               ),
             ),
+            (result != "???")
+                ? Container(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 5,
+                    ),
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    height: 60,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        elevation: 5,
+                        backgroundColor: Colors.black,
+                        shadowColor: Colors.black45,
+                      ),
+                      child: const Text(
+                        '배틀 생성 요청 완료!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                        ),
+                      ),
+                      onPressed: () async {
+                        var tmpResult = await Navigator.pushNamed(
+                            context, '/BattleAllScreen',
+                            arguments: "");
+                        setState(() {
+                          if (tmpResult != null) {
+                            result = tmpResult.toString();
+                          }
+                        });
+                      },
+                    ),
+                  )
+                : const SizedBox(
+                    height: 0,
+                  ),
             const SizedBox(
               height: 20,
             ),
