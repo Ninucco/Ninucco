@@ -11,11 +11,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
-
 @Entity
 @Table(name = "battle")
 @Getter
@@ -42,8 +39,10 @@ public class Battle extends BaseEntity {
     @Column(name="opponent_odds")
     Double opponentOdds;
     @Column(name="status", nullable = false)
+    @Enumerated(EnumType.STRING)
     BattleStatus status;
     @Column(name="result", nullable = false)
+    @Enumerated(EnumType.STRING)
     BattleResult result;
     @Column
     @CreatedDate
@@ -66,7 +65,8 @@ public class Battle extends BaseEntity {
         this.status = BattleStatus.PROCEEDING;
         this.result = BattleResult.PROCEEDING;
         this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-        this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1);
+        //this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1);
+        this.finishAt = LocalDateTime.now().plusMinutes(1);
     }
     @Builder
     public Battle(String title, Member applicant, Member opponent, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime updatedAt, LocalDateTime finishAt, Double opponentOdds){
