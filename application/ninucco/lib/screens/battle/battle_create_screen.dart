@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ninucco/models/battle_create_model.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
+import 'package:provider/provider.dart';
 
 class BattleCreateScreen extends StatefulWidget {
   const BattleCreateScreen({super.key});
@@ -83,6 +85,7 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
     bool isOk = categoryValue != null && _image != null;
     return Scaffold(
       appBar: const MyAppbarWidget(
@@ -205,8 +208,11 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                       {
                         Navigator.pushNamed(
                             context, '/BattleCreateDetailScreen',
-                            arguments: BattleCreateModel("someone", _image!,
-                                "로그인한 누군가", categoryValue!)),
+                            arguments: BattleCreateModel(
+                                authProvider.member!.id,
+                                _image!,
+                                authProvider.member!.nickname,
+                                categoryValue!)),
                       }
                   },
                 ),

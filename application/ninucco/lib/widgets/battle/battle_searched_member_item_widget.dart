@@ -78,7 +78,7 @@ class BattleSearchedMemberItem extends StatelessWidget {
                     ),
                     onPressed: () {
                       // 선택 누르면 선택한 아이디 정보 가지고 navigation pop 해야함
-                      Navigator.pop(context, nickname);
+                      Navigator.pop(context, [id, nickname]);
                     },
                     child: const Text('선택'),
                   ),

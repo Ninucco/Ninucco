@@ -188,6 +188,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                               _textEditingController.clear();
                                               setState(
                                                 () {
+                                                  print("I'm listening~~");
                                                   battleComments =
                                                       BattleApiCommentService
                                                           .getBattleComments(

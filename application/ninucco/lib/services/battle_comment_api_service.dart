@@ -10,7 +10,6 @@ class BattleApiCommentService {
   static Stream<List<BattleCommentInfoModel>> getBattleComments(
       int battleId) async* {
     List<BattleCommentInfoModel> battleInstances = [];
-    // await Future.delayed(const Duration(milliseconds: 1000));
     final url = Uri.parse('$baseUrl/$battleId/comment');
     final response = await http.get(url);
     if (response.statusCode == 200) {

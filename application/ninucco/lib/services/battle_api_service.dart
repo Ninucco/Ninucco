@@ -2,6 +2,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:ninucco/models/battle_info_model.dart';
+import 'package:ninucco/models/battle_post_model.dart';
+import 'package:ninucco/models/battle_post_response_model.dart';
+import 'package:image/image.dart' as IMG;
+import 'package:http_parser/http_parser.dart';
 
 class BattleApiService {
   static const String baseUrl = "https://k8a605.p.ssafy.io/api/battle";
@@ -28,6 +32,33 @@ class BattleApiService {
       final battle = jsonDecode(response.body)["data"];
       final instance = BattleInfoModel.fromJson(battle);
       return instance;
+    }
+    throw Error();
+  }
+
+  static Future<BattlePostResponseModel> postBattle(
+      BattlePostModel battlePost) async {
+    final url = Uri.parse(baseUrl);
+    final request = http.MultipartRequest("POST", url);
+    request.fields["applicantId"] = battlePost.memberAId;
+    request.fields["opponentId"] = battlePost.memberBId;
+    request.fields["title"] = battlePost.question;
+
+    IMG.Image? img = IMG.decodeImage(battlePost.memberAImage.readAsBytesSync());
+
+    var multipartFile = http.MultipartFile.fromBytes(
+      'applicantImage',
+      IMG.encodePng(img!),
+      filename: 'image.png',
+      contentType: MediaType.parse('image/png'),
+    );
+    request.files.add(multipartFile);
+
+    var response = await request.send();
+    final respStr = await response.stream.bytesToString();
+    var jsonData = jsonDecode(respStr)['data'];
+    if (response.statusCode == 200) {
+      return BattlePostResponseModel.fromJson(jsonData);
     }
     throw Error();
   }
