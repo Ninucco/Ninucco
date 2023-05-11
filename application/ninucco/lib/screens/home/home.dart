@@ -211,20 +211,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadData();
+  // }
 
-  Future<void> _loadData() async {
-    AuthProvider authProvider = Provider.of<AuthProvider>(context);
-    final apiService = MemberApiService(authProvider);
+  // Future<void> _loadData() async {
+  //   AuthProvider authProvider = Provider.of<AuthProvider>(context);
+  //   final apiService = MemberApiService(authProvider);
 
-    if (await MemberApiService.checkRegisted()) {
-      await MemberApiService.login(apiService);
-    }
-  }
+  //   if (await MemberApiService.checkRegisted()) {
+  //     await MemberApiService.login(apiService);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -410,9 +410,9 @@ class HomeSliverAppBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 Consumer<AuthProvider>(builder: (context, authProvider, _) {
-                  return Text(
-                    "안녕하세요,\n${authProvider.member?.nickname ?? '익명'}님!",
-                    style: const TextStyle(
+                  const Text(
+                    "안녕하세요,\n익명닉네임 님!",
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
