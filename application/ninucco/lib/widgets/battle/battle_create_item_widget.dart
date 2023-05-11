@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class BattleCreateItem extends StatelessWidget {
-  final int memberAId;
-  final String question, memberANickname, memberBNickname;
+  final String memberAId, question, memberANickname, memberBNickname;
   final File memberAImage;
 
   const BattleCreateItem({

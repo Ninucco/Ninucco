@@ -1,30 +1,29 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:ninucco/screens/battle/battle_friend_search.dart';
+import 'package:ninucco/models/battle_create_model.dart';
 import 'package:ninucco/widgets/battle/battle_create_item_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 
-class BattleCreateDetailWidget extends StatefulWidget {
-  final int memberAId;
-  final String question, memberANickname;
-  final File memberAImage;
+class BattleCreateDetailScreen extends StatefulWidget {
+  final RouteSettings settings;
 
-  const BattleCreateDetailWidget({
+  const BattleCreateDetailScreen({
     super.key,
-    required this.memberAId,
-    required this.memberAImage,
-    required this.question,
-    required this.memberANickname,
+    required this.settings,
   });
 
   @override
-  State<BattleCreateDetailWidget> createState() =>
-      _BattleCreateDetailWidgetState();
+  State<BattleCreateDetailScreen> createState() =>
+      _BattleCreateDetailScreenState();
 }
 
-class _BattleCreateDetailWidgetState extends State<BattleCreateDetailWidget> {
+class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
   var result = "???";
+  late BattleCreateModel _resultData;
+  @override
+  void initState() {
+    super.initState();
+    _resultData = widget.settings.arguments as BattleCreateModel;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +38,10 @@ class _BattleCreateDetailWidgetState extends State<BattleCreateDetailWidget> {
               height: 20,
             ),
             BattleCreateItem(
-              memberAId: widget.memberAId,
-              memberAImage: widget.memberAImage,
-              question: widget.question,
-              memberANickname: widget.memberANickname,
+              memberAId: _resultData.memberAId,
+              memberAImage: _resultData.memberAImage,
+              question: _resultData.question,
+              memberANickname: _resultData.memberANickname,
               memberBNickname: result,
             ),
             Container(
@@ -68,17 +67,13 @@ class _BattleCreateDetailWidgetState extends State<BattleCreateDetailWidget> {
                   ),
                 ),
                 onPressed: () async {
-                  var tmpResult = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const BattleFriendSearchScreen(
-                        keyword: "",
-                      ),
-                    ),
-                  );
-
+                  var tmpResult = await Navigator.pushNamed(
+                      context, '/BattleFriendSearch',
+                      arguments: "");
                   setState(() {
-                    result = tmpResult;
+                    if (tmpResult != null) {
+                      result = tmpResult.toString();
+                    }
                   });
                 },
               ),

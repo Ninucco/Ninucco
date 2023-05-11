@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ninucco/screens/battle/battle_detail_screen.dart';
+import 'package:ninucco/models/battle_info_model.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class BattleItem extends StatelessWidget {
@@ -29,22 +29,20 @@ class BattleItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => BattleDetailScreen(
-              battleId: battleId,
-              memberAId: memberAId,
-              memberBId: memberAId,
-              memberAImage: memberAImage,
-              memberANickname: memberANickname,
-              memberBImage: memberBImage,
-              memberBNickname: memberBNickname,
-              question: question,
-              ratioA: ratioA,
-              ratioB: ratioB,
-            ),
-            fullscreenDialog: true,
+          '/BattleDetailScreen',
+          arguments: BattleInfoModel(
+            battleId,
+            memberAId,
+            memberBId,
+            memberAImage,
+            memberANickname,
+            memberBImage,
+            memberBNickname,
+            question,
+            ratioA,
+            ratioB,
           ),
         );
       },
