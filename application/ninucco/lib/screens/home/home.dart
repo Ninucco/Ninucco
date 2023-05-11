@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ninucco/models/battle_info_model.dart';
+import 'package:ninucco/models/user_rank_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/services/user_rank_api_service.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
+import 'package:ninucco/widgets/ranking/ranking_item_widget.dart';
 import 'package:provider/provider.dart';
 
 class NoonLoopingDemo extends StatefulWidget {
@@ -225,6 +228,9 @@ class _HomeScreenState extends State<HomeScreen> {
   //   }
   // }
 
+  final Future<List<UserRankInfoModel>> userRanks =
+      UserRankApiService.getTop5UserRanks();
+
   @override
   Widget build(BuildContext context) {
     final searchController = TextEditingController();
@@ -239,6 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
             fit: BoxFit.cover,
           )),
           child: CustomScrollView(
+            physics: const RangeMaintainingScrollPhysics(),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
               HomeSliverAppBar(searchController: searchController),
@@ -251,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Text(
                         "나의 닮은꼴 찾기",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 17),
                       ),
                       TextButton(
                           onPressed: () {
@@ -284,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Text(
                         "인기 배틀",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 17),
                       ),
                       TextButton(
                           onPressed: () {},
@@ -304,70 +311,56 @@ class _HomeScreenState extends State<HomeScreen> {
               const SliverToBoxAdapter(
                 child: NoonLoopingDemo(),
               ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 35),
+              ),
               SliverToBoxAdapter(
                 child: Container(
-                  padding: const EdgeInsets.only(bottom: 12, top: 36),
-                  child: const Text(
-                    "랭킹",
-                    style: TextStyle(fontSize: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "배틀 우승 랭킹",
+                        style: TextStyle(fontSize: 17),
+                      ),
+                      TextButton(
+                          onPressed: () {},
+                          child: const Row(
+                            children: [
+                              Text(
+                                "전체보기",
+                                style: TextStyle(color: Colors.black87),
+                              ),
+                              Icon(Icons.chevron_right, color: Colors.black54)
+                            ],
+                          ))
+                    ],
                   ),
                 ),
               ),
               SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    for (var _ in [1, 2, 3, 4, 5])
-                      Column(
-                        children: [
-                          Stack(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: Image.network(
-                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwVVfi9a81AcdLJQCiVitDydwOnDDiRLpcbw&usqp=CAU',
-                                        scale: 0.1,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: Image.network(
-                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRky4seZyCNJWW8Wu3pt6AoaMMTsIZ203_xtQ&usqp=CAU',
-                                        scale: 0.1,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Positioned.fill(
-                                  bottom: 0,
-                                  left: 0,
-                                  child: Icon(
-                                    Icons.brightness_auto_outlined,
-                                    color: Colors.purpleAccent,
-                                    size: 64,
-                                  )),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          const Text("34명이 배팅했어요"),
-                          const Divider(
-                            height: 24,
-                            color: Color(0x88000000),
-                          )
-                        ],
-                      ),
-                  ],
-                ),
+                delegate: SliverChildListDelegate([
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 400,
+                    child: FutureBuilder(
+                      future: userRanks,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView(
+                            padding: const EdgeInsets.all(0),
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [Expanded(child: makeList(snapshot))],
+                          );
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    ),
+                  )
+                ]),
               ),
             ],
           ),
@@ -375,6 +368,24 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
+  return ListView.separated(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemCount: snapshot.data!.length,
+    itemBuilder: (context, index) {
+      var userRank = snapshot.data![index];
+      return RankingItem(
+        profileImage: userRank.profileImage,
+        nickname: userRank.nickname,
+        winCount: userRank.winCount,
+        index: index,
+      );
+    },
+    separatorBuilder: (context, index) => const SizedBox(width: 0),
+  );
 }
 
 class HomeSliverAppBar extends StatelessWidget {

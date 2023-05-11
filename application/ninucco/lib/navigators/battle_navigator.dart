@@ -12,12 +12,12 @@ class BattleNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      initialRoute: '/',
+      initialRoute: '/BattleAllScreen',
       onGenerateRoute: ((settings) {
         return MaterialPageRoute(
           builder: (context) {
             switch (settings.name) {
-              case "/":
+              case "/BattleAllScreen":
                 return BattleAllScreen();
               case "/BattleDetailScreen":
                 return BattleDetailScreen(settings: settings);

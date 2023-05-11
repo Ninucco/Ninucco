@@ -13,40 +13,46 @@ class RankingBattleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: FutureBuilder(
-        future: userRanks,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Expanded(child: makeList(snapshot))
-              ],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg2.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: FutureBuilder(
+          future: userRanks,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(child: makeList(snapshot))
+                ],
+              );
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+          },
+        ),
       ),
     );
   }
 
-  ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
+  static ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
     return ListView.separated(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
       itemCount: snapshot.data!.length,
-      // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       itemBuilder: (context, index) {
         var userRank = snapshot.data![index];
         return RankingItem(
-          id: userRank.id,
           profileImage: userRank.profileImage,
-          nickname: "뛰어난 수장룡",
-          topSimilarity: "방금 막 자다깬 유니콘상",
+          nickname: userRank.nickname,
+          winCount: userRank.winCount,
           index: index,
         );
       },

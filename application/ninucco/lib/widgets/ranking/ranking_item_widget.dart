@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
 class RankingItem extends StatelessWidget {
-  final String profileImage, nickname, topSimilarity;
-  final int id, index;
+  final String profileImage, nickname;
+  final int winCount, index;
 
   const RankingItem({
     super.key,
     required this.profileImage,
     required this.nickname,
-    required this.topSimilarity,
-    required this.id,
+    required this.winCount,
     required this.index,
   });
 
@@ -19,7 +18,11 @@ class RankingItem extends StatelessWidget {
       child: Align(
         alignment: Alignment.topCenter,
         child: Container(
-          margin: const EdgeInsets.all(10),
+          margin: const EdgeInsets.only(
+            left: 10,
+            right: 10,
+            bottom: 20,
+          ),
           padding: const EdgeInsets.all(15),
           width: MediaQuery.of(context).size.width * 0.9,
           height: 90,
@@ -88,7 +91,7 @@ class RankingItem extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      Text(topSimilarity),
+                      Text("우승 총 $winCount 회"),
                     ],
                   ),
                 ),
