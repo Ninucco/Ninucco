@@ -25,20 +25,16 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    // Obtain the auth details from the request
     final GoogleSignInAuthentication? googleAuth =
         await googleUser?.authentication;
 
-    // Create a new credential
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
 
-    // Once signed in, return the UserCredential
     return await _auth.signInWithCredential(credential);
   }
 
@@ -68,6 +64,28 @@ class AuthProvider with ChangeNotifier {
     } catch (error) {
       // Handle the error here
       debugPrint('Failed to sign in with Google: $error');
+    }
+  }
+
+  Future<void> convertAnonymousToGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      _auth.currentUser?.linkWithCredential(credential);
+    } on PlatformException catch (error) {
+      if (error.code == 'sign_in_canceled') {
+        debugPrint('Google sign in was canceled');
+      } else if (error.code == 'credential-already-in-use') {
+        debugPrint('Google Account Already Exist');
+        return;
+      }
+    } catch (error) {
+      debugPrint('Failed to convert with Google: $error');
     }
   }
 }
