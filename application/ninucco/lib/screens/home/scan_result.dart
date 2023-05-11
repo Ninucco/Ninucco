@@ -37,7 +37,7 @@ class ResultData {
   });
 
   factory ResultData.fromJson(Map<String, dynamic> json) {
-    var list = json['resultPercentages'] as List;
+    var list = json['resultList'] as List;
     List<AnalyticItem> analyticItemList =
         list.map((i) => AnalyticItem.fromJson(i)).toList();
     return ResultData(
