@@ -9,6 +9,7 @@ import 'package:ninucco/providers/test_provider.dart';
 import 'package:ninucco/providers/tutorial_provider.dart';
 import 'package:ninucco/screens/loading/loading_screen.dart';
 import 'package:ninucco/screens/login/login_screen.dart';
+import 'package:ninucco/services/member_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 import 'package:ninucco/screens/tutorial/tutorial_screen_demo.dart';
@@ -80,6 +81,12 @@ class Layout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavProvider navProvider = Provider.of<NavProvider>(context);
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    final apiService = MemberApiService(authProvider);
+
+    if (authProvider.member == null) {
+      MemberApiService.login(apiService);
+    }
 
     bool showFloatButton = Provider.of<NavProvider>(context).show &&
         MediaQuery.of(context).viewInsets.bottom == 0;

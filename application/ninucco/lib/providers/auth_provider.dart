@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ninucco/models/member_model.dart';
 
@@ -45,8 +46,11 @@ class AuthProvider with ChangeNotifier {
     try {
       await signInWithGoogle();
       setLoginStatus(true);
+    } on PlatformException catch (error) {
+      if (error.code == 'sign_in_canceled') {
+        debugPrint('Google sign in was canceled');
+      }
     } catch (error) {
-      // Handle the error here
       debugPrint('Failed to sign in with Google: $error');
     }
   }
@@ -55,6 +59,10 @@ class AuthProvider with ChangeNotifier {
     try {
       await _auth.signInAnonymously();
       setLoginStatus(true);
+    } on PlatformException catch (error) {
+      if (error.code == 'sign_in_canceled') {
+        debugPrint('Google Anonymous sign in was canceled');
+      }
     } catch (error) {
       // Handle the error here
       debugPrint('Failed to sign in with Google: $error');
