@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/navigators/battle_navigator.dart';
 import 'package:ninucco/navigators/home_navigator.dart';
@@ -50,17 +49,20 @@ class App extends StatelessWidget {
                   primary: const Color(0xff9BA0FC),
                 ),
           ),
-          home: Consumer2<TutorialProvider, AuthProvider>(
-            builder: (context, tutorialProvider, authProvider, _) {
-              // print('route by ${tutorialProvider.tutorialStatus}');
+          home: Consumer<TutorialProvider>(
+            builder: (context, tutorialProvider, _) {
               if (tutorialProvider.tutorialStatus == null) {
-                return const LoadingScreen(); // 여기에 로딩 추가
+                return const LoadingScreen();
               } else if (tutorialProvider.tutorialStatus!) {
-                if (authProvider.loginStatus) {
-                  return const Layout();
-                } else {
-                  return const LoginScreen();
-                }
+                return Consumer<AuthProvider>(
+                  builder: (context, authProvider, _) {
+                    if (authProvider.loginStatus) {
+                      return const Layout();
+                    } else {
+                      return const LoginScreen();
+                    }
+                  },
+                );
               } else {
                 return const TutorialScreen();
               }

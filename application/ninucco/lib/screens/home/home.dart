@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
+import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/services/member_api_service.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
+import 'package:provider/provider.dart';
 
 class NoonLoopingDemo extends StatefulWidget {
   const NoonLoopingDemo({super.key});
@@ -208,15 +211,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadData();
+  // }
+
+  // Future<void> _loadData() async {
+  //   AuthProvider authProvider = Provider.of<AuthProvider>(context);
+  //   final apiService = MemberApiService(authProvider);
+
+  //   if (await MemberApiService.checkRegisted()) {
+  //     await MemberApiService.login(apiService);
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     final searchController = TextEditingController();
-
-    @override
-    void dispose() {
-      searchController.dispose();
-      super.dispose();
-    }
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -390,21 +402,23 @@ class HomeSliverAppBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 16,
                   backgroundColor: Color(0xffFE9BB3),
                 ),
-                SizedBox(width: 16),
-                Text(
-                  "안녕하세요, 송승현님!",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                  ),
-                ),
+                const SizedBox(width: 16),
+                Consumer<AuthProvider>(builder: (context, authProvider, _) {
+                  const Text(
+                    "안녕하세요,\n익명닉네임 님!",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  );
+                })
               ],
             ),
             const SizedBox(height: 8),
