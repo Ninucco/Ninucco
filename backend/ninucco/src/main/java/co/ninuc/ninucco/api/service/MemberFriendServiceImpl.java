@@ -1,13 +1,12 @@
 package co.ninuc.ninucco.api.service;
 
-import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.FriendListInfo;
 import co.ninuc.ninucco.api.dto.response.MemberFriendListRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendRes;
-import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.MemberFriend;
+import co.ninuc.ninucco.db.entity.type.MemberFriendStatus;
 import co.ninuc.ninucco.db.repository.MemberFriendRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,21 +27,22 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     @Override
     public MemberFriendRes insertMemberFriend(String memberId, String friendId) {
         log.info("memberId : {}, friendId : {}", memberId, friendId);
+        validateUtil.memberFriendConflictCheckById(memberId, friendId);
         
         Member member = validateUtil.memberValidateById(memberId);
         Member friend = validateUtil.memberValidateById(friendId);
+        MemberFriendStatus status = MemberFriendStatus.WAITING;
 
-        if(memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(memberId, friendId)) {
-            throw new CustomException(ErrorRes.CONFLICT_FRIEND);
+        if(memberFriendRepository.existsByMemberIdAndFriendId(friendId, memberId)) {
+            status = MemberFriendStatus.FRIEND;
+            memberFriendRepository.findByMemberIdAndFriendId(friendId, memberId).get().updateStatus(status);
         }
 
-        MemberFriend memberFriend = toEntity(member, friend);
-        MemberFriend friendMember = toEntity(friend, member);
+        MemberFriend memberFriend = toEntity(member, friend, status);
 
         memberFriendRepository.save(memberFriend);
-        memberFriendRepository.save(friendMember);
 
-        return toMemberFriendRes(member, friend);
+        return toMemberFriendRes(member, friend, status);
     }
 
     @Override
@@ -50,64 +50,55 @@ public class MemberFriendServiceImpl implements MemberFriendService{
         Member member = validateUtil.memberValidateById(memberId);
         Member friend = validateUtil.memberValidateById(friendId);
 
-        MemberFriendRes memberFriendRes;
-        Optional<MemberFriend> memberFriend = memberFriendRepository.findMemberFriendByMember_IdAndFriend_Id(memberId, friendId);
+        MemberFriendStatus status;
+        Optional<MemberFriend> memberFriend = memberFriendRepository.findByMemberIdAndFriendId(memberId, friendId);
         if(memberFriend.isPresent()) {
-            memberFriendRes = toMemberFriendRes(member, friend);
+            status = memberFriend.get().getStatus();
         }
         else {
-            memberFriendRes = toMemberFriendNullRes(false);
+            status = MemberFriendStatus.NONE;
         }
 
-        return memberFriendRes;
+        return toMemberFriendRes(member, friend, status);
     }
 
     @Override
     public MemberFriendListRes selectAllMemberFriend(String memberId) {
         validateUtil.memberValidateById(memberId);
 
-        return new MemberFriendListRes(memberFriendRepository.findAllByMember_Id(memberId).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
+        return new MemberFriendListRes(memberFriendRepository.findAllByMemberIdAndStatus(memberId, MemberFriendStatus.FRIEND).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
     }
 
     @Transactional
     @Override
     public MemberFriendRes deleteMemberFriend(String memberId, String friendId) {
-        validateUtil.memberValidateById(memberId);
-        validateUtil.memberValidateById(friendId);
+        Member member = validateUtil.memberValidateById(memberId);
+        Member friend = validateUtil.memberValidateById(friendId);
 
-        if(memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(memberId, friendId)
-                && memberFriendRepository.existsMemberFriendByMember_IdAndFriend_Id(friendId, memberId)) {
+        if(memberFriendRepository.existsByMemberIdAndFriendId(memberId, friendId))
             memberFriendRepository.deleteMemberFriendByMember_IdAndFriend_Id(memberId, friendId);
-            memberFriendRepository.deleteMemberFriendByMember_IdAndFriend_Id(friendId, memberId);
-        }
-        else {
-            throw new CustomException(ErrorRes.NOT_FOUND_MEMBER_FRIEND);
-        }
 
-        return toMemberFriendNullRes(true);
+        if(memberFriendRepository.existsByMemberIdAndFriendId(friendId, memberId))
+            memberFriendRepository.deleteMemberFriendByMember_IdAndFriend_Id(friendId, memberId);
+
+
+        return toMemberFriendRes(member, friend, MemberFriendStatus.NONE);
     }
 
-    MemberFriend toEntity(Member member, Member friend) {
+    MemberFriend toEntity(Member member, Member friend, MemberFriendStatus status) {
         return MemberFriend.builder()
                 .member(member)
                 .friend(friend)
+                .status(status)
                 .build();
     }
 
-    MemberFriendRes toMemberFriendRes(Member member, Member friend) {
+    MemberFriendRes toMemberFriendRes(Member member, Member friend, MemberFriendStatus status) {
 
         return MemberFriendRes.builder()
-                .validate(true)
                 .memberNickname(member.getNickname())
                 .friendNickname(friend.getNickname())
-                .build();
-    }
-
-    MemberFriendRes toMemberFriendNullRes(boolean validate) {
-        return MemberFriendRes.builder()
-                .validate(validate)
-                .memberNickname(null)
-                .friendNickname(null)
+                .status(status)
                 .build();
     }
 
@@ -117,6 +108,7 @@ public class MemberFriendServiceImpl implements MemberFriendService{
         return FriendListInfo.builder()
                 .profileImage(friend.getUrl())
                 .nickname(friend.getNickname())
+                .status(memberFriend.getStatus())
                 .build();
     }
 }

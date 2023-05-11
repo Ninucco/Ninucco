@@ -3,11 +3,8 @@ package co.ninuc.ninucco.api.controller;
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.*;
-import co.ninuc.ninucco.api.dto.response.ItemListRes;
-import co.ninuc.ninucco.api.dto.response.MemberListRes;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
-import co.ninuc.ninucco.db.repository.MemberRepository;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberFriendService memberFriendService;
     private final boolean SUCCESS = true;
-    private final MemberRepository memberRepository;
+//    private final MemberRepository memberRepository;
 
     @ApiOperation(value = "가입되었는지 확인",notes="파이버베이스 키(PK)를 주면 가입되었는지 확인합니다.")
     @PostMapping("/checkRegisted")
@@ -92,15 +89,6 @@ public class MemberController {
         );
     }
 
-    @ApiOperation(value = "친구 맺기", notes = "친구 신청을 수락합니다.")
-    @PostMapping("/friend")
-    public ResponseEntity<ApiResult<Res>> insertMemberFriend(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend("testId1", memberFriendCreateReq.getFriendId())));
-    }
-
     @ApiOperation(value = "닉네임 중복검사", notes="닉네임 중복검사")
     @GetMapping("/regist/nickname")
     public ResponseEntity<ApiResult<Res>> checkMemberNickname(@RequestParam String nickname){
@@ -109,13 +97,33 @@ public class MemberController {
         );
     }
 
+    @ApiOperation(value = "친구 신청", notes = "친구 신청을 합니다.")
+    @PostMapping("/friend")
+    public ResponseEntity<ApiResult<Res>> insertMemberFriend(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
+
+        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
+        String memberId = "testId1";
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend(memberId, memberFriendCreateReq.getFriendId())));
+    }
+
+    @ApiOperation(value = "친구 신청 수락", notes = "친구 신청을 수락합니다.")
+    @PostMapping("/friend/allow")
+    public ResponseEntity<ApiResult<Res>> insertMemberFriendAllow(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
+
+        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
+        String memberId = "testId1";
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend(memberId, memberFriendCreateReq.getFriendId())));
+    }
     @ApiOperation(value = "친구 관계 조회", notes = "본인과 친구인지 확인합니다.")
     @GetMapping("/friend/{friendId}")
     public ResponseEntity<ApiResult<Res>> selectOneMemberFriend(@PathVariable String friendId) {
 
         //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
+        String memberId = "testId1";
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend("testId1", friendId)));
+                new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend(memberId, friendId)));
     }
 
     @ApiOperation(value = "친구 목록 조회", notes = "본인의 친구 목록을 조회합니다.")
