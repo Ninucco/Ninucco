@@ -1,11 +1,11 @@
 class ScanUtility {
   final typeList = [
-    "동물상 테스트",
-    "직업상 테스트",
-    '학창시절 테스트',
-    '과일상 테스트',
-    '개발자 테스트',
-    '전생 테스트',
+    "animal",
+    "job",
+    'highschool',
+    'fruit',
+    'fruit',
+    'fruit',
   ];
   get getTypeList => typeList;
   final typeMap = {
