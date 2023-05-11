@@ -6,6 +6,7 @@ import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.SimilarityModelService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
+import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.SimilarityResult;
 import co.ninuc.ninucco.db.repository.SimilarityResultRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -31,13 +32,14 @@ public class FaceServiceImpl {
     private final StabilityAIService stabilityAIService;
     private final AmazonS3Client amazonS3Client;
     private final SimilarityResultRepository similarityResultRepository;
+    private final ValidateUtil validateUtil;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public SimilarityResultRes generate(String memberId,String modelType, MultipartFile inputImg){
-        //1. 입력으로부터 유저 아이디를 받는다
-
+        //유저 아이디 검증
+        validateUtil.memberValidateById(memberId);
         //파일이 png인지 검사한다
         String contentType = inputImg.getContentType();
         if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
