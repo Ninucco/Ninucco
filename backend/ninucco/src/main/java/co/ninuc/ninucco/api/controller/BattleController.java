@@ -23,7 +23,7 @@ public class BattleController {
 
     //배틀 등록
     @ApiOperation(value = "배틀 등록", notes = "배틀을 등록합니다.")
-    @PostMapping("")
+    @RequestMapping(value="", method = RequestMethod.POST,consumes = {"multipart/form-data"})
     public ResponseEntity<ApiResult<Res>> insertBattle(@ModelAttribute BattleCreateReq battleCreateReq) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.insertBattle(battleCreateReq))
@@ -78,7 +78,7 @@ public class BattleController {
 
     // 배틀 수락 시 수정
     @ApiOperation(value = "배틀 수락", notes = "배틀을 수락하면 해당 배틀 데이터를 수정합니다.")
-    @PatchMapping("")
+    @RequestMapping(value="", method = RequestMethod.PATCH,consumes = {"multipart/form-data"})
     public ResponseEntity<ApiResult<Res>> updateBattle(@ModelAttribute BattleUpdateReq battleUpdateReq) {
         return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, battleService.updateBattle(battleUpdateReq)));
     }

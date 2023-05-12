@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.dto.response;
 
 import co.ninuc.ninucco.api.dto.Res;
+import co.ninuc.ninucco.db.entity.SimilarityResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,8 +14,8 @@ import java.util.List;
 public class MemberAllRes implements Res {
     MemberRes user;
     List<MemberRes> friendList;
-    List<ScanResultResDummy> scanResults;
+    List<SimilarityResult> scanResults;
     List<Object> items;
-    List<Object> curBattles;
-    List<Object> prevBattles;
+    List<BattleRes> curBattles;
+    List<BattleRes> prevBattles;
 }

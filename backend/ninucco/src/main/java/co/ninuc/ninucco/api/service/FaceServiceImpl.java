@@ -2,22 +2,21 @@ package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.Similarity;
-import co.ninuc.ninucco.api.dto.request.KeywordCreateReq;
+import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.SimilarityModelService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
-import co.ninuc.ninucco.db.entity.Keyword;
-import co.ninuc.ninucco.db.repository.KeywordRepository;
+import co.ninuc.ninucco.common.util.ValidateUtil;
+import co.ninuc.ninucco.db.entity.SimilarityResult;
+import co.ninuc.ninucco.db.repository.SimilarityResultRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,37 +30,29 @@ import java.util.UUID;
 public class FaceServiceImpl {
     private final SimilarityModelService similarityModelService;
     private final StabilityAIService stabilityAIService;
-    private final KeywordRepository keywordRepository;
     private final AmazonS3Client amazonS3Client;
+    private final SimilarityResultRepository similarityResultRepository;
+    private final ValidateUtil validateUtil;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    @Transactional
-    public Long saveKeyword(KeywordCreateReq keyword){
-        return keywordRepository.save(Keyword.builder()
-                .category(keyword.getCategory())
-                .name(keyword.getName()).build()).getId();
-    }
-    public List<Keyword> findAllKeywords(){
-        return keywordRepository.findAll();
-    }
 
-    public SimilarityResultRes generate(String modelType, MultipartFile inputImg){
-        //1. 입력으로부터 유저 아이디를 받는다
-
+    public SimilarityResultRes generate(SimilarityReq r){
+        //유저 아이디 검증
+        validateUtil.memberValidateById(r.getMemberId());
         //파일이 png인지 검사한다
-        String contentType = inputImg.getContentType();
+        String contentType = r.getImg().getContentType();
         if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
             throw new CustomException(ErrorRes.BAD_REQUEST);
         //파일 bypeArray로 변환
         byte[] inputImgByteArray;
         try{
-            inputImgByteArray = inputImg.getBytes();
+            inputImgByteArray = r.getImg().getBytes();
         }catch(IOException e){
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         }
         //2. 데이터 리스트를 받는다(keyword-value)
-        List<Similarity> similarityResultList = similarityModelService.getList(modelType, inputImgByteArray);
+        List<Similarity> similarityResultList = similarityModelService.getList(r.getModelType(), inputImgByteArray);
         List<Similarity> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
         log.info("1. 데이터 리스트 받기 완료");
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
@@ -112,10 +103,30 @@ public class FaceServiceImpl {
 
         //6. HTTPResponse로 보낸다.
         List<Similarity> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
+
+        similarityResultRepository.save(
+                SimilarityResult.builder()
+                        .memberId(r.getMemberId())
+                        .modelType(r.getModelType())
+                        .imgUrl(imgUrl)
+                        .resultTitle(resultTitle)
+                        .resultDescription(resultDescription)
+                        .resultList(listTop5).build()
+        );
+
         return SimilarityResultRes.builder()
                 .imgUrl(imgUrl)
                 .resultTitle(resultTitle)
                 .resultDescription(resultDescription)
                 .resultList(listTop5).build();
     }
+//    public SimilarityResultListRes findSimilarityResultsByMemberId(String memberId){
+//        return new SimilarityResultListRes(similarityResultRepository.findAllByMemberId(memberId).stream()
+//                .map((r -> SimilarityResultRes.builder()
+//                        .modelType(r.getModelType())
+//                        .imgUrl(r.getImgUrl())
+//                        .resultTitle(r.getResultTitle())
+//                        .resultDescription(r.getResultDescription())
+//                        .resultList(r.getResultList()).build())).collect(Collectors.toList()));
+//    }
 }

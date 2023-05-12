@@ -5,6 +5,7 @@ import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.repository.BattleRepository;
+import co.ninuc.ninucco.db.repository.MemberFriendRepository;
 import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ public class ValidateUtil {
 
     private final MemberRepository memberRepository;
     private final BattleRepository battleRepository;
+    private final MemberFriendRepository memberFriendRepository;
 
     public Member memberValidateById(String memberId) {
         log.info("memberValidateById : {}", memberId);
@@ -32,6 +34,11 @@ public class ValidateUtil {
     public boolean memberExistByNickname(String nickname) {
         log.info("memberExistByNickname : {}", nickname);
         return memberRepository.existsByNickname(nickname);
+    }
+
+    public void memberFriendConflictCheckById(String memberId, String friendId) {
+        if(memberFriendRepository.existsByMemberIdAndFriendId(memberId, friendId))
+            throw new CustomException(ErrorRes.CONFLICT_FRIEND);
     }
 
     public Battle battleValidateById(Long battleId) {
