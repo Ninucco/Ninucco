@@ -18,4 +18,9 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     List<Battle> findAllByStatus(@Param("applicantId") String applicantId, @Param("opponentId") String opponentId, @Param("status") BattleStatus status);
 
     List<Battle> findAllByStatusAndOpponentIdOrderByUpdatedAtDesc(BattleStatus status, String opponentId);
+
+    @Query("select b from Battle b where (b.applicant.id = :memberId or b.opponent.id = :memberId)" +
+            "and b.status = :battleStatus " +
+            "order by b.updatedAt desc")
+    List<Battle> findAllByMemberIdAndStatus(String memberId, BattleStatus battleStatus);
 }

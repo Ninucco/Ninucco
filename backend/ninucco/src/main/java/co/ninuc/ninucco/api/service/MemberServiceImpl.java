@@ -8,9 +8,12 @@ import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
 import co.ninuc.ninucco.api.dto.response.*;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.ValidateUtil;
+import co.ninuc.ninucco.db.entity.Battle;
 import co.ninuc.ninucco.db.entity.Item;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.MemberItem;
+import co.ninuc.ninucco.db.entity.type.BattleStatus;
+import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.MemberItemRepository;
 import co.ninuc.ninucco.db.repository.MemberRepository;
 import co.ninuc.ninucco.db.repository.SimilarityResultRepository;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -95,6 +99,7 @@ public class MemberServiceImpl implements MemberService{
             "바다토끼", "비버술렁", "바다코뿔소", "사막고양이", "코끼리쥐",
             "코알라쥐", "물수리", "산호", "돌고래돌고래", "아기돼지",
     };
+    private final BattleRepository battleRepository;
 
     @Override
     public MemberCheckRes checkMember(LoginReq loginReq){
@@ -183,12 +188,15 @@ public class MemberServiceImpl implements MemberService{
 
         MemberRes user=toMemberRes(validateUtil.memberValidateById(memberId));
 
-        MemberAllRes memberAllRes=MemberAllRes.builder()
+        return MemberAllRes.builder()
                 .user(user)
                 .scanResults(similarityResultRepository.findAllByMemberId(memberId))
+                .items(null)
+                .curBattles(battleRepository.findAllByMemberIdAndStatus(memberId, BattleStatus.PROCEEDING).stream()
+                        .map((this::toBattleRes)).collect(Collectors.toList()))
+                .prevBattles(battleRepository.findAllByMemberIdAndStatus(memberId, BattleStatus.TERMINATED).stream()
+                        .map((this::toBattleRes)).collect(Collectors.toList()))
                 .build();
-
-        return memberAllRes;
     }
 
     @Override
@@ -297,5 +305,21 @@ public class MemberServiceImpl implements MemberService{
                 .build();
     }
 
-
+    // TODO: duplicate code
+    BattleRes toBattleRes(Battle battle){
+        Member applicant = validateUtil.memberValidateById(battle.getApplicant().getId());
+        Member opponent = validateUtil.memberValidateById(battle.getOpponent().getId());
+        return BattleRes.builder()
+                .validate(true)
+                .battleId(battle.getId())
+                .applicantName(applicant.getNickname())
+                .opponentName(opponent.getNickname())
+                .title(battle.getTitle())
+                .applicantUrl(battle.getApplicantUrl())
+                .opponentUrl(battle.getOpponentUrl())
+                .applicantOdds(battle.getApplicantOdds())
+                .opponentOdds(battle.getOpponentOdds())
+                .finishTime(battle.getFinishAt())
+                .build();
+    }
 }

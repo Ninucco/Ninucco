@@ -22,6 +22,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -152,9 +153,18 @@ public class BattleServiceImpl implements BattleService{
         return null;
     }
     //TODO: 시간마다 배틀 끝났는지 체크
-
+    @Scheduled(cron = "* */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
+    //every 00:01
+    public void finishAtMidnight(){
+//        battleRepository.findAllToBeFinished()
+//                .stream().forEach((battle -> {
+//                    log.info("finish battle "+battle.getId());
+//                    finishBattle(battle.getId());
+//                }));
+    }
     //배틀이 끝나면 콜되는 함수
-    private void finishBattle(Long battleId){
+    @Transactional
+    public void finishBattle(Long battleId){
         Battle battle = validateUtil.battleValidateById(battleId);
         /*배틀 결과 구하기
          * ...
