@@ -18,4 +18,5 @@ public class MemberAllRes implements Res {
     List<Object> items;
     List<BattleRes> curBattles;
     List<BattleRes> prevBattles;
+    List<BattleRes> receivedBattles;
 }
