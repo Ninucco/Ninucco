@@ -425,7 +425,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                                 Navigator.pushNamed(
                                   context,
                                   "/ProfileReceivedBattle",
-                                  arguments: userData!.receivedBattles,
+                                  arguments: userData,
                                 );
                               },
                               child: Column(
@@ -440,7 +440,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                                   Builder(builder: (context) {
                                     return Text(
                                       userData != null
-                                          ? userData!.curBattleList.length
+                                          ? userData!.receivedBattles.length
                                               .toString()
                                           : '-',
                                       style: const TextStyle(
@@ -450,7 +450,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                                     );
                                   }),
                                   const SizedBox(height: 12),
-                                  const Text('신청받은 배틀'),
+                                  const Text('걸려온 배틀'),
                                 ],
                               ),
                             ),

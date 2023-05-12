@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/screens/battle/battle_approve.dart';
 import 'package:ninucco/screens/home/category.dart';
 import 'package:ninucco/screens/home/face_scan.dart';
 import 'package:ninucco/screens/home/home.dart';
@@ -50,6 +51,8 @@ class ProfileNavigator extends StatelessWidget {
                 return const ProfileSettings();
               case "/ProfileReceivedBattle":
                 return ReceivedBattles(settings: settings);
+              case "/BattleApprove":
+                return BattleApprove(settings: settings);
               default:
                 return const Placeholder();
             }

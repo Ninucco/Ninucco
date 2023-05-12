@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class ReceivedBattles extends StatelessWidget {
   final RouteSettings settings;
@@ -10,7 +12,8 @@ class ReceivedBattles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var receivedBattleList = settings.arguments as List<Battle>;
+    var userDetailData = settings.arguments as UserDetailData;
+    var me = Provider.of<AuthProvider>(context).member;
 
     return Scaffold(
       appBar: AppBar(
@@ -23,7 +26,7 @@ class ReceivedBattles extends StatelessWidget {
           horizontal: 12,
         ),
         child: Column(
-          children: receivedBattleList
+          children: userDetailData.receivedBattles
               .map((battleData) => Container(
                     margin: const EdgeInsets.only(bottom: 24),
                     padding: const EdgeInsetsDirectional.symmetric(
@@ -93,36 +96,47 @@ class ReceivedBattles extends StatelessWidget {
                             fit: BoxFit.fitWidth,
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.red),
-                                ),
-                                onPressed: () {},
-                                child: const Text("거절",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.green),
-                                ),
-                                child: const Text("수락",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            )
-                          ],
-                        ),
+                        me?.id != null && me?.id == userDetailData.user.id
+                            ? Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.red),
+                                      ),
+                                      onPressed: () {},
+                                      child: const Text("거절",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          "/BattleApprove",
+                                          arguments: battleData,
+                                        );
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.green),
+                                      ),
+                                      child: const Text("수락",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : const SizedBox(),
                       ],
                     ),
                   ))

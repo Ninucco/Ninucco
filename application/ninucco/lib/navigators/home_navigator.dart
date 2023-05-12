@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/screens/battle/battle_approve.dart';
 import 'package:ninucco/screens/home/category.dart';
 import 'package:ninucco/screens/home/face_scan.dart';
 import 'package:ninucco/screens/home/home.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
 import 'package:ninucco/screens/home/search.dart';
-import 'package:ninucco/screens/login/login_screen.dart';
 import 'package:ninucco/screens/profile/profile.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 
@@ -36,6 +36,8 @@ class HomeNavigator extends StatelessWidget {
                 return ProfileScreen(settings: settings);
               case "/ProfileScanList":
                 return ProfileScanResult(settings: settings);
+              case "/BattleApprove":
+                return BattleApprove(settings: settings);
               default:
                 return const Placeholder();
             }
