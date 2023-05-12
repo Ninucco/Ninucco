@@ -166,7 +166,7 @@ class GridItems extends StatelessWidget {
                               .map(
                                 (e) => GestureDetector(
                                   onTap: () {},
-                                  child: Image.network(e.imgUrl),
+                                  child: Image.network(e.opponentUrl),
                                 ),
                               )
                               .toList()

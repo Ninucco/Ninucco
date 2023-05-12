@@ -104,21 +104,14 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                           fontSize: 17,
                         ),
                       ),
-                      onPressed: () async {
+                      onPressed: () {
                         BattleApiService.postBattle(BattlePostModel(
                           _resultData.memberAImage,
                           _resultData.memberAId,
                           resultId,
                           _resultData.question,
                         ));
-                        var tmpResult = await Navigator.pushNamed(
-                            context, '/BattleAllScreen',
-                            arguments: "");
-                        setState(() {
-                          if (tmpResult != null) {
-                            result = tmpResult.toString();
-                          }
-                        });
+                        Navigator.pushNamed(context, '/BattleAllScreen');
                       },
                     ),
                   )
