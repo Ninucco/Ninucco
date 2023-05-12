@@ -122,9 +122,9 @@ public class MemberController {
 
     @ApiOperation(value = "친구 목록 조회", notes = "본인의 친구 목록을 조회합니다.")
     @GetMapping("/friend-list")
-    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId) {
+    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId,@RequestParam String status) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend(memberId)));
+                new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend(memberId,status)));
     }
 
     @ApiOperation(value = "친구 삭제", notes = "친구를 삭제합니다.")
