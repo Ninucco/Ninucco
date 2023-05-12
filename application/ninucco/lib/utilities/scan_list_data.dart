@@ -8,14 +8,13 @@ class ScanUtility {
     'fruit',
   ];
   get getTypeList => typeList;
-  final typeMap = {
-    "동물상 테스트": 0,
-    "직업상 테스트": 1,
-    "학창시절 테스트": 2,
-    "과일상 테스트": 3,
-    '개발자 테스트': 4,
-    '전생 테스트': 5,
+  final Map<String, String> typeMap = {
+    "animal": "동물상 테스트",
+    "job": "직업상 테스트",
+    "highschool": "학창시절 테스트",
+    "fruit": "과일상 테스트",
   };
+  get getTypeMap => typeMap;
   final scanTitleList = [
     ["나는 ", "어떤 동물", "을 닮았을까?"],
     ["나는 ", "어떤 직업", "이 어울릴까?"],

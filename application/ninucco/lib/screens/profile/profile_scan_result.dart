@@ -71,7 +71,7 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
               ),
               ExpansionTile(
                 title: Text(
-                  "${_scanUtility!.scanTitlePreviewList[_resultDataList[index].type][0]} 결과",
+                  "${_scanUtility!.getTypeMap[_resultDataList[index].modelType]} 결과",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 childrenPadding:
@@ -125,11 +125,12 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          Text("${data.value.value * 100}%"),
+                                          Text(
+                                              "${(data.value.value * 100).round()}%"),
                                         ],
                                       )
                                     : null,
-                                percent: prefixSum,
+                                percent: prefixSum > 1 ? 1 : prefixSum,
                                 backgroundColor: data.key ==
                                         _resultDataList[index]
                                                 .resultPercentages
@@ -177,7 +178,9 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
                                             MediaQuery.sizeOf(context).width *
                                                     0.6 -
                                                 48,
-                                        percent: entry.value.value,
+                                        percent: entry.value.value > 1
+                                            ? 1
+                                            : entry.value.value,
                                         progressColor:
                                             Color(colorsList[entry.key]),
                                         barRadius: const Radius.circular(12),

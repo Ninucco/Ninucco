@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/screens/battle/battle_approve.dart';
 import 'package:ninucco/screens/home/category.dart';
 import 'package:ninucco/screens/home/face_scan.dart';
 import 'package:ninucco/screens/home/home.dart';
@@ -9,6 +10,8 @@ import 'package:ninucco/screens/login/login_screen.dart';
 import 'package:ninucco/screens/profile/my_profile.dart';
 import 'package:ninucco/screens/profile/profile.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
+import 'package:ninucco/screens/profile/profile_settings.dart';
+import 'package:ninucco/screens/profile/received_battles.dart';
 import 'package:provider/provider.dart';
 
 class ProfileNavigator extends StatelessWidget {
@@ -42,6 +45,14 @@ class ProfileNavigator extends StatelessWidget {
                 return const MyProfileScreen();
               case "/ProfileScanList":
                 return ProfileScanResult(settings: settings);
+              case "/ProfileSettings":
+                return const ProfileSettings();
+              case "/ProfileBattleList":
+                return const ProfileSettings();
+              case "/ProfileReceivedBattle":
+                return ReceivedBattles(settings: settings);
+              case "/BattleApprove":
+                return BattleApprove(settings: settings);
               default:
                 return const Placeholder();
             }
