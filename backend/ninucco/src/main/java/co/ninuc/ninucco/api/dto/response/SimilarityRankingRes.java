@@ -8,6 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class SimilarityRankingRes {
+    String memberId;
     String profileImage;
     String nickname;
     String similarity;
