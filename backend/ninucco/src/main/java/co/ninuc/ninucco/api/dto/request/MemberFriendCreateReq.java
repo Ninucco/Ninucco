@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MemberFriendCreateReq {
+    String myId;
 
     String friendId;
 }

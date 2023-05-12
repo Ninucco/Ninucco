@@ -58,36 +58,6 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     }
 
     @Bean
-    public Docket bettingApi() {
-        return getDocket("betting", Predicates.or(PathSelectors.regex("/betting.*")));
-    }
-
-    @Bean
-    public Docket commentApi() {
-        return getDocket("comment", Predicates.or(PathSelectors.regex("/comment.*")));
-    }
-
-    @Bean
-    public Docket itemApi() {
-        return getDocket("item", Predicates.or(PathSelectors.regex("/item.*")));
-    }
-
-    @Bean
-    public Docket memberFriendApi() {
-        return getDocket("memberFriend", Predicates.or(PathSelectors.regex("/memberFriend.*")));
-    }
-
-    @Bean
-    public Docket memberItemApi() {
-        return getDocket("memberItem", Predicates.or(PathSelectors.regex("/memberItem.*")));
-    }
-
-    @Bean
-    public Docket memberSimilarityApi() {
-        return getDocket("memberSimilarity", Predicates.or(PathSelectors.regex("/memberSimilarity.*")));
-    }
-
-    @Bean
     public Docket faceApi() {
         return getDocket("face", Predicates.or(PathSelectors.regex("/face.*")));
     }
