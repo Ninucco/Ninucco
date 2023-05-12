@@ -29,6 +29,7 @@ public class RankingServiceImpl implements RankingService {
 
     BattleRankingListInfo toBattleRankingRes(Member member) {
         return BattleRankingListInfo.builder()
+                .memberId(member.getId())
                 .profileImage(member.getUrl())
                 .nickname(member.getNickname())
                 .winCount(member.getWinCount())
