@@ -420,30 +420,39 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                             color: Colors.black.withOpacity(0.2),
                           ),
                           Expanded(
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/icons/battle_bubble.png',
-                                  color: Colors.black,
-                                  fit: BoxFit.fitWidth,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                                Builder(builder: (context) {
-                                  return Text(
-                                    userData != null
-                                        ? userData!.curBattleList.length
-                                            .toString()
-                                        : '-',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  );
-                                }),
-                                const SizedBox(height: 12),
-                                const Text('진행중인 배틀'),
-                              ],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/ProfileReceivedBattle",
+                                  arguments: userData!.receivedBattles,
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/battle_bubble.png',
+                                    color: Colors.black,
+                                    fit: BoxFit.fitWidth,
+                                    width: 48,
+                                    height: 48,
+                                  ),
+                                  Builder(builder: (context) {
+                                    return Text(
+                                      userData != null
+                                          ? userData!.curBattleList.length
+                                              .toString()
+                                          : '-',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 12),
+                                  const Text('신청받은 배틀'),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -467,8 +476,10 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           top: 8,
           right: 8,
           child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications_sharp),
+            onPressed: () {
+              Provider.of<AuthProvider>(context, listen: false).signOut();
+            },
+            icon: const Icon(Icons.settings),
             color: Colors.black,
             iconSize: 24,
           ),

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/models/battle_post_model.dart';
-import 'package:ninucco/models/battle_post_response_model.dart';
 import 'package:image/image.dart' as IMG;
 import 'package:http_parser/http_parser.dart';
 
@@ -36,8 +35,7 @@ class BattleApiService {
     throw Error();
   }
 
-  static Future<BattlePostResponseModel> postBattle(
-      BattlePostModel battlePost) async {
+  static void postBattle(BattlePostModel battlePost) {
     final url = Uri.parse(baseUrl);
     final request = http.MultipartRequest("POST", url);
     request.fields["applicantId"] = battlePost.memberAId;
@@ -54,12 +52,6 @@ class BattleApiService {
     );
     request.files.add(multipartFile);
 
-    var response = await request.send();
-    final respStr = await response.stream.bytesToString();
-    var jsonData = jsonDecode(respStr)['data'];
-    if (response.statusCode == 200) {
-      return BattlePostResponseModel.fromJson(jsonData);
-    }
-    throw Error();
+    request.send();
   }
 }

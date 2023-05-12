@@ -106,10 +106,11 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                       ),
                       onPressed: () async {
                         BattleApiService.postBattle(BattlePostModel(
-                            _resultData.memberAImage,
-                            _resultData.memberAId,
-                            resultId,
-                            _resultData.question));
+                          _resultData.memberAImage,
+                          _resultData.memberAId,
+                          resultId,
+                          _resultData.question,
+                        ));
                         var tmpResult = await Navigator.pushNamed(
                             context, '/BattleAllScreen',
                             arguments: "");
