@@ -95,10 +95,8 @@ public class MemberController {
     @ApiOperation(value = "친구 맺기", notes = "친구 신청을 수락합니다.")
     @PostMapping("/friend")
     public ResponseEntity<ApiResult<Res>> insertMemberFriend(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend("testId1", memberFriendCreateReq.getFriendId())));
+                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend(memberFriendCreateReq.getMyId(), memberFriendCreateReq.getFriendId())));
     }
 
     @ApiOperation(value = "닉네임 중복검사", notes="닉네임 중복검사")
@@ -110,30 +108,22 @@ public class MemberController {
     }
 
     @ApiOperation(value = "친구 관계 조회", notes = "본인과 친구인지 확인합니다.")
-    @GetMapping("/friend/{friendId}")
-    public ResponseEntity<ApiResult<Res>> selectOneMemberFriend(@PathVariable String friendId) {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
+    @GetMapping("/friend/check")
+    public ResponseEntity<ApiResult<Res>> selectOneMemberFriend(@RequestParam String myId,@RequestParam String friendId) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend("testId1", friendId)));
+                new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend(myId, friendId)));
     }
 
     @ApiOperation(value = "친구 목록 조회", notes = "본인의 친구 목록을 조회합니다.")
     @GetMapping("/friend-list")
-    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend() {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
+    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend("testId1")));
+                new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend(memberId)));
     }
 
     @ApiOperation(value = "친구 삭제", notes = "친구를 삭제합니다.")
-    @DeleteMapping("/friend/{friendId}")
-    public ResponseEntity<ApiResult<Res>> deleteMemberFriend(@PathVariable String friendId) {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
-        String memberId = "testId1";
-
-        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, memberFriendService.deleteMemberFriend(memberId, friendId)));
+    @DeleteMapping("/friend/delete")
+    public ResponseEntity<ApiResult<Res>> deleteMemberFriend(@RequestParam String myId,@RequestParam String friendId) {
+        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, memberFriendService.deleteMemberFriend(myId, friendId)));
     }
 }

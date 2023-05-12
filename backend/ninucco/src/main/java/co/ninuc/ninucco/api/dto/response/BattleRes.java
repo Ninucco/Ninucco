@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class BattleRes implements Res {
-    Boolean validate;
+    //validate 안쓸거니까 지우기
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     Long battleId;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)

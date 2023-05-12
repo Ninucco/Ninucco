@@ -193,7 +193,6 @@ public class BattleServiceImpl implements BattleService{
         Member applicant = validateUtil.memberValidateById(battle.getApplicant().getId());
         Member opponent = validateUtil.memberValidateById(battle.getOpponent().getId());
         return BattleRes.builder()
-                .validate(true)
                 .battleId(battle.getId())
                 .applicantName(applicant.getNickname())
                 .opponentName(opponent.getNickname())
@@ -207,7 +206,6 @@ public class BattleServiceImpl implements BattleService{
     }
     BattleRes toNullRes() {
         return BattleRes.builder()
-                .validate(true)
                 .applicantOdds(null)
                 .opponentOdds(null)
                 .build();

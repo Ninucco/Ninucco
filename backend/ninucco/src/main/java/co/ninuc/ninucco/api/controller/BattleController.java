@@ -39,32 +39,30 @@ public class BattleController {
         );
     }
 
+    //************************************************************** 노필요
     // 내 배틀 리스트 조회
     @ApiOperation(value = "나의 배틀 리스트 조회", notes = "로그인한 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
     @GetMapping("/my-list")
-    public ResponseEntity<ApiResult<Res>> selectAllMyBattle(@RequestParam String status) {
-        // TODO 헤더에서 멤버 ID 가져오기
-        String memberId = "refactoringTestId3";
+    public ResponseEntity<ApiResult<Res>> selectAllMyBattle(@RequestParam String memberId,@RequestParam String status) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
         );
     }
-
+    
+    //**************************************************************
     // 타사용자 배틀 리스트 조회
     @ApiOperation(value = "타사용자의 배틀 리스트 조회", notes = "다른 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
     @GetMapping("/other-list")
-    public ResponseEntity<ApiResult<Res>> selectAllOtherBattle(@RequestParam String id, @RequestParam String status) {
+    public ResponseEntity<ApiResult<Res>> selectAllOtherBattle(@RequestParam String memberId, @RequestParam String status) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(id, status))
+                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
         );
     }
-
+    //**************************************************************
     // 신청받은 배틀 리스트 조회
     @ApiOperation(value = "신청받은 배틀 리스트 조회", notes = "신청받은 배틀 리스트를 조회합니다.")
     @GetMapping("/received-list")
-    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle() {
-        //TODO 헤더에서 멤버 ID 가져오기
-        String memberId = "testId1";
+    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle(@RequestParam String memberId) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.selectAllReceivedBattle(memberId)));
     }
@@ -97,11 +95,7 @@ public class BattleController {
     //댓글 작성
     @ApiOperation(value="댓글 작성", notes = "댓글 작성")
     @PostMapping("/comment")
-    public ResponseEntity<ApiResult<Res>> insertComment(@RequestBody CommentCreateReq commentCreateReq) {
-
-        //TODO 본인 ID 헤더에서 가져오기
-        String memberId = "testId1";
-
+    public ResponseEntity<ApiResult<Res>> insertComment(@RequestParam String memberId,@RequestBody CommentCreateReq commentCreateReq) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, commentService.insertComment(memberId, commentCreateReq))
         );
@@ -125,10 +119,7 @@ public class BattleController {
 
     @ApiOperation(value = "배팅 여부 조회", notes = "본인이 해당 배틀에 배팅을 했는지")
     @GetMapping("/{battleId}/bet")
-    public ResponseEntity<ApiResult<Res>> selectOneBetting(@PathVariable Long battleId) {
-
-        //TODO 헤더에서 memberId 가져오기
-        String memberId = "testId1";
+    public ResponseEntity<ApiResult<Res>> selectOneBetting(@RequestParam String memberId,@PathVariable Long battleId) {
         return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, battleService.selectOneBetting(memberId, battleId)));
     }
 
