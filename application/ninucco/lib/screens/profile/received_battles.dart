@@ -42,28 +42,37 @@ class ReceivedBattles extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/Profile',
+                              arguments: 'linga',
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.blueAccent,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  battleData.applicantName,
+                                  style: const TextStyle(
                                     color: Colors.blueAccent,
-                                    offset: Offset(0, 2),
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
-                              child: Text(
-                                battleData.applicantName,
-                                style: const TextStyle(
-                                  color: Colors.blueAccent,
-                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                            const Text('님으로 부터 온 대결신청'),
-                          ],
+                              const Text('님으로 부터 온 대결신청'),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 16),
                         Text(
