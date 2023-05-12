@@ -125,7 +125,7 @@ public class MemberServiceImpl implements MemberService{
         //랜덤 닉네임 생성 후 혹시 있을 중복 방지를 위해 memberRepository 자료 총 개수를 뒤에 붙임
 
         memberCreateReq.setNickname(randomNickname.toString());
-        
+
         validateUtil.memberConflictCheckById(memberCreateReq.getId());
 
         return toMemberRes(memberRepository.save(toEntity(memberCreateReq)));
@@ -313,6 +313,8 @@ public class MemberServiceImpl implements MemberService{
         Member opponent = validateUtil.memberValidateById(battle.getOpponent().getId());
         return BattleRes.builder()
                 .battleId(battle.getId())
+                .applicantId(applicant.getId())
+                .opponentId(opponent.getId())
                 .applicantName(applicant.getNickname())
                 .opponentName(opponent.getNickname())
                 .title(battle.getTitle())
