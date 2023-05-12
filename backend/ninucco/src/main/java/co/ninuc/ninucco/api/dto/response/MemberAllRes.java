@@ -16,6 +16,6 @@ public class MemberAllRes implements Res {
     List<MemberRes> friendList;
     List<SimilarityResult> scanResults;
     List<Object> items;
-    List<Object> curBattles;
-    List<Object> prevBattles;
+    List<BattleRes> curBattles;
+    List<BattleRes> prevBattles;
 }
