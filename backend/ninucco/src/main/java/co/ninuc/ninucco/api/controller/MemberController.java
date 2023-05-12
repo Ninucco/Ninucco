@@ -52,7 +52,7 @@ public class MemberController {
                 new ApiResult<>(SUCCESS, memberService.findByNicknameKeyword(keyword))
         );
     }
-    
+
     @ApiOperation(value = "멤버 사진 업데이트", notes="멤버 사진주소를 업데이트 합니다.")
     @PatchMapping("/photo")
     public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestPart String memberId, @RequestPart MultipartFile img){
@@ -83,7 +83,7 @@ public class MemberController {
 
     @ApiOperation(value = "프로필 조회", notes="유저 아이디로 유저 정보를 불러옵니다.")
     @GetMapping("/{memberId}")
-    public ResponseEntity<ApiResult<Res>> selectUserPrifile(@PathVariable String memberId){
+    public ResponseEntity<ApiResult<Res>> selectUserProfile(@PathVariable String memberId){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.selectOneMember(memberId))
         );
@@ -108,19 +108,17 @@ public class MemberController {
     @PostMapping("/friend/allow")
     public ResponseEntity<ApiResult<Res>> insertMemberFriendAllow(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
 
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
-        String memberId = "refactoringTestId2";
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend(memberId, memberFriendCreateReq.getFriendId())));
+                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend(memberFriendCreateReq.getMyId(), memberFriendCreateReq.getFriendId())));
     }
-    @ApiOperation(value = "친구 관계 조회", notes = "본인과 친구인지 확인합니다.")
+    @ApiOperation(value = "친구 관계 조회", notes = "본인과 친구인지 확인합니다. status => WAITING : 친구 수락 대기중, FRIEND: 친구 상태, NONE : 친구 상태 아님")
     @GetMapping("/friend/check")
     public ResponseEntity<ApiResult<Res>> selectOneMemberFriend(@RequestParam String myId,@RequestParam String friendId) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend(myId, friendId)));
     }
 
-    @ApiOperation(value = "친구 목록 조회", notes = "본인의 친구 목록을 조회합니다.")
+    @ApiOperation(value = "친구 목록 조회", notes = "해당 사용자의 친구 목록을 조회합니다. status => WAITING : 받은 신청 목록, FRIEND : 친구 목록 조회")
     @GetMapping("/friend-list")
     public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId,@RequestParam String status) {
         return ResponseEntity.ok().body(

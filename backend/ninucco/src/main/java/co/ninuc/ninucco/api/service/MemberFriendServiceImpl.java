@@ -30,14 +30,16 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     public MemberFriendRes insertMemberFriend(String memberId, String friendId) {
         log.info("memberId : {}, friendId : {}", memberId, friendId);
         validateUtil.memberFriendConflictCheckById(memberId, friendId);
-        
+
         Member member = validateUtil.memberValidateById(memberId);
         Member friend = validateUtil.memberValidateById(friendId);
         MemberFriendStatus status = MemberFriendStatus.WAITING;
 
-        if(memberFriendRepository.existsByMemberIdAndFriendId(friendId, memberId)) {
+        Optional<MemberFriend> checkStatus = memberFriendRepository.findByMemberIdAndFriendId(friendId, memberId);
+
+        if(checkStatus.isPresent()) {
             status = MemberFriendStatus.FRIEND;
-            memberFriendRepository.findByMemberIdAndFriendId(friendId, memberId).get().updateStatus(status);
+            checkStatus.get().updateStatus(status);
         }
 
         MemberFriend memberFriend = toEntity(member, friend, status);
@@ -54,8 +56,12 @@ public class MemberFriendServiceImpl implements MemberFriendService{
 
         MemberFriendStatus status;
         Optional<MemberFriend> memberFriend = memberFriendRepository.findByMemberIdAndFriendId(memberId, friendId);
+        Optional<MemberFriend> friendMember = memberFriendRepository.findByMemberIdAndFriendId(friendId, memberId);
         if(memberFriend.isPresent()) {
             status = memberFriend.get().getStatus();
+        }
+        else if(friendMember.isPresent()) {
+            status = friendMember.get().getStatus();
         }
         else {
             status = MemberFriendStatus.NONE;
