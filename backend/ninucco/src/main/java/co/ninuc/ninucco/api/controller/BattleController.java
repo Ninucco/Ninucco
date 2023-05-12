@@ -41,31 +41,31 @@ public class BattleController {
 
     //************************************************************** 노필요
     // 내 배틀 리스트 조회
-    @ApiOperation(value = "나의 배틀 리스트 조회", notes = "로그인한 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
-    @GetMapping("/my-list")
-    public ResponseEntity<ApiResult<Res>> selectAllMyBattle(@RequestParam String memberId,@RequestParam String status) {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
-        );
-    }
+//    @ApiOperation(value = "나의 배틀 리스트 조회", notes = "로그인한 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
+//    @GetMapping("/my-list")
+//    public ResponseEntity<ApiResult<Res>> selectAllMyBattle(@RequestParam String memberId,@RequestParam String status) {
+//        return ResponseEntity.ok().body(
+//                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
+//        );
+//    }
     
     //**************************************************************
     // 타사용자 배틀 리스트 조회
-    @ApiOperation(value = "타사용자의 배틀 리스트 조회", notes = "다른 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
-    @GetMapping("/other-list")
-    public ResponseEntity<ApiResult<Res>> selectAllOtherBattle(@RequestParam String memberId, @RequestParam String status) {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
-        );
-    }
+//    @ApiOperation(value = "타사용자의 배틀 리스트 조회", notes = "다른 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
+//    @GetMapping("/other-list")
+//    public ResponseEntity<ApiResult<Res>> selectAllOtherBattle(@RequestParam String memberId, @RequestParam String status) {
+//        return ResponseEntity.ok().body(
+//                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
+//        );
+//    }
     //**************************************************************
     // 신청받은 배틀 리스트 조회
-    @ApiOperation(value = "신청받은 배틀 리스트 조회", notes = "신청받은 배틀 리스트를 조회합니다.")
-    @GetMapping("/received-list")
-    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle(@RequestParam String memberId) {
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, battleService.selectAllReceivedBattle(memberId)));
-    }
+//    @ApiOperation(value = "신청받은 배틀 리스트 조회", notes = "신청받은 배틀 리스트를 조회합니다.")
+//    @GetMapping("/received-list")
+//    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle(@RequestParam String memberId) {
+//        return ResponseEntity.ok().body(
+//                new ApiResult<>(SUCCESS, battleService.selectAllReceivedBattle(memberId)));
+//    }
 
     //배틀 상세정보 조회
     @ApiOperation(value = "배틀 상세정보 조회", notes = "배틀 진행중의 상세정보를 조회합니다.")
