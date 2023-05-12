@@ -7,7 +7,7 @@ public interface MemberFriendService {
 
     MemberFriendRes insertMemberFriend(String memberId, String friendId);
 
-    MemberFriendListRes selectAllMemberFriend(String memberId);
+    MemberFriendListRes selectAllMemberFriend(String memberId, String status);
 
     MemberFriendRes selectOneMemberFriend(String memberId, String friendId);
 

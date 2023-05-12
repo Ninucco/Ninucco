@@ -9,6 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class FriendListInfo {
+    String friendId;
     String profileImage;
     String nickname;
     MemberFriendStatus status;

@@ -1,8 +1,10 @@
 package co.ninuc.ninucco.api.service;
 
+import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.FriendListInfo;
 import co.ninuc.ninucco.api.dto.response.MemberFriendListRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendRes;
+import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.MemberFriend;
@@ -63,10 +65,21 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     }
 
     @Override
-    public MemberFriendListRes selectAllMemberFriend(String memberId) {
+    public MemberFriendListRes selectAllMemberFriend(String memberId, String status) {
         validateUtil.memberValidateById(memberId);
+        MemberFriendStatus memberFriendStatus;
 
-        return new MemberFriendListRes(memberFriendRepository.findAllByMemberIdAndStatus(memberId, MemberFriendStatus.FRIEND).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
+        if(status.equals("WAITING")) {
+            memberFriendStatus = MemberFriendStatus.WAITING;
+        }
+        else if(status.equals("FRIEND")) {
+            memberFriendStatus = MemberFriendStatus.FRIEND;
+        }
+        else {
+            throw new CustomException(ErrorRes.BAD_REQUEST);
+        }
+
+        return new MemberFriendListRes(memberFriendRepository.findAllByMemberIdAndStatus(memberId, memberFriendStatus).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
     }
 
     @Transactional
@@ -96,7 +109,9 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     MemberFriendRes toMemberFriendRes(Member member, Member friend, MemberFriendStatus status) {
 
         return MemberFriendRes.builder()
+                .memberId(member.getId())
                 .memberNickname(member.getNickname())
+                .friendId(friend.getId())
                 .friendNickname(friend.getNickname())
                 .status(status)
                 .build();
@@ -106,6 +121,7 @@ public class MemberFriendServiceImpl implements MemberFriendService{
         Member friend = validateUtil.memberValidateById(memberFriend.getFriend().getId());
 
         return FriendListInfo.builder()
+                .friendId(friend.getId())
                 .profileImage(friend.getUrl())
                 .nickname(friend.getNickname())
                 .status(memberFriend.getStatus())

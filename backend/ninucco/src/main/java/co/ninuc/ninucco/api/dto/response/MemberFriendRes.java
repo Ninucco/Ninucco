@@ -12,9 +12,13 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class MemberFriendRes implements Res {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    String memberId;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     String memberNickname;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    String friendId;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     String friendNickname;
     MemberFriendStatus status;
 }
