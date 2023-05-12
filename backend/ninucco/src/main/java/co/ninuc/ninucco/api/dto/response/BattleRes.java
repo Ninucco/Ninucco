@@ -15,6 +15,10 @@ public class BattleRes implements Res {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     Long battleId;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    String applicantId;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    String opponentId;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     String applicantName;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     String opponentName;

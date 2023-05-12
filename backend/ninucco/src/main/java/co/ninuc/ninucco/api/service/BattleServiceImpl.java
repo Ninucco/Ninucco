@@ -204,6 +204,8 @@ public class BattleServiceImpl implements BattleService{
         Member opponent = validateUtil.memberValidateById(battle.getOpponent().getId());
         return BattleRes.builder()
                 .battleId(battle.getId())
+                .applicantId(applicant.getId())
+                .opponentId(opponent.getId())
                 .applicantName(applicant.getNickname())
                 .opponentName(opponent.getNickname())
                 .title(battle.getTitle())
