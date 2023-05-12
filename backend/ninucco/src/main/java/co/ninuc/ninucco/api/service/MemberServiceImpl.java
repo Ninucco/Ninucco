@@ -196,6 +196,8 @@ public class MemberServiceImpl implements MemberService{
                         .map((this::toBattleRes)).collect(Collectors.toList()))
                 .prevBattles(battleRepository.findAllByMemberIdAndStatus(memberId, BattleStatus.TERMINATED).stream()
                         .map((this::toBattleRes)).collect(Collectors.toList()))
+                .receivedBattles(battleRepository.findAllByStatusAndOpponentIdOrderByUpdatedAtDesc(BattleStatus.WAITING, user.getId()).stream()
+                        .map((this::toBattleRes)).collect(Collectors.toList()))
                 .build();
     }
 
