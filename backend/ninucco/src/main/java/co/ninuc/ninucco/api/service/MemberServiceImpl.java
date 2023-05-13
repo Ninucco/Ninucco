@@ -1,10 +1,7 @@
 package co.ninuc.ninucco.api.service;
 
 import co.ninuc.ninucco.api.dto.ErrorRes;
-import co.ninuc.ninucco.api.dto.request.LoginReq;
-import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
+import co.ninuc.ninucco.api.dto.request.*;
 import co.ninuc.ninucco.api.dto.response.*;
 import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.ValidateUtil;
@@ -162,6 +159,14 @@ public class MemberServiceImpl implements MemberService{
 
         member.updateUrl(amazonS3Client.getResourceUrl(bucket,fileName));
 
+        return toMemberRes(member);
+    }
+
+    @Transactional
+    @Override
+    public MemberRes updateMemberUrl(MemberUpdatePhotoUrlReq memberUpdatePhotoUrlReq) {
+        Member member= validateUtil.memberValidateById(memberUpdatePhotoUrlReq.getMemberId());
+        member.updateUrl(memberUpdatePhotoUrlReq.getUrl());
         return toMemberRes(member);
     }
 

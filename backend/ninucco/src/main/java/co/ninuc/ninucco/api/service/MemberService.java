@@ -1,9 +1,6 @@
 package co.ninuc.ninucco.api.service;
 
-import co.ninuc.ninucco.api.dto.request.LoginReq;
-import co.ninuc.ninucco.api.dto.request.MemberCreateReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdateNicknameReq;
-import co.ninuc.ninucco.api.dto.request.MemberUpdatePhotoReq;
+import co.ninuc.ninucco.api.dto.request.*;
 import co.ninuc.ninucco.api.dto.response.*;
 
 import java.util.List;
@@ -17,6 +14,7 @@ public interface MemberService {
     MemberRes updateMemberUrl(MemberUpdatePhotoReq memberUpdatePhotoReq);
     MemberRes updateMemberNickname(MemberUpdateNicknameReq memberUpdateNicknameReq);
     MemberAllRes selectOneMember(String memberId);
+    MemberRes updateMemberUrl(MemberUpdatePhotoUrlReq memberUpdatePhotoUrlReq);
     List<ItemRes> selectAllItemsByMemberId(String memberId);
     Long insertMemberFriend(String friendId);
     List<MemberRes> selectAllFriendsByMemberId(String memberId);
