@@ -53,7 +53,7 @@ public class MemberController {
         );
     }
 
-    @ApiOperation(value = "멤버 사진 업데이트", notes="멤버 사진주소를 업데이트 합니다.")
+    @ApiOperation(value = "멤버 사진을 파일로 업데이트", notes="멤버 사진을 파일로 업데이트 합니다.")
     @PatchMapping("/photo")
     public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestPart String memberId, @RequestPart MultipartFile img){
         MemberUpdatePhotoReq memberUpdatePhotoReq= MemberUpdatePhotoReq.builder()
@@ -62,6 +62,14 @@ public class MemberController {
                 .build();
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoReq))
+        );
+    }
+
+    @ApiOperation(value = "멤버 사진을 url로 업데이트", notes="멤버 사진을 주소로 업데이트 합니다.")
+    @PatchMapping("/photo/url")
+    public ResponseEntity<ApiResult<Res>> updateMemberPhotoByUrl(@ModelAttribute MemberUpdatePhotoUrlReq memberUpdatePhotoUrlReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoUrlReq))
         );
     }
 
