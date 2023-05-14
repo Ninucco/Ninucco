@@ -49,8 +49,9 @@ class RankingBettingScreen extends StatelessWidget {
       itemCount: snapshot.data!.length,
       itemBuilder: (context, index) {
         var userRank = snapshot.data![index];
-        
+
         return RankingItem(
+          memberId: userRank.memberId,
           profileImage: userRank.profileImage,
           nickname: userRank.nickname,
           winCount: userRank.winCount,

@@ -35,129 +35,151 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
         titleText: "배틀 생성 결과",
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 20,
+        child: Container(
+          height: MediaQuery.of(context).size.height -
+              AppBar().preferredSize.height -
+              80,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/bg/bg2.png'),
+              fit: BoxFit.cover,
             ),
-            BattleCreateItem(
-              memberAId: _resultData.memberAId,
-              memberAImage: _resultData.memberAImage,
-              question: _resultData.question,
-              memberANickname: _resultData.memberANickname,
-              memberBNickname: result,
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 5,
+          ),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 20,
               ),
-              width: MediaQuery.of(context).size.width * 0.75,
-              height: 60,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  elevation: 5,
-                  backgroundColor: Colors.white,
-                  shadowColor: Colors.black45,
+              BattleCreateItem(
+                memberAId: _resultData.memberAId,
+                memberAImage: _resultData.memberAImage,
+                question: _resultData.question,
+                memberANickname: _resultData.memberANickname,
+                memberBNickname: result,
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  vertical: 5,
                 ),
-                child: const Text(
-                  '배틀 신청할 친구 검색하기',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 17,
+                width: MediaQuery.of(context).size.width * 0.75,
+                height: 60,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 5,
+                    backgroundColor: Colors.white,
+                    shadowColor: Colors.black45,
                   ),
-                ),
-                onPressed: () async {
-                  var tmpResult = await Navigator.pushNamed(
-                      context, '/BattleFriendSearch',
-                      arguments: "") as List;
+                  child: const Text(
+                    '배틀 신청할 친구 검색하기',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 17,
+                    ),
+                  ),
+                  onPressed: () async {
+                    List tmpResult;
+                    (await Navigator.pushNamed(context, '/BattleFriendSearch',
+                                arguments: "") ==
+                            Null)
+                        ? tmpResult = await Navigator.pushNamed(
+                                context, '/BattleFriendSearch', arguments: "")
+                            as List
+                        : tmpResult = [];
 
-                  setState(() {
-                    result = tmpResult[1] as String;
-                    resultId = tmpResult[0] as String;
-                  });
-                },
-              ),
-            ),
-            (result != "???")
-                ? Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 5,
-                    ),
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    height: 60,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        elevation: 5,
-                        backgroundColor: Colors.black,
-                        shadowColor: Colors.black45,
-                      ),
-                      child: const Text(
-                        '배틀 생성 요청 완료!',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                        ),
-                      ),
-                      onPressed: () async {
-                        BattleApiService.postBattle(BattlePostModel(
-                          _resultData.memberAImage,
-                          _resultData.memberAId,
-                          resultId,
-                          _resultData.question,
-                        ));
-                        var tmpResult = await Navigator.pushNamed(
-                            context, '/BattleAllScreen',
-                            arguments: "");
-                        setState(() {
-                          if (tmpResult != null) {
-                            result = tmpResult.toString();
-                          }
-                        });
-                      },
-                    ),
-                  )
-                : const SizedBox(
-                    height: 0,
-                  ),
-            const SizedBox(
-              height: 20,
-            ),
-            const Text(
-              "친구가 아직 회원이 아니신가요?",
-              textAlign: TextAlign.left,
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 5,
-              ),
-              width: MediaQuery.of(context).size.width * 0.75,
-              height: 60,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  elevation: 5,
-                  backgroundColor: Colors.black,
-                  shadowColor: Colors.black45,
+                    setState(() {
+                      (tmpResult.isNotEmpty)
+                          ? result = tmpResult[1] as String
+                          : result = "???";
+
+                      (tmpResult.isNotEmpty)
+                          ? resultId = tmpResult[0] as String
+                          : resultId = "";
+                    });
+                  },
                 ),
-                child: const Text(
-                  '배틀 초대 링크 생성하기',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                  ),
-                ),
-                onPressed: () => {},
               ),
-            ),
-          ],
+              (result != "???")
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 5,
+                      ),
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      height: 60,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 5,
+                          backgroundColor: Colors.black,
+                          shadowColor: Colors.black45,
+                        ),
+                        child: const Text(
+                          '배틀 생성 요청 완료!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                          ),
+                        ),
+                        onPressed: () async {
+                          BattleApiService.postBattle(BattlePostModel(
+                            _resultData.memberAImage,
+                            _resultData.memberAId,
+                            resultId,
+                            _resultData.question,
+                          ));
+                          var tmpResult = await Navigator.pushNamed(
+                              context, '/BattleAllScreen',
+                              arguments: "");
+                          setState(() {
+                            if (tmpResult != null) {
+                              result = tmpResult.toString();
+                            }
+                          });
+                        },
+                      ),
+                    )
+                  : const SizedBox(
+                      height: 0,
+                    ),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text(
+                "친구가 아직 회원이 아니신가요?",
+                textAlign: TextAlign.left,
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  vertical: 5,
+                ),
+                width: MediaQuery.of(context).size.width * 0.75,
+                height: 60,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 5,
+                    backgroundColor: Colors.black,
+                    shadowColor: Colors.black45,
+                  ),
+                  child: const Text(
+                    '배틀 초대 링크 생성하기',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                    ),
+                  ),
+                  onPressed: () => {},
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
