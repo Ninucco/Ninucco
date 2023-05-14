@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/battle_betting_request_model.dart';
+import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/services/betting_api_service.dart';
+import 'package:provider/provider.dart';
 
-class BettingPopupWidget extends StatelessWidget {
-  final int memberId, posessCoin;
-  final String nickname;
+class BettingPopupWidget extends StatefulWidget {
+  final int memberId, battleId;
+  final String nickname, type;
 
   const BettingPopupWidget({
     super.key,
     required this.memberId,
+    required this.battleId,
     required this.nickname,
-    required this.posessCoin,
+    required this.type,
   });
 
   @override
+  State<BettingPopupWidget> createState() => _BettingPopupWidgetState();
+}
+
+class _BettingPopupWidgetState extends State<BettingPopupWidget> {
+  final myController = TextEditingController();
+  @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
     return ElevatedButton(
       onPressed: () {
         showModalBottomSheet(
@@ -38,7 +50,7 @@ class BettingPopupWidget extends StatelessWidget {
                           height: 10,
                         ),
                         Text(
-                          "'$nickname'에게",
+                          "'${widget.nickname}'에게",
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -65,37 +77,38 @@ class BettingPopupWidget extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      "최대 $posessCoin ninu 코인을 베팅할 수 있어요!\n",
+                      "최대 ${authProvider.member!.point} ninu 코인을 베팅할 수 있어요!\n",
                       style: const TextStyle(
                         fontSize: 13,
                       ),
                     ),
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           "베팅 금액",
                           style: TextStyle(
                             fontSize: 23,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         SizedBox(
                           width: 80,
                           height: 20,
                           child: TextField(
+                            controller: myController,
                             textAlign: TextAlign.center,
                             showCursor: true,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                        Text(
+                        const Text(
                           " Point",
                           style: TextStyle(
                             fontSize: 23,
@@ -189,6 +202,13 @@ class BettingPopupWidget extends StatelessWidget {
                             ),
                             onPressed: () => {
                               Navigator.pop(context),
+                              BettingApiService.postBetting(
+                                  BattleBettingRequestModel(
+                                widget.battleId,
+                                int.parse(myController.text),
+                                widget.type,
+                                authProvider.member!.id,
+                              )),
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(

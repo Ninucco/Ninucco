@@ -3,17 +3,29 @@ import 'package:ninucco/screens/home/scan_result.dart';
 
 class Battle {
   final int battleId;
-  final String applicantName;
-  final String opponentName;
   final String title;
+  final String applicantName;
   final String applicantUrl;
+  final String opponentName;
+
+  final String applicantId;
+  final String opponentId;
+  final String opponentUrl;
+
+  final double applicantOdds;
+  final double opponentOdds;
 
   Battle({
     required this.battleId,
+    required this.title,
     required this.applicantName,
     required this.opponentName,
-    required this.title,
     required this.applicantUrl,
+    required this.applicantId,
+    required this.opponentId,
+    required this.opponentUrl,
+    required this.applicantOdds,
+    required this.opponentOdds,
   });
 
   factory Battle.fromJson(Map<String, dynamic> json) {
@@ -23,6 +35,11 @@ class Battle {
       opponentName: json['opponentName'],
       title: json['title'],
       applicantUrl: json['applicantUrl'],
+      applicantId: json['applicantId'] ?? '',
+      opponentId: json['opponentId'] ?? '',
+      opponentUrl: json['opponentUrl'] ?? '',
+      applicantOdds: json['applicantOdds'] ?? 2.0,
+      opponentOdds: json['opponentOdds'] ?? 2.0,
     );
   }
 }
@@ -31,10 +48,10 @@ class UserDetailData {
   final UserModel user;
   final List<dynamic> friendList;
   final List<dynamic> itemList;
-  final List<dynamic> curBattleList;
-  final List<dynamic> prevBattleList;
   final List<ResultData> scanResultList;
   final List<Battle> receivedBattles;
+  final List<Battle> curBattleList;
+  final List<Battle> prevBattleList;
 
   UserDetailData(
       {required this.user,
@@ -58,14 +75,22 @@ class UserDetailData {
     List<Battle> receivedBattles =
         tempReceivedBattles.map((i) => Battle.fromJson(i)).toList();
 
+    var tempCurBattleList = json['curBattles'] as List;
+    List<Battle> curBattleList =
+        tempCurBattleList.map((i) => Battle.fromJson(i)).toList();
+
+    var tempPrevBattleList = json['prevBattles'] as List;
+    List<Battle> prevBattleList =
+        tempPrevBattleList.map((i) => Battle.fromJson(i)).toList();
+
     return UserDetailData(
       user: UserModel.fromJson(json['user']),
       friendList: friendList,
       scanResultList: scanResultList,
       receivedBattles: receivedBattles,
-      curBattleList: [],
+      curBattleList: curBattleList,
+      prevBattleList: prevBattleList,
       itemList: [],
-      prevBattleList: [],
     );
   }
 }

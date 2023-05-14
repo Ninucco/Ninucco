@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:ninucco/widgets/betting/betting_popup_widget.dart';
 
 class BattleMemberWidget extends StatelessWidget {
-  final String nickname, profileImage;
+  final String nickname, profileImage, type;
   final double ratio;
-  final int memberId;
+  final int memberId, battleId;
 
   const BattleMemberWidget({
     super.key,
+    required this.type,
     required this.memberId,
+    required this.battleId,
     required this.nickname,
     required this.profileImage,
     required this.ratio,
@@ -158,9 +160,10 @@ class BattleMemberWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     BettingPopupWidget(
+                      type: type,
+                      battleId: battleId,
                       memberId: memberId,
                       nickname: nickname,
-                      posessCoin: 10000,
                     ),
                   ],
                 ),

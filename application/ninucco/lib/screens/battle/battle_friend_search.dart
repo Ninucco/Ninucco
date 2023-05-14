@@ -89,12 +89,6 @@ class Layout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      floatingActionButton: RotatedBox(
-        quarterTurns: 3,
-        child: Container(
-          child: const Icon(Icons.chevron_right),
-        ),
-      ),
       appBar: AppBar(
         toolbarHeight: 80,
         leadingWidth: 30,

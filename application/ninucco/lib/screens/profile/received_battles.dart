@@ -50,7 +50,7 @@ class ReceivedBattles extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               '/Profile',
-                              arguments: 'linga',
+                              arguments: battleData.applicantId,
                             );
                           },
                           child: Row(
