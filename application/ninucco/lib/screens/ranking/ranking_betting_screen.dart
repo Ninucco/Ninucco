@@ -27,7 +27,7 @@ class RankingBettingScreen extends StatelessWidget {
               return Column(
                 children: [
                   const SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Expanded(child: makeList(snapshot))
                 ],
@@ -49,8 +49,9 @@ class RankingBettingScreen extends StatelessWidget {
       itemCount: snapshot.data!.length,
       itemBuilder: (context, index) {
         var userRank = snapshot.data![index];
-        
+
         return RankingItem(
+          memberId: userRank.memberId,
           profileImage: userRank.profileImage,
           nickname: userRank.nickname,
           winCount: userRank.winCount,
