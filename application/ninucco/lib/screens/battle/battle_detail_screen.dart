@@ -86,6 +86,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                             Column(
                               children: [
                                 BattleMemberWidget(
+                                  type: "APPLICANT",
+                                  battleId: _resultData.battleId,
                                   memberId: _resultData.memberAId,
                                   nickname: _resultData.memberANickname,
                                   profileImage: _resultData.memberAImage,
@@ -95,6 +97,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                   height: 20,
                                 ),
                                 BattleMemberWidget(
+                                  type: "OPPONENT",
+                                  battleId: _resultData.battleId,
                                   memberId: _resultData.memberBId,
                                   nickname: _resultData.memberBNickname,
                                   profileImage: _resultData.memberBImage,
