@@ -57,36 +57,38 @@ class _BattleApproveState extends State<BattleApprove> {
       appBar: AppBar(
         title: Text(battleData.title),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ShowImage(context: context, image: _image, type: 0),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CameraButton(
-                  setImage: setImage,
-                  type: 'camera',
-                ),
-                CameraButton(
-                  setImage: setImage,
-                  type: 'gallery',
-                )
-              ],
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: BattlerApproveButton(
-                image: _image,
-                battleData: battleData,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ShowImage(context: context, image: _image, type: 0),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CameraButton(
+                    setImage: setImage,
+                    type: 'camera',
+                  ),
+                  CameraButton(
+                    setImage: setImage,
+                    type: 'gallery',
+                  )
+                ],
               ),
-            )
-          ],
+              const SizedBox(height: 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: BattlerApproveButton(
+                  image: _image,
+                  battleData: battleData,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

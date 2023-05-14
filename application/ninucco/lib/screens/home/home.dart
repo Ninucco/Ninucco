@@ -378,6 +378,7 @@ ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
     itemBuilder: (context, index) {
       var userRank = snapshot.data![index];
       return RankingItem(
+        memberId: userRank.memberId,
         profileImage: userRank.profileImage,
         nickname: userRank.nickname,
         winCount: userRank.winCount,
