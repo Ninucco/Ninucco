@@ -25,8 +25,8 @@ class BattleApiCommentService {
   }
 
   static Future<BattleCommentInfoModel> postBattleComments(
-      BattleCommentPostModel battleCommentPost) async {
-    final url = Uri.parse('$baseUrl/comment');
+      BattleCommentPostModel battleCommentPost, String memberId) async {
+    final url = Uri.parse('$baseUrl/comment?memberId=$memberId');
     final response = await http.post(
       url,
       headers: <String, String>{

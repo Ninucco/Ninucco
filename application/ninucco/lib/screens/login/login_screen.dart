@@ -117,7 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           Map<String, String?> data = {
                             'id': user.uid,
                             'nickname': user.email,
-                            'url': user.photoURL,
+                            'url':
+                                'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/default.png',
                           };
 
                           var response = await http.post(url,

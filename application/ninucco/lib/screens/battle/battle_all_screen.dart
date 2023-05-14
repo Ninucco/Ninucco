@@ -3,11 +3,15 @@ import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_item_widget.dart';
 
-class BattleAllScreen extends StatelessWidget {
-  BattleAllScreen({super.key});
+class BattleAllScreen extends StatefulWidget {
+  const BattleAllScreen({super.key});
 
+  @override
+  State<BattleAllScreen> createState() => _BattleAllScreenState();
+}
+
+class _BattleAllScreenState extends State<BattleAllScreen> {
   final Future<List<BattleInfoModel>> battles = BattleApiService.getBattles();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,25 +33,30 @@ class BattleAllScreen extends StatelessWidget {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/bg/bg2.png'),
-            fit: BoxFit.cover,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          return Future<void>.delayed(const Duration(seconds: 1));
+        },
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/bg/bg2.png'),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: FutureBuilder(
-          future: battles,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Column(
-                children: [Expanded(child: makeList(snapshot))],
+          child: FutureBuilder(
+            future: battles,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Column(
+                  children: [Expanded(child: makeList(snapshot))],
+                );
+              }
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          },
+            },
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

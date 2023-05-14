@@ -27,7 +27,7 @@ class RankingLookalikeScreen extends StatelessWidget {
               return Column(
                 children: [
                   const SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Expanded(child: makeList(snapshot))
                 ],
@@ -50,6 +50,7 @@ class RankingLookalikeScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         var userRank = snapshot.data![index];
         return RankingItem(
+          memberId: userRank.memberId,
           profileImage: userRank.profileImage,
           nickname: userRank.nickname,
           winCount: userRank.winCount,

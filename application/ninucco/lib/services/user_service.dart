@@ -33,4 +33,12 @@ class UserService {
     }
     throw Error();
   }
+
+  static Future<bool> existNickName(String nickname) async {
+    final url = Uri.parse(
+        "https://k8a605.p.ssafy.io/api/member/regist/nickname/?nickname=$nickname");
+    final response = await http.get(url);
+
+    return jsonDecode(response.body)['data']['validate'];
+  }
 }

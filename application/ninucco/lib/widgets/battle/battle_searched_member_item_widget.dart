@@ -51,8 +51,10 @@ class BattleSearchedMemberItem extends StatelessWidget {
                           children: [
                             Text(
                               nickname,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
                             ),
                           ],
                         ),

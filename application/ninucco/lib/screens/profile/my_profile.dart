@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
 import 'package:provider/provider.dart';
@@ -137,7 +138,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                                           .sliverOverlapAbsorberHandleFor(
                                               context),
                                     ),
-                                    name == '검사결과'
+                                    name != '아이템'
                                         ? GridItems(
                                             name: name,
                                             userData: _userDetailData!,
@@ -197,20 +198,36 @@ class GridItems extends StatelessWidget {
                       ),
                     )
                     .toList()
-                : name == '아이템'
-                    ? userData.itemList
+                : name == '배틀이력'
+                    ? userData.curBattleList
+                        .asMap()
+                        .entries
                         .map(
-                          (e) => GestureDetector(
-                            onTap: () {},
-                            child: Image.network(e.imgUrl),
+                          (data) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/ProfileBattleList",
+                                  arguments: ProfileBattlesListArgs(
+                                    selectedId: data.key,
+                                    data: userData.curBattleList,
+                                  ));
+                            },
+                            child: Image.network(
+                              userData.user.id == data.value.applicantId
+                                  ? data.value.applicantUrl
+                                  : data.value.opponentUrl,
+                            ),
                           ),
                         )
                         .toList()
                     : userData.prevBattleList
                         .map(
-                          (e) => GestureDetector(
+                          (battle) => GestureDetector(
                             onTap: () {},
-                            child: Image.network(e.imgUrl),
+                            child: Image.network(
+                              userData.user.id == battle.applicantId
+                                  ? battle.applicantUrl
+                                  : battle.opponentUrl,
+                            ),
                           ),
                         )
                         .toList());
@@ -353,35 +370,13 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       ),
                       // SizedBox(height: 32.0),
                       const SizedBox(height: 16.0),
-                      Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 80,
-                            backgroundImage: NetworkImage(
-                              userData != null
-                                  ? userData!.user.profileImage
-                                  : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg",
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: -6,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(8),
-                                backgroundColor:
-                                    Colors.white, // <-- Button color
-                              ),
-                              child: const Icon(
-                                Icons.edit,
-                                color: Colors.black,
-                                size: 16,
-                              ),
-                            ),
-                          )
-                        ],
+                      CircleAvatar(
+                        radius: 80,
+                        backgroundImage: NetworkImage(
+                          userData != null
+                              ? userData!.user.profileImage
+                              : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg",
+                        ),
                       ),
                       const SizedBox(height: 32.0),
                       Row(
@@ -477,7 +472,8 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           right: 8,
           child: IconButton(
             onPressed: () {
-              Provider.of<AuthProvider>(context, listen: false).signOut();
+              Navigator.pushNamed(context, '/ProfileSettings',
+                  arguments: userData);
             },
             icon: const Icon(Icons.settings),
             color: Colors.black,
