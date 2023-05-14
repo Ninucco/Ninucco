@@ -27,7 +27,7 @@ class RankingLookalikeScreen extends StatelessWidget {
               return Column(
                 children: [
                   const SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Expanded(child: makeList(snapshot))
                 ],

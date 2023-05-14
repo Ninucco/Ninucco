@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_comment_info_model.dart';
 import 'package:ninucco/models/battle_comment_post_model.dart';
 import 'package:ninucco/models/battle_info_model.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/services/battle_comment_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_comment_widget.dart';
 import 'package:ninucco/widgets/battle/battle_member_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
+import 'package:provider/provider.dart';
 
 class BattleDetailScreen extends StatefulWidget {
   final RouteSettings settings;
@@ -40,6 +42,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       appBar: const MyAppbarWidget(
         titleText: "이 배틀의 상황은?",
@@ -128,9 +131,11 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                       BattleApiCommentService
                                           .postBattleComments(
                                               BattleCommentPostModel(
-                                                  _textEditingController
-                                                      .value.text,
-                                                  _resultData.battleId)),
+                                                _textEditingController
+                                                    .value.text,
+                                                _resultData.battleId,
+                                              ),
+                                              authProvider.member!.id),
                                       _textEditingController.clear(),
                                       setState(
                                         () {
@@ -183,8 +188,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                                       BattleCommentPostModel(
                                                           _textEditingController
                                                               .value.text,
-                                                          _resultData
-                                                              .battleId));
+                                                          _resultData.battleId),
+                                                      authProvider.member!.id);
                                               _textEditingController.clear();
                                               setState(
                                                 () {
