@@ -15,27 +15,25 @@ class _TutorialScreenState extends State<TutorialScreen> {
   @override
   Widget build(BuildContext context) {
     TutorialProvider tutorialProvider = Provider.of<TutorialProvider>(context);
-    return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          body: Container(
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-              image: AssetImage('assets/images/bg/bg.png'),
-              fit: BoxFit.cover,
-            )),
-            child: CustomScrollView(
-              physics: const RangeMaintainingScrollPhysics(),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              slivers: [
-                const TutorialCarousel(),
-                ElevatedButton(
-                    onPressed: () => tutorialProvider.setIsPassTutorial(true),
-                    child: const Text('ninucco 시작하기')),
-              ],
-            ),
-          ),
-        ));
+    return Scaffold(
+      body: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg.png'),
+            fit: BoxFit.cover,
+          )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 180.0),
+              const TutorialCarousel(),
+              const SizedBox(height: 40.0),
+              ElevatedButton(
+                  onPressed: () => tutorialProvider.setIsPassTutorial(true),
+                  child: const Text('ninucco 시작하기')),
+            ],
+          )),
+    );
   }
 }
 
@@ -59,7 +57,7 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
   Widget build(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
-        aspectRatio: 2.0,
+        aspectRatio: 1,
         enlargeCenterPage: true,
         enableInfiniteScroll: false,
       ),
@@ -67,43 +65,39 @@ class _TutorialCarouselState extends State<TutorialCarousel> {
           .asMap()
           .map((index, imagePath) {
             return MapEntry(
-                index,
-                Container(
-                  margin: const EdgeInsets.all(5.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5.0)),
-                          child: Image.asset(
-                            imagePath,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Text(
-                        _tutorialImages!.getGuideTitle[index],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 5.0),
-                      Text(
-                        _tutorialImages!.getGuideMessage[index],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
+              index,
+              Column(
+                children: [
+                  Expanded(
+                    child: Image.asset(
+                      imagePath,
+                    ),
                   ),
-                ));
+                  const SizedBox(height: 1.0),
+                  Text(
+                    _tutorialImages!.getGuideTitle[index],
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15.0),
+                  Column(
+                    children: _tutorialImages!.getGuideMessage[index]
+                        .map((message) => Text(
+                              message,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ],
+              ),
+            );
           })
           .values
           .toList(),

@@ -18,10 +18,9 @@ class TutorialProvider with ChangeNotifier {
   }
 
   void setIsPassTutorial(bool isPassTutorial) async {
-    notifyListeners();
     await _prefs.setBool('isPassTutorial', isPassTutorial);
     _isPassTutorial = isPassTutorial;
-    // print(_prefs.getBool('isPassTutorial'));
+    notifyListeners();
   }
 
   Future<void> passTutorial() async {
