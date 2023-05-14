@@ -15,6 +15,7 @@ import 'package:ninucco/screens/login/login_screen.dart';
 import 'package:ninucco/screens/profile/my_profile.dart';
 import 'package:ninucco/screens/profile/profile.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
+import 'package:ninucco/screens/profile/profile_image_picker.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/screens/profile/profile_settings.dart';
 import 'package:ninucco/screens/profile/received_battles.dart';
@@ -52,9 +53,11 @@ class ProfileNavigator extends StatelessWidget {
               case "/ProfileScanList":
                 return ProfileScanResult(settings: settings);
               case "/ProfileSettings":
-                return const ProfileSettings();
+                return ProfileSettings(settings: settings);
               case "/ProfileBattleList":
                 return ProfileBattlesList(settings: settings);
+              case "/ProfileImagePicker":
+                return ProfileImagePicker(settings: settings);
               case "/ProfileReceivedBattle":
                 return ReceivedBattles(settings: settings);
               case "/BattleApprove":

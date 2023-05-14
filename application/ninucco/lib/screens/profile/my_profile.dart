@@ -176,7 +176,6 @@ class GridItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(userData.curBattleList.length);
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: Builder(builder: (context) {
@@ -371,35 +370,13 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       ),
                       // SizedBox(height: 32.0),
                       const SizedBox(height: 16.0),
-                      Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 80,
-                            backgroundImage: NetworkImage(
-                              userData != null
-                                  ? userData!.user.profileImage
-                                  : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg",
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: -6,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(8),
-                                backgroundColor:
-                                    Colors.white, // <-- Button color
-                              ),
-                              child: const Icon(
-                                Icons.edit,
-                                color: Colors.black,
-                                size: 16,
-                              ),
-                            ),
-                          )
-                        ],
+                      CircleAvatar(
+                        radius: 80,
+                        backgroundImage: NetworkImage(
+                          userData != null
+                              ? userData!.user.profileImage
+                              : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg",
+                        ),
                       ),
                       const SizedBox(height: 32.0),
                       Row(
@@ -495,7 +472,8 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           right: 8,
           child: IconButton(
             onPressed: () {
-              Provider.of<AuthProvider>(context, listen: false).signOut();
+              Navigator.pushNamed(context, '/ProfileSettings',
+                  arguments: userData);
             },
             icon: const Icon(Icons.settings),
             color: Colors.black,
