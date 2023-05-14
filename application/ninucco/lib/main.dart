@@ -14,7 +14,7 @@ import 'package:ninucco/screens/login/login_screen.dart';
 import 'package:ninucco/services/member_api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
-import 'package:ninucco/screens/tutorial/tutorial_screen_demo.dart';
+import 'package:ninucco/screens/tutorial/tutorial_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
