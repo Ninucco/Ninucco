@@ -142,9 +142,15 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                           });
                         },
                       ),
-                    )
-                  : const SizedBox(
-                      height: 0,
+                      onPressed: () {
+                        BattleApiService.postBattle(BattlePostModel(
+                          _resultData.memberAImage,
+                          _resultData.memberAId,
+                          resultId,
+                          _resultData.question,
+                        ));
+                        Navigator.pushNamed(context, '/BattleAllScreen');
+                      },
                     ),
               const SizedBox(
                 height: 20,

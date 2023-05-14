@@ -25,62 +25,60 @@ class _NoonLoopingDemoState extends State<NoonLoopingDemo> {
         future: battles,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Container(
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  aspectRatio: 2.0,
-                  enlargeCenterPage: true,
-                  enableInfiniteScroll: true,
-                ),
-                items: snapshot.data!
-                    .map(
-                      (item) => Container(
-                        margin: const EdgeInsets.all(5.0),
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5.0)),
-                          child: Stack(
-                            children: <Widget>[
-                              Image.network(item.memberAImage,
-                                  fit: BoxFit.cover, width: 1000.0),
-                              Positioned(
-                                bottom: 0.0,
-                                left: 0.0,
-                                right: 0.0,
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(200, 0, 0, 0),
-                                        Color.fromARGB(0, 0, 0, 0)
-                                      ],
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        item.question,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+            return CarouselSlider(
+              options: CarouselOptions(
+                aspectRatio: 2.0,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: true,
+              ),
+              items: snapshot.data!
+                  .map(
+                    (item) => Container(
+                      margin: const EdgeInsets.all(5.0),
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5.0)),
+                        child: Stack(
+                          children: <Widget>[
+                            Image.network(item.memberAImage,
+                                fit: BoxFit.cover, width: 1000.0),
+                            Positioned(
+                              bottom: 0.0,
+                              left: 0.0,
+                              right: 0.0,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(200, 0, 0, 0),
+                                      Color.fromARGB(0, 0, 0, 0)
                                     ],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
                                   ),
                                 ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 20.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      item.question,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                    .toList(),
-              ),
+                    ),
+                  )
+                  .toList(),
             );
           }
           return const Text("LOADING...");
@@ -213,21 +211,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadData();
-  // }
-
-  // Future<void> _loadData() async {
-  //   AuthProvider authProvider = Provider.of<AuthProvider>(context);
-  //   final apiService = MemberApiService(authProvider);
-
-  //   if (await MemberApiService.checkRegisted()) {
-  //     await MemberApiService.login(apiService);
-  //   }
-  // }
-
   final Future<List<UserRankInfoModel>> userRanks =
       UserRankApiService.getTop5UserRanks();
 
