@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(16),
                 child: CustomScrollView(
                   slivers: [
-                    const SliverToBoxAdapter(child: SizedBox(height: 200)),
+                    const SliverToBoxAdapter(child: SizedBox(height: 180)),
                     SliverToBoxAdapter(
                       child: Container(
                         decoration: const BoxDecoration(
@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SliverToBoxAdapter(child: SizedBox(height: 40)),
+                    const SliverToBoxAdapter(child: SizedBox(height: 100)),
                     SliverToBoxAdapter(
                       child: Container(
                         alignment: Alignment.center,
