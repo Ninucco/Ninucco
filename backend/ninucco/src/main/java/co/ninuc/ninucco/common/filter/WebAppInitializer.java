@@ -5,11 +5,10 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 public class WebAppInitializer implements WebApplicationInitializer {
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException{
+    public void onStartup(ServletContext servletContext){
         FilterRegistration charEncodingFilterReg = servletContext.addFilter("CharacterEncodingFilter", CharacterEncodingFilter.class);
         charEncodingFilterReg.setInitParameter("encoding", "UTF-8");
         charEncodingFilterReg.setInitParameter("forceEncoding", "true");

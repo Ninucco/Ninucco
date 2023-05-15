@@ -13,8 +13,6 @@ public interface BattleService {
 
     BattleListRes selectAllBattle(String option);
 
-    BattleListRes selectAllMemberBattle(String memberId, String status);
-
     BattleListRes selectAllReceivedBattle(String memberId);
 
     BattleRes selectOneBattle(Long battleId);
