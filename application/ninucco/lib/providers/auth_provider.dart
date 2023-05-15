@@ -87,7 +87,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> convertAnonymousToGoogle() async {
+  Future<String> convertAnonymousToGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
@@ -96,16 +96,17 @@ class AuthProvider with ChangeNotifier {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-      _auth.currentUser?.linkWithCredential(credential);
+      await _auth.currentUser?.linkWithCredential(credential);
+      return 'Convert Process Done';
     } on PlatformException catch (error) {
       if (error.code == 'sign_in_canceled') {
-        debugPrint('Google sign in was canceled');
-      } else if (error.code == 'credential-already-in-use') {
-        debugPrint('Google Account Already Exist');
-        return;
+        return 'Google sign in was canceled';
       }
-    } catch (error) {
-      debugPrint('Failed to convert with Google: $error');
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'credential-already-in-use') {
+        return 'Google Account Already Exist';
+      }
     }
+    return '';
   }
 }
