@@ -66,8 +66,19 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    String providerId = _auth.currentUser?.providerData.isNotEmpty ?? false
+        ? _auth.currentUser!.providerData[0].providerId
+        : '';
     try {
-      await _auth.signOut();
+      // 구글 로그인으로 진행했다면 구글 로그인 정보 초기화
+      if (providerId == 'google.com') {
+        await _auth.signOut();
+        await googleSignIn.disconnect();
+        // 그 외에는 일반 로그아웃
+      } else {
+        await _auth.signOut();
+      }
       setMember(null);
       setLoginStatus(false);
     } catch (error) {
@@ -76,7 +87,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> convertAnonymousToGoogle() async {
+  Future<String> convertAnonymousToGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
@@ -85,16 +96,17 @@ class AuthProvider with ChangeNotifier {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-      _auth.currentUser?.linkWithCredential(credential);
+      await _auth.currentUser?.linkWithCredential(credential);
+      return 'Convert Process Done';
     } on PlatformException catch (error) {
       if (error.code == 'sign_in_canceled') {
-        debugPrint('Google sign in was canceled');
-      } else if (error.code == 'credential-already-in-use') {
-        debugPrint('Google Account Already Exist');
-        return;
+        return 'Google sign in was canceled';
       }
-    } catch (error) {
-      debugPrint('Failed to convert with Google: $error');
+    } on FirebaseAuthException catch (error) {
+      if (error.code == 'credential-already-in-use') {
+        return 'Google Account Already Exist';
+      }
     }
+    return '';
   }
 }
