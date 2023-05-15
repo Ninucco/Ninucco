@@ -11,12 +11,14 @@ class Battle {
   final String applicantId;
   final String opponentId;
   final String opponentUrl;
+  final String result;
 
   final double applicantOdds;
   final double opponentOdds;
 
   Battle({
     required this.battleId,
+    required this.result,
     required this.title,
     required this.applicantName,
     required this.opponentName,
@@ -40,6 +42,7 @@ class Battle {
       opponentUrl: json['opponentUrl'] ?? '',
       applicantOdds: json['applicantOdds'] ?? 2.0,
       opponentOdds: json['opponentOdds'] ?? 2.0,
+      result: json['result'] ?? "null",
     );
   }
 }
