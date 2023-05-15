@@ -66,8 +66,19 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    String providerId = _auth.currentUser?.providerData.isNotEmpty ?? false
+        ? _auth.currentUser!.providerData[0].providerId
+        : '';
     try {
-      await _auth.signOut();
+      // 구글 로그인으로 진행했다면 구글 로그인 정보 초기화
+      if (providerId == 'google.com') {
+        await _auth.signOut();
+        await googleSignIn.disconnect();
+        // 그 외에는 일반 로그아웃
+      } else {
+        await _auth.signOut();
+      }
       setMember(null);
       setLoginStatus(false);
     } catch (error) {
