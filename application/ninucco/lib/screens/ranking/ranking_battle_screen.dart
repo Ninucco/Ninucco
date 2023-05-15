@@ -55,6 +55,12 @@ class RankingBattleScreen extends StatelessWidget {
           nickname: userRank.nickname,
           winCount: userRank.winCount,
           index: index,
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              "/Profile",
+              arguments: userRank.memberId,
+            );
+          },
         );
       },
       separatorBuilder: (context, index) => const SizedBox(width: 40),

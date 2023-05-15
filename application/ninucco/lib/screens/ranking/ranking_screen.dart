@@ -8,9 +8,7 @@ class RankingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyStatefulWidget(),
-    );
+    return const MyStatefulWidget();
   }
 }
 
@@ -29,6 +27,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+  }
+
+  void onTap(String memberId) {
+    print(memberId);
   }
 
   @override

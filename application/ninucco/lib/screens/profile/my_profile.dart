@@ -27,7 +27,6 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   bool inited = false;
   late TabController _tabController = TabController(length: 3, vsync: this);
   late String userId;
-  late bool canGoBack;
 
   UserDetailData? _userDetailData;
   Future<void>? _initUserDetail;

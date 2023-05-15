@@ -366,6 +366,13 @@ ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
         nickname: userRank.nickname,
         winCount: userRank.winCount,
         index: index,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            "/Profile",
+            arguments: userRank.memberId,
+          );
+        },
       );
     },
     separatorBuilder: (context, index) => const SizedBox(width: 0),

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
 
@@ -24,8 +25,13 @@ class _ProfileScreenState extends State<ProfileScreen>
   final List<String> tabs = <String>['검사결과', '배틀이력', '아이템'];
   late TabController _tabController = TabController(length: 3, vsync: this);
   late Future<UserDetailData> _userData;
+
+  bool inited = false;
   late String userId;
-  late bool canGoBack;
+
+  UserDetailData? _userDetailData;
+  Future<void>? _initUserDetail;
+
   @override
   void initState() {
     super.initState();
@@ -34,8 +40,25 @@ class _ProfileScreenState extends State<ProfileScreen>
     _userData = UserService.getUserDetailById(userId);
   }
 
+  Future<void> _initDatas(String id) async {
+    final data = await UserService.getUserDetailById(id);
+    _userDetailData = data;
+  }
+
+  Future<void> _refreshData(String id) async {
+    final data = await UserService.getUserDetailById(id);
+    setState(() {
+      _userDetailData = data;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (inited == false) {
+      _initUserDetail = _initDatas(userId);
+      inited = true;
+    }
+
     var myTabBar = TabBar(
       controller: _tabController,
       indicatorColor: Colors.teal,
@@ -64,15 +87,30 @@ class _ProfileScreenState extends State<ProfileScreen>
               SliverOverlapAbsorber(
                 handle:
                     NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                sliver: SliverPersistentHeader(
-                  pinned: true,
-                  delegate: HomeSliverAppBar(
-                    expandedHeight: 450.0,
-                    height: 96,
-                    tabbar: myTabBar,
-                    userData: _userData,
-                  ),
-                ),
+                sliver: FutureBuilder(
+                    future: _initUserDetail,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        return SliverPersistentHeader(
+                          pinned: true,
+                          delegate: HomeSliverAppBar(
+                            expandedHeight: 450.0,
+                            height: 96,
+                            tabbar: myTabBar,
+                            userData: null,
+                          ),
+                        );
+                      }
+                      return SliverPersistentHeader(
+                        pinned: true,
+                        delegate: HomeSliverAppBar(
+                          expandedHeight: 450.0,
+                          height: 96,
+                          tabbar: myTabBar,
+                          userData: _userDetailData,
+                        ),
+                      );
+                    }),
               ),
             ],
             body: TabBarView(
@@ -81,30 +119,40 @@ class _ProfileScreenState extends State<ProfileScreen>
                     .map((name) => SafeArea(
                           top: false,
                           bottom: false,
-                          child: Builder(
-                            builder: (BuildContext context) {
-                              return CustomScrollView(
-                                key: PageStorageKey<String>(tabs[0]),
-                                slivers: [
-                                  SliverOverlapInjector(
-                                    handle: NestedScrollView
-                                        .sliverOverlapAbsorberHandleFor(
-                                            context),
-                                  ),
-                                  name == '검사결과'
-                                      ? GridItems(
-                                          name: name,
-                                          userData: _userData,
-                                        )
-                                      : const SliverToBoxAdapter(
-                                          child: Column(
-                                            children: [
-                                              SizedBox(height: 32),
-                                              Text("준비중입니다"),
-                                            ],
+                          child: FutureBuilder(
+                            future: _initUserDetail,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                      ConnectionState.active ||
+                                  _userDetailData == null) {
+                                return const Text("LOADING...");
+                              }
+                              return RefreshIndicator(
+                                onRefresh: () => _refreshData(
+                                    widget.settings.arguments as String),
+                                child: CustomScrollView(
+                                  key: PageStorageKey<String>(tabs[0]),
+                                  slivers: [
+                                    SliverOverlapInjector(
+                                      handle: NestedScrollView
+                                          .sliverOverlapAbsorberHandleFor(
+                                              context),
+                                    ),
+                                    name != '아이템'
+                                        ? GridItems(
+                                            name: name,
+                                            userData: _userDetailData!,
+                                          )
+                                        : const SliverToBoxAdapter(
+                                            child: Column(
+                                              children: [
+                                                SizedBox(height: 32),
+                                                Text("준비중입니다"),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                ],
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -119,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
 class GridItems extends StatelessWidget {
   final String name;
-  final Future<UserDetailData> userData;
+  final UserDetailData userData;
   const GridItems({
     super.key,
     required this.name,
@@ -130,55 +178,66 @@ class GridItems extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
-      sliver: FutureBuilder(
-          future: userData,
-          builder: (context, snapshot) {
-            return SliverGrid.count(
-              crossAxisCount: 3,
-              children: snapshot.hasData
-                  ? name == '검사결과'
-                      ? snapshot.data!.scanResultList
-                          .asMap()
-                          .entries
-                          .map(
-                            (data) => GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, "/ProfileScanList",
-                                    arguments: ProfileScanResultsArgs(
-                                      selectedId: data.key,
-                                      data: snapshot.data!.scanResultList,
-                                    ));
-                              },
-                              child: Image.network(data.value.imgUrl),
+      sliver: Builder(builder: (context) {
+        return SliverGrid.count(
+            crossAxisCount: 3,
+            children: name == '검사결과'
+                ? userData.scanResultList
+                    .asMap()
+                    .entries
+                    .map(
+                      (data) => GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, "/ProfileScanList",
+                              arguments: ProfileScanResultsArgs(
+                                selectedId: data.key,
+                                data: userData.scanResultList,
+                              ));
+                        },
+                        child: Image.network(data.value.imgUrl),
+                      ),
+                    )
+                    .toList()
+                : name == '배틀이력'
+                    ? userData.curBattleList
+                        .asMap()
+                        .entries
+                        .map(
+                          (data) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/ProfileBattleList",
+                                  arguments: ProfileBattlesListArgs(
+                                    selectedId: data.key,
+                                    data: userData.curBattleList,
+                                  ));
+                            },
+                            child: Image.network(
+                              userData.user.id == data.value.applicantId
+                                  ? data.value.applicantUrl
+                                  : data.value.opponentUrl,
                             ),
-                          )
-                          .toList()
-                      : name == '아이템'
-                          ? snapshot.data!.itemList
-                              .map(
-                                (e) => GestureDetector(
-                                  onTap: () {},
-                                  child: Image.network(e.imgUrl),
-                                ),
-                              )
-                              .toList()
-                          : snapshot.data!.prevBattleList
-                              .map(
-                                (e) => GestureDetector(
-                                  onTap: () {},
-                                  child: Image.network(e.opponentUrl),
-                                ),
-                              )
-                              .toList()
-                  : [const Text("No Data")],
-            );
-          }),
+                          ),
+                        )
+                        .toList()
+                    : userData.prevBattleList
+                        .map(
+                          (battle) => GestureDetector(
+                            onTap: () {},
+                            child: Image.network(
+                              userData.user.id == battle.applicantId
+                                  ? battle.applicantUrl
+                                  : battle.opponentUrl,
+                            ),
+                          ),
+                        )
+                        .toList());
+      }),
     );
   }
 }
 
 class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
-  final Future<UserDetailData> userData;
+  final UserDetailData? userData;
   final double expandedHeight;
   final double height;
   final TabBar tabbar;
@@ -235,66 +294,63 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           ),
         ),
         // 스크롤 후 appbar
-        FutureBuilder(
-            future: userData,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Positioned(
-                  top: 16,
-                  child: Opacity(
-                    opacity: percentage,
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 64),
-                        CircleAvatar(
-                          radius: 16,
-                          backgroundImage:
-                              NetworkImage(snapshot.data!.user.profileImage),
-                        ),
-                        const SizedBox(width: 16),
-                        Text(
-                          '${snapshot.data!.user.nickname}\'s Profile',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
+        Builder(builder: (context) {
+          if (userData != null) {
+            return Positioned(
+              top: 16,
+              left: 40,
+              child: Opacity(
+                opacity: percentage,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 16),
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundImage:
+                          NetworkImage(userData!.user.profileImage),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      userData!.user.nickname,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return Positioned(
+            top: 16,
+            child: Opacity(
+              opacity: percentage,
+              child: const Row(
+                children: [
+                  SizedBox(width: 16),
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundImage: AssetImage('assets/images/anonymous.png'),
+                  ),
+                  SizedBox(width: 16),
+                  Text(
+                    '--- Profile',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
                     ),
                   ),
-                );
-              }
-              return Positioned(
-                top: 16,
-                child: Opacity(
-                  opacity: percentage,
-                  child: const Row(
-                    children: [
-                      SizedBox(width: 16),
-                      CircleAvatar(
-                        radius: 16,
-                        backgroundImage:
-                            AssetImage('assets/images/anonymous.png'),
-                      ),
-                      SizedBox(width: 16),
-                      Text(
-                        '--- Profile',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
+                ],
+              ),
+            ),
+          );
+        }),
         // scroll이전
-        FutureBuilder(
-          future: userData,
-          builder: (context, snapshot) {
+        Builder(
+          builder: (context) {
             return Positioned(
               top: 16 - shrinkOffset,
               right: 0,
@@ -306,7 +362,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        '${snapshot.hasData ? snapshot.data!.user.nickname : "---"}님의 프로필',
+                        userData != null ? userData!.user.nickname : "---",
                         style: const TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -317,9 +373,11 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       const SizedBox(height: 16.0),
                       CircleAvatar(
                         radius: 80,
-                        backgroundImage: NetworkImage(snapshot.hasData
-                            ? snapshot.data!.user.profileImage
-                            : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg"),
+                        backgroundImage: NetworkImage(
+                          userData != null
+                              ? userData!.user.profileImage
+                              : "https://image.bugsm.co.kr/artist/images/1000/802570/80257085.jpg",
+                        ),
                       ),
                       const SizedBox(height: 32.0),
                       Row(
@@ -336,20 +394,17 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                                   height: 48,
                                 ),
                                 const SizedBox(height: 6),
-                                FutureBuilder(
-                                    future: userData,
-                                    builder: (context, snapshot) {
-                                      return Text(
-                                        snapshot.hasData
-                                            ? snapshot.data!.friendList.length
-                                                .toString()
-                                            : '-',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
-                                      );
-                                    }),
+                                Builder(builder: (context) {
+                                  return Text(
+                                    userData != null
+                                        ? userData!.friendList.length.toString()
+                                        : '-',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  );
+                                }),
                                 const SizedBox(height: 6),
                                 const Text('친구목록'),
                               ],
@@ -361,33 +416,39 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                             color: Colors.black.withOpacity(0.2),
                           ),
                           Expanded(
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/icons/battle_bubble.png',
-                                  color: Colors.black,
-                                  fit: BoxFit.fitWidth,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                                FutureBuilder(
-                                    future: userData,
-                                    builder: (context, snapshot) {
-                                      return Text(
-                                        snapshot.hasData
-                                            ? snapshot
-                                                .data!.curBattleList.length
-                                                .toString()
-                                            : '-',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
-                                      );
-                                    }),
-                                const SizedBox(height: 12),
-                                const Text('진행중인 배틀'),
-                              ],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/ProfileReceivedBattle",
+                                  arguments: userData,
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/battle_bubble.png',
+                                    color: Colors.black,
+                                    fit: BoxFit.fitWidth,
+                                    width: 48,
+                                    height: 48,
+                                  ),
+                                  Builder(builder: (context) {
+                                    return Text(
+                                      userData != null
+                                          ? userData!.receivedBattles.length
+                                              .toString()
+                                          : '-',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 12),
+                                  const Text('걸려온 배틀'),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -407,10 +468,9 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
             child: Center(child: tabbar),
           ),
         ),
-
         Positioned(
           top: 8,
-          left: 16,
+          left: 8,
           child: IconButton(
             onPressed: () {
               Navigator.pop(context);

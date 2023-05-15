@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class RankingItem extends StatelessWidget {
   final String profileImage, nickname, memberId;
   final int winCount, index;
+  final VoidCallback onTap;
 
   const RankingItem({
     super.key,
@@ -11,6 +12,7 @@ class RankingItem extends StatelessWidget {
     required this.nickname,
     required this.winCount,
     required this.index,
+    required this.onTap,
   });
 
   @override
@@ -19,13 +21,7 @@ class RankingItem extends StatelessWidget {
       child: Align(
         alignment: Alignment.topCenter,
         child: GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              "/Profile",
-              arguments: memberId,
-            );
-          },
+          onTap: onTap,
           child: Container(
             margin: const EdgeInsets.only(
               left: 10,
