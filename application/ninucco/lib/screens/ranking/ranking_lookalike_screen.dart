@@ -55,6 +55,7 @@ class RankingLookalikeScreen extends StatelessWidget {
           nickname: userRank.nickname,
           winCount: userRank.winCount,
           index: index,
+          onTap: () {},
         );
       },
       separatorBuilder: (context, index) => const SizedBox(width: 20),
