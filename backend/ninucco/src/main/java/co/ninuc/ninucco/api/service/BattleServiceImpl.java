@@ -135,7 +135,8 @@ public class BattleServiceImpl implements BattleService{
         return null;
     }
     //TODO: 시간마다 배틀 끝났는지 체크
-    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
+//    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
+    @Scheduled(cron = "0 0 0 * * * ", zone = "Asia/Seoul") //every midnight
     public void finishAtMidnight(){
         log.info("finish() called: "+LocalDateTime.now());
         battleRepository.findByFinishAtLessThanAndStatus(LocalDateTime.now(), BattleStatus.PROCEEDING)
