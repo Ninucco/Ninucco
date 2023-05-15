@@ -23,20 +23,15 @@ class ShowImage extends StatelessWidget {
       ),
       width: MediaQuery.of(context).size.width - 64,
       height: MediaQuery.of(context).size.width - 64,
-      child: Expanded(
-        child: AspectRatio(
-          aspectRatio: 1,
-          child: _image == null
-              ? Image.asset(
-                  'assets/images/scan_items/no_img_${type + 1}.png',
-                  fit: BoxFit.cover,
-                )
-              : Image.file(
-                  File(_image!.path),
-                  fit: BoxFit.cover,
-                ),
-        ),
-      ),
+      child: _image == null
+          ? Image.asset(
+              'assets/images/scan_items/no_img_${type + 1}.png',
+              fit: BoxFit.cover,
+            )
+          : Image.file(
+              File(_image!.path),
+              fit: BoxFit.cover,
+            ),
     );
   }
 }

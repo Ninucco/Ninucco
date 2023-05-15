@@ -125,36 +125,20 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                             fontSize: 17,
                           ),
                         ),
-                        onPressed: () async {
+                        onPressed: () {
                           BattleApiService.postBattle(BattlePostModel(
                             _resultData.memberAImage,
                             _resultData.memberAId,
                             resultId,
                             _resultData.question,
                           ));
-                          var tmpResult = await Navigator.pushNamed(
-                              context, '/BattleAllScreen',
-                              arguments: "");
-                          setState(() {
-                            if (tmpResult != null) {
-                              result = tmpResult.toString();
-                            }
-                          });
+                          Navigator.pushNamed(context, '/BattleAllScreen');
                         },
                       ),
-                      onPressed: () {
-                        BattleApiService.postBattle(BattlePostModel(
-                          _resultData.memberAImage,
-                          _resultData.memberAId,
-                          resultId,
-                          _resultData.question,
-                        ));
-                        Navigator.pushNamed(context, '/BattleAllScreen');
-                      },
+                    )
+                  : const SizedBox(
+                      height: 20,
                     ),
-              const SizedBox(
-                height: 20,
-              ),
               const Text(
                 "친구가 아직 회원이 아니신가요?",
                 textAlign: TextAlign.left,

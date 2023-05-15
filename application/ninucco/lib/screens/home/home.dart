@@ -334,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return ListView(
                             padding: const EdgeInsets.all(0),
                             physics: const NeverScrollableScrollPhysics(),
-                            children: [Expanded(child: makeList(snapshot))],
+                            children: [makeList(snapshot)],
                           );
                         }
                         return const Center(

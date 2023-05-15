@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ninucco/providers/nav_provider.dart';
-import 'package:ninucco/widgets/home/show_image.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:ninucco/widgets/home/camera_button.dart';
+import 'package:ninucco/widgets/home/show_image.dart';
 import 'package:ninucco/widgets/home/submit_button.dart';
 import 'package:provider/provider.dart';
 import 'package:wrapped_korean_text/wrapped_korean_text.dart';
