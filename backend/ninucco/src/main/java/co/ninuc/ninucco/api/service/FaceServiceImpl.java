@@ -32,6 +32,7 @@ public class FaceServiceImpl {
     private final StabilityAIService stabilityAIService;
     private final AmazonS3Client amazonS3Client;
     private final SimilarityResultRepository similarityResultRepository;
+    private final RedisService redisService;
     private final ValidateUtil validateUtil;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -53,16 +54,16 @@ public class FaceServiceImpl {
         }
         //2. 데이터 리스트를 받는다(keyword-value)
         List<Similarity> similarityResultList = similarityModelService.getList(r.getModelType(), inputImgByteArray);
-        List<Similarity> personalitySimilarityResultList = similarityModelService.getList("job", inputImgByteArray);
+        List<Similarity> personalitySimilarityResultList = similarityModelService.getList("personality", inputImgByteArray);
         log.info("1. 데이터 리스트 받기 완료");
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
-        String animalKeyword = similarityResultList.get(0).getKeyword();
+        String keyword = similarityResultList.get(0).getKeyword();
         String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
 
         //프롬프트 생성
         String basePrompt = "sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render";
         String prompt=new StringBuilder().append("Cute small ")
-                .append(animalKeyword)
+                .append(keyword)
                 .append(personalityKeyword)
                 //기본 프롬프트
                 .append(basePrompt)
@@ -90,7 +91,10 @@ public class FaceServiceImpl {
          * ......
          *
          * */
-        String resultTitle = "1퍼센트의 오차도 허용하지 않는 깐깐한 고양이상";
+        StringBuilder resultTitle = new StringBuilder().append("1퍼센트의 오차도 허용하지 않는").append(' ')
+                .append(redisService.getRedisStringValue(personalityKeyword)).append(' ')
+                .append(redisService.getRedisStringValue(keyword))
+                .append("상");
         String resultDescription = "장인은 대담하면서도 현실적인 성격으로, 모든 종류의 도구를 자유자재로 다루는 성격 유형입니다. \\n\" +\n" +
                 "                                \"\\n\" +\n" +
                 "                                \"내향형의 사람들은 소수의 사람들과 깊고 의미 있는 관계를 맺는 일을 선호하며, 차분한 환경을 원할 때가 많습니다.\\n\" +\n" +
@@ -109,14 +113,14 @@ public class FaceServiceImpl {
                         .memberId(r.getMemberId())
                         .modelType(r.getModelType())
                         .imgUrl(imgUrl)
-                        .resultTitle(resultTitle)
+                        .resultTitle(resultTitle.toString())
                         .resultDescription(resultDescription)
                         .resultList(listTop5).build()
         );
 
         return SimilarityResultRes.builder()
                 .imgUrl(imgUrl)
-                .resultTitle(resultTitle)
+                .resultTitle(resultTitle.toString())
                 .resultDescription(resultDescription)
                 .resultList(listTop5).build();
     }

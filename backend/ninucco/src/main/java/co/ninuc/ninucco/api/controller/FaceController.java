@@ -66,4 +66,11 @@ public class FaceController {
                 redisService.getRedisStringValue(key)
         );
     }
+    @ApiOperation(value = "키워드 보는 임시 api", notes = "키워드 보는 임시 api")
+    @GetMapping("/keywordlist")
+    public ResponseEntity<?> selectAllKeywords() {
+        return ResponseEntity.ok().body(
+                redisService.getAllRedisKeyValuePairs()
+        );
+    }
 }

@@ -5,6 +5,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class RedisServiceImpl implements RedisService{
@@ -15,6 +20,19 @@ public class RedisServiceImpl implements RedisService{
     }
     public String getRedisStringValue(String key){
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
-        return stringStringValueOperations.get(key);
+        String value = stringStringValueOperations.get(key);
+        return value!=null?value:key;
+    }
+
+    public List<String> getAllRedisKeyValuePairs(){
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+        Set<String> redisKeys = stringRedisTemplate.keys("*");
+        List<String> ret = new ArrayList<>();
+        Iterator<String> it = redisKeys.iterator();
+        while(it.hasNext()){
+            String data = it.next();
+            ret.add(data+": "+stringStringValueOperations.get(data));
+        }
+        return ret;
     }
 }
