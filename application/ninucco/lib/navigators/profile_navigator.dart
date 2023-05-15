@@ -6,6 +6,7 @@ import 'package:ninucco/screens/battle/battle_create_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_create_screen.dart';
 import 'package:ninucco/screens/battle/battle_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_friend_search.dart';
+import 'package:ninucco/screens/battle/battle_prev_detail_screen.dart';
 import 'package:ninucco/screens/home/category.dart';
 import 'package:ninucco/screens/home/face_scan.dart';
 import 'package:ninucco/screens/home/home.dart';
@@ -63,7 +64,7 @@ class ProfileNavigator extends StatelessWidget {
               case "/BattleApprove":
                 return BattleApprove(settings: settings);
               case "/BattleAllScreen":
-                return BattleAllScreen();
+                return const BattleAllScreen();
               case "/BattleDetailScreen":
                 return BattleDetailScreen(settings: settings);
               case "/BattleCreateScreen":
@@ -72,6 +73,8 @@ class ProfileNavigator extends StatelessWidget {
                 return BattleCreateDetailScreen(settings: settings);
               case "/BattleFriendSearch":
                 return BattleFriendSearchScreen(settings: settings);
+              case "/BattlePrevDetail":
+                return BattlePrevDetailScreen(settings: settings);
 
               default:
                 return const Placeholder();

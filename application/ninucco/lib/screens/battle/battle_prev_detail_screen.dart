@@ -8,13 +8,12 @@ import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/services/battle_comment_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_comment_widget.dart';
-import 'package:ninucco/widgets/battle/battle_member_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 import 'package:provider/provider.dart';
 
-class BattleDetailScreen extends StatefulWidget {
+class BattlePrevDetailScreen extends StatefulWidget {
   final RouteSettings settings;
-  BattleDetailScreen({
+  BattlePrevDetailScreen({
     super.key,
     required this.settings,
   });
@@ -22,10 +21,10 @@ class BattleDetailScreen extends StatefulWidget {
   FocusNode textFocus = FocusNode();
 
   @override
-  State<BattleDetailScreen> createState() => _BattleDetailScreenState();
+  State<BattlePrevDetailScreen> createState() => _BattlePrevDetailScreenState();
 }
 
-class _BattleDetailScreenState extends State<BattleDetailScreen> {
+class _BattlePrevDetailScreenState extends State<BattlePrevDetailScreen> {
   late Future<BattleInfoModel> battle;
   late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();

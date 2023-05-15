@@ -179,10 +179,12 @@ class GridItems extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: Builder(builder: (context) {
-        return SliverGrid.count(
-            crossAxisCount: 3,
-            children: name == '검사결과'
-                ? userData.scanResultList
+        switch (name) {
+          case "검사결과":
+            if (userData.scanResultList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.scanResultList
                     .asMap()
                     .entries
                     .map(
@@ -197,40 +199,82 @@ class GridItems extends StatelessWidget {
                         child: Image.network(data.value.imgUrl),
                       ),
                     )
-                    .toList()
-                : name == '배틀이력'
-                    ? userData.curBattleList
-                        .asMap()
-                        .entries
-                        .map(
-                          (data) => GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, "/ProfileBattleList",
-                                  arguments: ProfileBattlesListArgs(
-                                    selectedId: data.key,
-                                    data: userData.curBattleList,
-                                  ));
-                            },
-                            child: Image.network(
-                              userData.user.id == data.value.applicantId
-                                  ? data.value.applicantUrl
-                                  : data.value.opponentUrl,
-                            ),
-                          ),
-                        )
-                        .toList()
-                    : userData.prevBattleList
-                        .map(
-                          (battle) => GestureDetector(
-                            onTap: () {},
-                            child: Image.network(
-                              userData.user.id == battle.applicantId
-                                  ? battle.applicantUrl
-                                  : battle.opponentUrl,
-                            ),
-                          ),
-                        )
-                        .toList());
+                    .toList(),
+              );
+            } else {
+              return const SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    SizedBox(height: 32),
+                    Text("검사이력이 없습니다"),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              );
+            }
+
+          case "배틀이력":
+            if (userData.curBattleList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.curBattleList
+                    .asMap()
+                    .entries
+                    .map(
+                      (data) => GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, "/ProfileBattleList",
+                              arguments: ProfileBattlesListArgs(
+                                  selectedId: data.key,
+                                  data: userData.curBattleList,
+                                  userId: userData.user.id));
+                        },
+                        child: Image.network(
+                          userData.user.id == data.value.applicantId
+                              ? data.value.applicantUrl
+                              : data.value.opponentUrl,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
+            } else {
+              return const SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    SizedBox(height: 32),
+                    Text("배틀이력이 없습니다"),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              );
+            }
+
+          default:
+            return SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  const Text("아직 검사를 한번도 안했어요!"),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.black87,
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/BattleCreateScreen");
+                      },
+                      child:
+                          const Text("배틀 생성하기", style: TextStyle(fontSize: 16)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+        }
       }),
     );
   }
