@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,28 +61,6 @@ public class BattleServiceImpl implements BattleService{
         return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(BattleStatus.PROCEEDING).stream()
                 .map(this::toRes).collect(Collectors.toList()));
     }
-
-    @Override
-    public BattleListRes selectAllMemberBattle(String memberId, String status) {
-        Member member = validateUtil.memberValidateById(memberId);
-        log.info("===> Request Status : {}", status);
-        BattleStatus battleStatus;
-        if(status.equals("TERMINATED")) {
-            log.info("===> TERMINATED");
-            battleStatus = BattleStatus.TERMINATED;
-        }
-        else if(status.equals("PROCEEDING")) {
-            log.info("===> PROCEEDING");
-            battleStatus = BattleStatus.PROCEEDING;
-        }
-        else {
-            throw new CustomException(ErrorRes.BAD_REQUEST);
-        }
-
-        List<Battle> battleList = battleRepository.findAllByStatus(member.getId(), member.getId(), battleStatus);
-        return new BattleListRes(battleList.stream().map(this::toRes).collect(Collectors.toList()));
-    }
-
     @Override
     public BattleListRes selectAllReceivedBattle(String memberId) {
         Member member = validateUtil.memberValidateById(memberId);
@@ -153,28 +132,28 @@ public class BattleServiceImpl implements BattleService{
         return null;
     }
     //TODO: 시간마다 배틀 끝났는지 체크
-    @Scheduled(cron = "* */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
-    //every 00:01
+    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
     public void finishAtMidnight(){
-//        battleRepository.findAllToBeFinished()
-//                .stream().forEach((battle -> {
-//                    log.info("finish battle "+battle.getId());
-//                    finishBattle(battle.getId());
-//                }));
+        log.info("finish() called: "+LocalDateTime.now());
+        battleRepository.findByFinishAtLessThanAndStatus(LocalDateTime.now(), BattleStatus.PROCEEDING)
+                .forEach((battle -> finishBattle(battle.getId())));
     }
     //배틀이 끝나면 콜되는 함수
     @Transactional
     public void finishBattle(Long battleId){
+        log.info("finish battle "+battleId);
         Battle battle = validateUtil.battleValidateById(battleId);
         /*배틀 결과 구하기
          * ...
          * */
-        BattleResult result = BattleResult.APPLICANT;
+
+//        BattleResult result = BattleResult.APPLICANT;
         //배틀 결과에 따라 battleResult, 멤버들 elo업데이트
-        updateEloAndResultByResult(battle, result);
+//        updateEloAndResultByResult(battle, result);
 
         //배틀 상태 TERMINATED로 변경
         battle.updateStatusTerminated();
+        battleRepository.save(battle);
         //배틀 끝남 FCM보내기
 
     }
