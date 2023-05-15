@@ -323,6 +323,7 @@ public class MemberServiceImpl implements MemberService{
                 .applicantOdds(battle.getApplicantOdds())
                 .opponentOdds(battle.getOpponentOdds())
                 .finishTime(battle.getFinishAt())
+                .result(battle.getResult())
                 .build();
     }
 }
