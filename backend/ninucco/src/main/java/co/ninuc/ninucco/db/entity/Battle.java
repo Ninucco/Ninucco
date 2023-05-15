@@ -58,6 +58,9 @@ public class Battle extends BaseEntity {
     public void updateStatusTerminated(){
         this.status=BattleStatus.TERMINATED;
     }
+    public void updateStatusProceeding(){
+        this.status=BattleStatus.PROCEEDING;
+    }
     public void updateBattle(String opponentUrl, Double applicantOdds, Double opponentOdds) {
         this.opponentUrl = opponentUrl;
         this.applicantOdds = applicantOdds;

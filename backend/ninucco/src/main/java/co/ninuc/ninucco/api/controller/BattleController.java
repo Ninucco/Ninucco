@@ -149,4 +149,13 @@ public class BattleController {
         );
     }
 
+    @ApiOperation(value = "test) 종료된 배틀 진행중으로 변경", notes = "종료된 배틀을 모두 진행 중으로 돌립니다. 와!")
+    @GetMapping("/battle/set-terminated-to-proceeding")
+    public ResponseEntity<?> selectOneBattleResult() {
+        battleService.setAllTerminatedBattleProceeding();
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, null)
+        );
+    }
+
 }
