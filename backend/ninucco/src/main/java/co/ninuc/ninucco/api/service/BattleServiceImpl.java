@@ -15,6 +15,7 @@ import co.ninuc.ninucco.db.entity.Betting;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.type.BattleResult;
 import co.ninuc.ninucco.db.entity.type.BattleStatus;
+import co.ninuc.ninucco.db.entity.type.BetSide;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -146,16 +147,28 @@ public class BattleServiceImpl implements BattleService{
         /*배틀 결과 구하기
          * ...
          * */
-
-//        BattleResult result = BattleResult.APPLICANT;
+        int applicant_cnt = bettingRepository.countByBattleIdAndBetSide(battleId, BetSide.APPLICANT);
+        int opponent_cnt = bettingRepository.countByBattleIdAndBetSide(battleId, BetSide.OPPONENT);
+        BattleResult result = applicant_cnt > opponent_cnt? BattleResult.APPLICANT : (
+                applicant_cnt < opponent_cnt? BattleResult.OPPONENT: BattleResult.DRAW
+                );
         //배틀 결과에 따라 battleResult, 멤버들 elo업데이트
-//        updateEloAndResultByResult(battle, result);
+        updateEloAndResultByResult(battle, result);
 
         //배틀 상태 TERMINATED로 변경
         battle.updateStatusTerminated();
         battleRepository.save(battle);
         //배틀 끝남 FCM보내기
 
+    }
+
+    public void setAllTerminatedBattleProceeding(){
+        battleRepository.findAllByStatus(BattleStatus.TERMINATED).forEach(
+                battle->{
+                    battle.updateStatusProceeding();
+                    battleRepository.save(battle);
+                }
+        );
     }
 
     // toEntity, toRes

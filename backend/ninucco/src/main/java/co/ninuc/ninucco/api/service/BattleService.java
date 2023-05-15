@@ -26,4 +26,5 @@ public interface BattleService {
     BettingRes selectOneBetting(String memberId, Long battleId);
 
     BattleResultRes selectOneBattleResult(Long battleId);
+    void setAllTerminatedBattleProceeding();
 }
