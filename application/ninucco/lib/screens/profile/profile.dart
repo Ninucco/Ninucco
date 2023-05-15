@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/screens/profile/my_profile.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
@@ -24,7 +25,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
   final List<String> tabs = <String>['검사결과', '배틀이력', '아이템'];
   late TabController _tabController = TabController(length: 3, vsync: this);
-  late Future<UserDetailData> _userData;
 
   bool inited = false;
   late String userId;
@@ -37,7 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.initState();
     userId = widget.settings.arguments as String;
     _tabController = TabController(length: 3, vsync: this);
-    _userData = UserService.getUserDetailById(userId);
   }
 
   Future<void> _initDatas(String id) async {
@@ -214,29 +213,77 @@ class GridItems extends StatelessWidget {
             }
 
           case "배틀이력":
-            if (userData.curBattleList.isNotEmpty) {
+            if (userData.curBattleList.isNotEmpty ||
+                userData.prevBattleList.isNotEmpty) {
               return SliverGrid.count(
                 crossAxisCount: 3,
                 children: userData.curBattleList
-                    .asMap()
-                    .entries
-                    .map(
-                      (data) => GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, "/ProfileBattleList",
-                              arguments: ProfileBattlesListArgs(
-                                  selectedId: data.key,
-                                  data: userData.curBattleList,
-                                  userId: userData.user.id));
-                        },
-                        child: Image.network(
-                          userData.user.id == data.value.applicantId
-                              ? data.value.applicantUrl
-                              : data.value.opponentUrl,
-                        ),
-                      ),
-                    )
-                    .toList(),
+                        .asMap()
+                        .entries
+                        .map(
+                          (data) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/ProfileBattleList",
+                                  arguments: ProfileBattlesListArgs(
+                                      selectedId: data.key,
+                                      data: userData.curBattleList +
+                                          userData.prevBattleList,
+                                      userId: userData.user.id));
+                            },
+                            child: Image.network(
+                              userData.user.id == data.value.applicantId
+                                  ? data.value.applicantUrl
+                                  : data.value.opponentUrl,
+                            ),
+                          ),
+                        )
+                        .toList() +
+                    userData.prevBattleList
+                        .asMap()
+                        .entries
+                        .map(
+                          (data) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/ProfileBattleList",
+                                  arguments: ProfileBattlesListArgs(
+                                    selectedId: userData.curBattleList.length +
+                                        data.key,
+                                    data: userData.curBattleList +
+                                        userData.prevBattleList,
+                                    userId: userData.user.id,
+                                  ));
+                            },
+                            child: Stack(
+                              children: [
+                                Image.network(
+                                  userData.user.id == data.value.applicantId
+                                      ? data.value.applicantUrl
+                                      : data.value.opponentUrl,
+                                ),
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: MediaQuery.of(context).size.width / 6,
+                                  left: MediaQuery.of(context).size.width / 6,
+                                  child: FractionalTranslation(
+                                    translation: const Offset(-0.5, -0.5),
+                                    child: Transform.rotate(
+                                      angle: -45,
+                                      child: ResultText(
+                                        data: data.value,
+                                        myId: userData.user.id,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                        .toList(),
               );
             } else {
               return const SliverToBoxAdapter(

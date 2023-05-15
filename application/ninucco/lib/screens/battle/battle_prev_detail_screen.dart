@@ -3,13 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_comment_info_model.dart';
 import 'package:ninucco/models/battle_comment_post_model.dart';
-import 'package:ninucco/models/battle_info_model.dart';
+import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
-import 'package:ninucco/services/battle_api_service.dart';
+import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/services/battle_comment_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_comment_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:wrapped_korean_text/wrapped_korean_text.dart';
 
 class BattlePrevDetailScreen extends StatefulWidget {
   final RouteSettings settings;
@@ -18,238 +19,157 @@ class BattlePrevDetailScreen extends StatefulWidget {
     required this.settings,
   });
 
-  FocusNode textFocus = FocusNode();
-
+  final FocusNode textFocus = FocusNode();
   @override
   State<BattlePrevDetailScreen> createState() => _BattlePrevDetailScreenState();
 }
 
 class _BattlePrevDetailScreenState extends State<BattlePrevDetailScreen> {
-  late Future<BattleInfoModel> battle;
-  late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();
-  late BattleInfoModel _resultData;
+  late Battle _battleData;
+
+  bool inited = false;
+  List<BattleCommentInfoModel>? _battleComments;
+  Future<void>? _initBattleComment;
+
+  Future<void> _initDatas(int id) async {
+    final data = await BattleApiCommentService.fetchBattleComments(id);
+    setState(() {
+      _battleComments = data;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _resultData = widget.settings.arguments as BattleInfoModel;
-    battle = BattleApiService.getBattlesById(_resultData.battleId);
-    battleComments =
-        BattleApiCommentService.getBattleComments(_resultData.battleId);
+    _battleData = widget.settings.arguments as Battle;
+    _initBattleComment = _initDatas(_battleData.battleId);
   }
 
   @override
   Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    var me = Provider.of<AuthProvider>(context).member;
+    var isApplicant = _battleData.applicantId == me!.id;
+    var isWin = isApplicant && _battleData.result == "APPLICANT" ||
+        !isApplicant && _battleData.result != "APPLICANT";
+    var battleResult = _battleData.result == "DRAW"
+        ? "DRAW"
+        : _battleData.result == "PROCEEDING"
+            ? "PROCEEDING"
+            : isWin
+                ? "WIN"
+                : "LOSE";
+
+    if (inited == false) {
+      _initBattleComment = _initDatas(_battleData.battleId);
+      inited = true;
+    }
+
     return Scaffold(
       appBar: const MyAppbarWidget(
-        titleText: "이 배틀의 상황은?",
+        titleText: "배틀 결과",
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bg/bg2.png',
-              repeat: ImageRepeat.repeat,
-              fit: BoxFit.fitWidth,
-            ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg2.png'),
+            fit: BoxFit.cover,
           ),
-          SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: GestureDetector(
-              onTap: () {
-                widget.textFocus.unfocus();
-              },
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              _resultData.question,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Column(
-                              children: [],
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            const Row(
-                              children: [
-                                Text(
-                                  "댓글",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            // 댓글 쓰기
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Flexible(
-                                  flex: 4,
-                                  child: TextFormField(
-                                    onFieldSubmitted: (value) => {
-                                      _textEditingController.notifyListeners(),
-                                      BattleApiCommentService
-                                          .postBattleComments(
-                                              BattleCommentPostModel(
-                                                _textEditingController
-                                                    .value.text,
-                                                _resultData.battleId,
-                                              ),
-                                              authProvider.member!.id),
-                                      _textEditingController.clear(),
-                                      setState(
-                                        () {
-                                          battleComments =
-                                              BattleApiCommentService
-                                                  .getBattleComments(
-                                                      _resultData.battleId);
-                                        },
-                                      ),
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode()),
-                                    },
-                                    focusNode: widget.textFocus,
-                                    controller: _textEditingController,
-                                    decoration: const InputDecoration(
-                                      hintText: "댓글을 입력하세요..",
-                                    ),
-                                    cursorColor: const Color(0xff9C9EFE),
-                                  ),
-                                ),
-                                Flexible(
-                                  flex: 1,
-                                  child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    margin: const EdgeInsets.all(5),
-                                    child: Ink(
-                                      decoration: ShapeDecoration(
-                                        color: const Color(0xff9C9EFE),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(18),
-                                        ),
-                                      ),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.send,
-                                        ),
-                                        mouseCursor:
-                                            MaterialStateMouseCursor.clickable,
-                                        color: Colors.white,
-                                        tooltip: "댓글 달기",
-                                        onPressed: () {
-                                          setState(
-                                            () {
-                                              _textEditingController
-                                                  .notifyListeners();
-                                              BattleApiCommentService
-                                                  .postBattleComments(
-                                                      BattleCommentPostModel(
-                                                          _textEditingController
-                                                              .value.text,
-                                                          _resultData.battleId),
-                                                      authProvider.member!.id);
-                                              _textEditingController.clear();
-                                              setState(
-                                                () {
-                                                  print("I'm listening~~");
-                                                  battleComments =
-                                                      BattleApiCommentService
-                                                          .getBattleComments(
-                                                              _resultData
-                                                                  .battleId);
-                                                },
-                                              );
-                                              FocusScope.of(context)
-                                                  .requestFocus(FocusNode());
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            StreamBuilder(
-                              stream: battleComments,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: makeList(snapshot),
-                                      ),
-                                    ],
-                                  );
-                                }
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.pink.shade200,
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(
-                              height: 50,
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
+        ),
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: GestureDetector(
+            onTap: () => widget.textFocus.unfocus(),
+            child: Column(
+              children: [
+                WrappedKoreanText(
+                  _battleData.title,
+                  style: const TextStyle(
+                    fontSize: 24,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+                BattleCard(
+                  battleData: _battleData,
+                  battleResult: battleResult,
+                  isApplicant: _battleData.applicantId == me.id,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _textEditingController,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (value) {
+                    setState(() {
+                      var newComment = BattleCommentInfoModel(
+                        content: value,
+                        id: 1,
+                        nickname: me.nickname,
+                        profileImage: me.url,
+                      );
+                      _battleComments = [newComment] + _battleComments!;
+                    });
+                    BattleApiCommentService.postBattleComments(
+                      BattleCommentPostModel(value, _battleData.battleId),
+                      me.id,
+                    );
+                    _textEditingController.clear();
+                  },
+                  style: const TextStyle(fontSize: 16),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: "댓글입력",
+                    suffixIcon: Icon(Icons.send),
+                  ),
+                ),
+                Comments(
+                  initBattleComment: _initBattleComment,
+                  battleComments: _battleComments,
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
-ListView makeList(AsyncSnapshot<List<BattleCommentInfoModel>> snapshot) {
-  return ListView.separated(
-    physics: const NeverScrollableScrollPhysics(),
-    shrinkWrap: true,
-    scrollDirection: Axis.vertical,
-    itemCount: snapshot.data!.length,
-    itemBuilder: (context, index) {
-      var battleComment = snapshot.data![index];
-      return BattleCommentItem(
-        id: battleComment.id,
-        profileImage: battleComment.profileImage,
-        nickname: battleComment.nickname,
-        content: battleComment.content,
-      );
-    },
-    separatorBuilder: (context, index) => const SizedBox(width: 40),
-  );
+class Comments extends StatelessWidget {
+  const Comments({
+    super.key,
+    required Future<void>? initBattleComment,
+    required List<BattleCommentInfoModel>? battleComments,
+  })  : _initBattleComment = initBattleComment,
+        _battleComments = battleComments;
+
+  final Future<void>? _initBattleComment;
+  final List<BattleCommentInfoModel>? _battleComments;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _initBattleComment,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          return const Text("Loading...");
+        } else if (_battleComments == null) {
+          return const Text("NO DATA");
+        } else {
+          return Column(
+            children: _battleComments!
+                .map(
+                  (data) => BattleCommentItem(
+                    memberId: "linga",
+                    content: data.content,
+                    nickname: data.nickname,
+                    profileImage: data.profileImage,
+                  ),
+                )
+                .toList(),
+          );
+        }
+      },
+    );
+  }
 }

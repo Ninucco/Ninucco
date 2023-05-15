@@ -63,11 +63,6 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
                   : isWin
                       ? "WIN"
                       : "LOSE";
-          Map colorMap = {
-            "DRAW": const Color(0xffE4E5E7),
-            "WIN": const Color(0xff00fc00),
-            "LOSE": const Color.fromARGB(255, 245, 73, 73),
-          };
 
           return Container(
             width: double.infinity,
@@ -87,110 +82,10 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.5 - 18,
-                          height: MediaQuery.of(context).size.width * 0.5 - 18,
-                          child: Image.network(
-                            battleData.applicantUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        battleResult != "PROCEEDING"
-                            ? Container(
-                                width: MediaQuery.of(context).size.width * 0.5 -
-                                    18,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.5 -
-                                        18,
-                                decoration: const BoxDecoration(
-                                  color: Colors.black38,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12)),
-                                ),
-                              )
-                            : const SizedBox(),
-                        isApplicant && battleResult != "PROCEEDING"
-                            ? Positioned(
-                                top: MediaQuery.of(context).size.width / 4,
-                                left: MediaQuery.of(context).size.width / 4,
-                                child: FractionalTranslation(
-                                  translation: const Offset(-0.5, -0.5),
-                                  child: Transform.rotate(
-                                    angle: -45,
-                                    child: Text(
-                                      battleResult,
-                                      style: TextStyle(
-                                        color: colorMap[battleResult],
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox()
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                          ),
-                          width: MediaQuery.of(context).size.width * 0.5 - 18,
-                          height: MediaQuery.of(context).size.width * 0.5 - 18,
-                          child: Image.network(
-                            battleData.opponentUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        battleResult != "PROCEEDING"
-                            ? Container(
-                                width: MediaQuery.of(context).size.width * 0.5 -
-                                    18,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.5 -
-                                        18,
-                                decoration: const BoxDecoration(
-                                  color: Colors.black38,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12)),
-                                ),
-                              )
-                            : const SizedBox(),
-                        !isApplicant && battleResult != "PROCEEDING"
-                            ? Positioned(
-                                top: MediaQuery.of(context).size.width / 4,
-                                left: MediaQuery.of(context).size.width / 4,
-                                child: FractionalTranslation(
-                                  translation: const Offset(-0.5, -0.5),
-                                  child: Transform.rotate(
-                                    angle: -45,
-                                    child: Text(
-                                      battleResult,
-                                      style: TextStyle(
-                                        color: colorMap[battleResult],
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox()
-                      ],
-                    ),
-                  ],
+                BattleCard(
+                  battleData: battleData,
+                  battleResult: battleResult,
+                  isApplicant: isApplicant,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -219,7 +114,13 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
                               battleData.opponentOdds,
                             ),
                           );
-                        } else {}
+                        } else {
+                          Navigator.pushNamed(
+                            context,
+                            "/BattlePrevDetail",
+                            arguments: battleData,
+                          );
+                        }
                       },
                       child: const Text(
                         "자세히보기",
@@ -240,6 +141,126 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
           );
         },
       ),
+    );
+  }
+}
+
+class BattleCard extends StatelessWidget {
+  BattleCard({
+    super.key,
+    required this.battleData,
+    required this.battleResult,
+    required this.isApplicant,
+  });
+
+  final Battle battleData;
+  final String battleResult;
+  final bool isApplicant;
+
+  final Map colorMap = {
+    "DRAW": const Color(0xffE4E5E7),
+    "WIN": const Color(0xff00fc00),
+    "LOSE": const Color.fromARGB(255, 245, 73, 73),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Stack(
+          children: [
+            Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              width: MediaQuery.of(context).size.width * 0.5 - 18,
+              height: MediaQuery.of(context).size.width * 0.5 - 18,
+              child: Image.network(
+                battleData.applicantUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            battleResult != "PROCEEDING"
+                ? Container(
+                    width: MediaQuery.of(context).size.width * 0.5 - 18,
+                    height: MediaQuery.of(context).size.width * 0.5 - 18,
+                    decoration: const BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                  )
+                : const SizedBox(),
+            isApplicant && battleResult != "PROCEEDING"
+                ? Positioned(
+                    top: MediaQuery.of(context).size.width / 4,
+                    left: MediaQuery.of(context).size.width / 4,
+                    child: FractionalTranslation(
+                      translation: const Offset(-0.5, -0.5),
+                      child: Transform.rotate(
+                        angle: -45,
+                        child: Text(
+                          battleResult,
+                          style: TextStyle(
+                            color: colorMap[battleResult],
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : const SizedBox()
+          ],
+        ),
+        Stack(
+          children: [
+            Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              width: MediaQuery.of(context).size.width * 0.5 - 18,
+              height: MediaQuery.of(context).size.width * 0.5 - 18,
+              child: Image.network(
+                battleData.opponentUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            battleResult != "PROCEEDING"
+                ? Container(
+                    width: MediaQuery.of(context).size.width * 0.5 - 18,
+                    height: MediaQuery.of(context).size.width * 0.5 - 18,
+                    decoration: const BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                  )
+                : const SizedBox(),
+            !isApplicant && battleResult != "PROCEEDING"
+                ? Positioned(
+                    top: MediaQuery.of(context).size.width / 4,
+                    left: MediaQuery.of(context).size.width / 4,
+                    child: FractionalTranslation(
+                      translation: const Offset(-0.5, -0.5),
+                      child: Transform.rotate(
+                        angle: -45,
+                        child: Text(
+                          battleResult,
+                          style: TextStyle(
+                            color: colorMap[battleResult],
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : const SizedBox()
+          ],
+        ),
+      ],
     );
   }
 }
