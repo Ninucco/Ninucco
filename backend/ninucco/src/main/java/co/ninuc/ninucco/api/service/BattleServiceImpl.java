@@ -18,6 +18,7 @@ import co.ninuc.ninucco.db.entity.type.BattleStatus;
 import co.ninuc.ninucco.db.entity.type.BetSide;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
+import co.ninuc.ninucco.db.repository.MemberRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService{
+    private final MemberRepository memberRepository;
     private final BattleRepository battleRepository;
     private final BettingRepository bettingRepository;
     private final ValidateUtil validateUtil;
@@ -144,20 +146,13 @@ public class BattleServiceImpl implements BattleService{
     public void finishBattle(Long battleId){
         log.info("finish battle "+battleId);
         Battle battle = validateUtil.battleValidateById(battleId);
-        /*배틀 결과 구하기
-         * ...
-         * */
         int applicant_cnt = bettingRepository.countByBattleIdAndBetSide(battleId, BetSide.APPLICANT);
         int opponent_cnt = bettingRepository.countByBattleIdAndBetSide(battleId, BetSide.OPPONENT);
         BattleResult result = applicant_cnt > opponent_cnt? BattleResult.APPLICANT : (
                 applicant_cnt < opponent_cnt? BattleResult.OPPONENT: BattleResult.DRAW
                 );
-        //배틀 결과에 따라 battleResult, 멤버들 elo업데이트
-        updateEloAndResultByResult(battle, result);
-
-        //배틀 상태 TERMINATED로 변경
-        battle.updateStatusTerminated();
-        battleRepository.save(battle);
+        //배틀 결과에 따라 battleResult, 멤버들 elo업데이트, 배틀 terminated로 변경
+        updateEloAndResultandTerminate(battle, result);
         //배틀 끝남 FCM보내기
 
     }
@@ -230,7 +225,8 @@ public class BattleServiceImpl implements BattleService{
                 .betMoney(null)
                 .build();
     }
-    public void updateEloAndResultByResult(Battle battle, BattleResult winner){
+    @Transactional
+    public void updateEloAndResultandTerminate(Battle battle, BattleResult winner){
         if(winner==BattleResult.PROCEEDING)
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         Member mWin, mLose;
@@ -246,8 +242,13 @@ public class BattleServiceImpl implements BattleService{
         int d = (int)((double)C*2*rLose/rSum);
         if(d==0) d=1;
         mWin.updateElo(mWin.getElo()+d);
+        memberRepository.save(mWin);
         mLose.updateElo(rLose-d);
+        memberRepository.save(mLose);
         battle.updateResult(winner);
+        //배틀 상태 TERMINATED로 변경
+        battle.updateStatusTerminated();
+        battleRepository.save(battle);
     }
     private static double[] calcOddsByElos(int elo1, int elo2){
         int eloSum = elo1+elo2;
