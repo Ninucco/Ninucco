@@ -6,12 +6,14 @@ import co.ninuc.ninucco.api.dto.request.BattleCreateReq;
 import co.ninuc.ninucco.api.dto.request.BattleUpdateReq;
 import co.ninuc.ninucco.api.dto.request.BettingCreateReq;
 import co.ninuc.ninucco.api.dto.request.CommentCreateReq;
+import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.service.BattleService;
 import co.ninuc.ninucco.api.service.CommentService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/battle")
@@ -129,6 +131,21 @@ public class BattleController {
     public ResponseEntity<?> selectOneBattleResult(@PathVariable Long battleId) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, battleService.selectOneBattleResult(battleId))
+        );
+    }
+
+    @ApiOperation(value = "배틀 한번에 등록", notes = "한번에 배틀을 등록합니다. 와!")
+    @RequestMapping(value="/battle", method = RequestMethod.POST,consumes = {"multipart/form-data"})
+    public ResponseEntity<ApiResult<Res>> insertCompleteBattle(@RequestPart String title,
+                                                               @RequestPart String applicantId,
+                                                               @RequestPart String opponentId,
+                                                               @RequestPart MultipartFile applicantImage,
+                                                               @RequestPart MultipartFile opponentImage) {
+        BattleRes bres = battleService.insertBattle(
+                new BattleCreateReq(title, applicantId, opponentId, applicantImage));
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.updateBattle(
+                        new BattleUpdateReq(bres.getBattleId(), opponentImage)))
         );
     }
 
