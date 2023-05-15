@@ -73,6 +73,9 @@ public class Member implements UserDetails{
     public void updateElo(int elo){
         this.elo =elo;
     }
+    public void updatePoint(int point){
+        this.point =point;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
