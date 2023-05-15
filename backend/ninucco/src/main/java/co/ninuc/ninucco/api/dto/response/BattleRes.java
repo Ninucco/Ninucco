@@ -1,6 +1,7 @@
 package co.ninuc.ninucco.api.dto.response;
 
 import co.ninuc.ninucco.api.dto.Res;
+import co.ninuc.ninucco.db.entity.type.BattleResult;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,4 +35,6 @@ public class BattleRes implements Res {
     Double opponentOdds;
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     LocalDateTime finishTime;
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    BattleResult result;
 }
