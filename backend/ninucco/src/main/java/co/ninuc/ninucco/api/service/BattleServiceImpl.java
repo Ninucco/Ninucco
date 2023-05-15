@@ -101,6 +101,19 @@ public class BattleServiceImpl implements BattleService{
     @Transactional
     @Override
     public BettingRes insertBetting(BettingCreateReq bettingCreateReq){
+        Battle battle = validateUtil.battleValidateById(bettingCreateReq.getBattleId());
+        Member member = validateUtil.memberValidateById(bettingCreateReq.getMemberId());
+        long remainPoint = member.getPoint() - bettingCreateReq.getBetMoney();
+
+        if(!battle.getStatus().equals(BattleStatus.PROCEEDING)) {
+            throw new CustomException(ErrorRes.NOT_PROCEEDING_BATTLE);
+        }
+
+        if(remainPoint < 0) {
+            throw new CustomException(ErrorRes.NOT_ENOUGH_POINT);
+        }
+
+        member.updatePoint(remainPoint);
         return toBettingRes(bettingRepository.save(toEntity(bettingCreateReq)));
     }
 
@@ -115,7 +128,7 @@ public class BattleServiceImpl implements BattleService{
         /* 본인이 해당 배틀에 베팅했었다면 validate를 true로 설정하고
            베팅 정보를 Response에 전달한다.
            베팅을 하지 않았다면 validate를 false로 설정하고,
-           Response로 isExist만을 전달한다.
+           Response로 validate만을 전달한다.
         */
         if(optionalBetting.isPresent()) {
             Betting betting = optionalBetting.get();

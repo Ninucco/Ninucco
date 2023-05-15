@@ -73,7 +73,7 @@ public class Member implements UserDetails{
     public void updateElo(int elo){
         this.elo =elo;
     }
-    public void updatePoint(int point){
+    public void updatePoint(long point){
         this.point =point;
     }
 
