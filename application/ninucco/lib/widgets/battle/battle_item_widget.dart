@@ -11,7 +11,8 @@ class BattleItem extends StatelessWidget {
       memberANickname,
       memberBNickname,
       memberAId,
-      memberBId;
+      memberBId,
+      result;
 
   const BattleItem({
     super.key,
@@ -25,6 +26,7 @@ class BattleItem extends StatelessWidget {
     required this.question,
     required this.ratioA,
     required this.ratioB,
+    required this.result,
   });
 
   @override
@@ -45,12 +47,16 @@ class BattleItem extends StatelessWidget {
             question,
             ratioA,
             ratioB,
+            result,
           ),
         );
       },
       child: Column(
         children: [
           Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
             margin: const EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
@@ -59,7 +65,19 @@ class BattleItem extends StatelessWidget {
             ),
             child: Column(
               children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  question,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 17),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
                 Material(
+                  color: Colors.transparent,
                   child: Stack(
                     alignment: AlignmentDirectional.center,
                     children: [
@@ -74,7 +92,11 @@ class BattleItem extends StatelessWidget {
                                 Container(
                                   width: 150,
                                   height: 150,
-                                  margin: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(
+                                    right: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -85,7 +107,6 @@ class BattleItem extends StatelessWidget {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                Text(memberANickname),
                               ],
                             ),
                           ),
@@ -97,7 +118,11 @@ class BattleItem extends StatelessWidget {
                                 Container(
                                   width: 150,
                                   height: 150,
-                                  margin: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(
+                                    left: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
@@ -108,7 +133,6 @@ class BattleItem extends StatelessWidget {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                Text(memberBNickname),
                               ],
                             ),
                           ),
@@ -123,32 +147,30 @@ class BattleItem extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  question,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(memberANickname),
+                    Text(
+                      memberBNickname,
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "$memberANickname이\n이기면 $ratioA배",
+                        "여기가 이기면 $ratioA배",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
                       ),
                       Text(
-                        "$memberBNickname이\n이기면 $ratioB배",
+                        "여기가 이기면 $ratioB배",
                         style: const TextStyle(
                           fontSize: 12,
                         ),
@@ -162,6 +184,7 @@ class BattleItem extends StatelessWidget {
                 ),
                 LinearPercentIndicator(
                   animation: true,
+                  padding: const EdgeInsets.all(0),
                   animationDuration: 500,
                   lineHeight: 10.0,
                   percent: (ratioA) / (ratioA + ratioB),
