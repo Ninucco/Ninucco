@@ -231,6 +231,7 @@ public class BattleServiceImpl implements BattleService{
                 .applicantOdds(battle.getApplicantOdds())
                 .opponentOdds(battle.getOpponentOdds())
                 .finishTime(battle.getFinishAt())
+                .result(battle.getResult())
                 .build();
     }
     BattleRes toNullRes() {
