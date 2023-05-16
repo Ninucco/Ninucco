@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ninucco/screens/battle/battle_all_screen.dart';
 import 'package:ninucco/screens/battle/battle_approve.dart';
 import 'package:ninucco/screens/battle/battle_create_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_create_screen.dart';
 import 'package:ninucco/screens/battle/battle_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_friend_search.dart';
 import 'package:ninucco/screens/battle/battle_prev_detail_screen.dart';
+import 'package:ninucco/screens/battle/battle_screen.dart';
 import 'package:ninucco/screens/home/category.dart';
 import 'package:ninucco/screens/home/face_scan.dart';
 import 'package:ninucco/screens/home/home.dart';
@@ -55,8 +55,8 @@ MaterialPageRoute<dynamic> globalRoutes(RouteSettings settings) {
           return ReceivedBattles(settings: settings);
         case "/BattleApprove":
           return BattleApprove(settings: settings);
-        case "/BattleAllScreen":
-          return const BattleAllScreen();
+        case "/BattleScreen":
+          return const BattleScreen();
         case "/BattleDetailScreen":
           return BattleDetailScreen(settings: settings);
         case "/BattleCreateScreen":
