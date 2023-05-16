@@ -34,7 +34,10 @@ class ProfileSettings extends StatelessWidget {
         ),
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(child: FormData(userData: userData)),
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: FormData(userData: userData),
+          ),
         ),
       ),
     );
@@ -73,6 +76,7 @@ class _FormDataState extends State<FormData> {
         .currentUser;
 
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
+    var me = authProvider.member;
 
     return Form(
       key: formKey,
@@ -157,6 +161,9 @@ class _FormDataState extends State<FormData> {
                     setState(() => existNickname = check);
                   },
                   validator: (value) {
+                    if (widget.userData.user.nickname == value) {
+                      return null;
+                    }
                     if (value!.length < 3 || value.length > 15) {
                       return "닉네임은 3~5글자 사이로 설정해주세요";
                     }
@@ -259,6 +266,13 @@ class _FormDataState extends State<FormData> {
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   formKey.currentState!.save();
+                  UserService.updateProfile(
+                    memberId: me!.id,
+                    nickname: nickname,
+                    profileUrl: newProfileUrl != ''
+                        ? newProfileUrl
+                        : widget.userData.user.profileImage,
+                  );
                   showTopSnackBar(
                     Overlay.of(context),
                     const CustomSnackBar.success(

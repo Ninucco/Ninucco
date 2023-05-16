@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
@@ -175,13 +176,17 @@ class GridItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: Builder(builder: (context) {
-        return SliverGrid.count(
-            crossAxisCount: 3,
-            children: name == '검사결과'
-                ? userData.scanResultList
+        switch (name) {
+          case "검사결과":
+            if (userData.scanResultList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.scanResultList
                     .asMap()
                     .entries
                     .map(
@@ -196,9 +201,40 @@ class GridItems extends StatelessWidget {
                         child: Image.network(data.value.imgUrl),
                       ),
                     )
-                    .toList()
-                : name == '배틀이력'
-                    ? userData.curBattleList
+                    .toList(),
+              );
+            } else {
+              return SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    const Text("지금 바로 검사 하고 프로필을 받아보세요!"),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.black87,
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/Category");
+                        },
+                        child: const Text("검사하러 가기",
+                            style: TextStyle(fontSize: 16)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+          case "배틀이력":
+            if (userData.curBattleList.isNotEmpty ||
+                userData.prevBattleList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.curBattleList
                         .asMap()
                         .entries
                         .map(
@@ -207,7 +243,9 @@ class GridItems extends StatelessWidget {
                               Navigator.pushNamed(context, "/ProfileBattleList",
                                   arguments: ProfileBattlesListArgs(
                                     selectedId: data.key,
-                                    data: userData.curBattleList,
+                                    data: userData.curBattleList +
+                                        userData.prevBattleList,
+                                    userId: userData.user.id,
                                   ));
                             },
                             child: Image.network(
@@ -217,21 +255,145 @@ class GridItems extends StatelessWidget {
                             ),
                           ),
                         )
-                        .toList()
-                    : userData.prevBattleList
+                        .toList() +
+                    userData.prevBattleList
+                        .asMap()
+                        .entries
                         .map(
-                          (battle) => GestureDetector(
-                            onTap: () {},
-                            child: Image.network(
-                              userData.user.id == battle.applicantId
-                                  ? battle.applicantUrl
-                                  : battle.opponentUrl,
+                          (data) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/ProfileBattleList",
+                                  arguments: ProfileBattlesListArgs(
+                                    selectedId: userData.curBattleList.length +
+                                        data.key,
+                                    data: userData.curBattleList +
+                                        userData.prevBattleList,
+                                    userId: userData.user.id,
+                                  ));
+                            },
+                            child: Stack(
+                              children: [
+                                Image.network(
+                                  userData.user.id == data.value.applicantId
+                                      ? data.value.applicantUrl
+                                      : data.value.opponentUrl,
+                                ),
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: MediaQuery.of(context).size.width / 6,
+                                  left: MediaQuery.of(context).size.width / 6,
+                                  child: FractionalTranslation(
+                                    translation: const Offset(-0.5, -0.5),
+                                    child: Transform.rotate(
+                                      angle: -45,
+                                      child: ResultText(
+                                        data: data.value,
+                                        myId: userData.user.id,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         )
-                        .toList());
+                        .toList(),
+              );
+            } else {
+              return SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    const Text("지금 바로 친구와 경쟁해보세요!"),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.black87,
+                        ),
+                        onPressed: () {
+                          navProvider.to(2);
+                        },
+                        child: const Text("배틀 하러하기",
+                            style: TextStyle(fontSize: 16)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+          default:
+            return SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  const Text("지금 바로 검사 하고 프로필을 받아보세요!"),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.black87,
+                      ),
+                      onPressed: () {
+                        navProvider.to(2);
+                        // Navigator.pushNamed(context, "/BattleCreateScreen");
+                      },
+                      child:
+                          const Text("배틀 생성하기", style: TextStyle(fontSize: 16)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+        }
       }),
     );
+  }
+}
+
+class ResultText extends StatelessWidget {
+  final Battle data;
+  final String myId;
+  const ResultText({
+    super.key,
+    required this.data,
+    required this.myId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var isApplicant = data.applicantId == myId;
+    var isWin = isApplicant && data.result == "APPLICANT" ||
+        !isApplicant && data.result != "APPLICANT";
+    var battleResult = data.result == "DRAW"
+        ? "DRAW"
+        : isWin
+            ? "WIN"
+            : "LOSE";
+    Map colorMap = {
+      "DRAW": const Color(0xffE4E5E7),
+      "WIN": const Color(0xff00fc00),
+      "LOSE": const Color.fromARGB(255, 245, 73, 73),
+    };
+    return Builder(builder: (context) {
+      return Text(
+        battleResult,
+        style: TextStyle(
+          color: colorMap[battleResult],
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    });
   }
 }
 

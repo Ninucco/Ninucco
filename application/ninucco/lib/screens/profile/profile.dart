@@ -1,9 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/screens/profile/my_profile.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   final RouteSettings settings;
@@ -24,12 +27,12 @@ class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
   final List<String> tabs = <String>['검사결과', '배틀이력', '아이템'];
   late TabController _tabController = TabController(length: 3, vsync: this);
-  late Future<UserDetailData> _userData;
 
   bool inited = false;
   late String userId;
 
   UserDetailData? _userDetailData;
+  String _isFriend = "NONE";
   Future<void>? _initUserDetail;
 
   @override
@@ -37,27 +40,39 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.initState();
     userId = widget.settings.arguments as String;
     _tabController = TabController(length: 3, vsync: this);
-    _userData = UserService.getUserDetailById(userId);
   }
 
-  Future<void> _initDatas(String id) async {
-    final data = await UserService.getUserDetailById(id);
-    _userDetailData = data;
+  Future<void> _initDatas(String id, String myId) async {
+    _userDetailData = await UserService.getUserDetailById(id);
+    _isFriend = await UserService.checkFriend(friendId: id, myId: myId);
   }
 
-  Future<void> _refreshData(String id) async {
+  Future<void> _refreshData(String id, String myId) async {
     final data = await UserService.getUserDetailById(id);
+    final checkFriend = await UserService.checkFriend(friendId: id, myId: myId);
     setState(() {
       _userDetailData = data;
+      _isFriend = checkFriend;
+    });
+  }
+
+  void requestFriend() {
+    setState(() {
+      _isFriend = "WAITING";
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+    var me = authProvider.member;
+
     if (inited == false) {
-      _initUserDetail = _initDatas(userId);
+      _initUserDetail = _initDatas(userId, me!.id);
       inited = true;
     }
+    print('친구임?');
+    print(_isFriend);
 
     var myTabBar = TabBar(
       controller: _tabController,
@@ -95,9 +110,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                           pinned: true,
                           delegate: HomeSliverAppBar(
                             expandedHeight: 450.0,
-                            height: 96,
+                            height: 108,
                             tabbar: myTabBar,
                             userData: null,
+                            friendStatus: _isFriend,
+                            requestFriend: requestFriend,
                           ),
                         );
                       }
@@ -105,9 +122,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                         pinned: true,
                         delegate: HomeSliverAppBar(
                           expandedHeight: 450.0,
-                          height: 96,
+                          height: 108,
                           tabbar: myTabBar,
                           userData: _userDetailData,
+                          friendStatus: _isFriend,
+                          requestFriend: requestFriend,
                         ),
                       );
                     }),
@@ -129,7 +148,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                               }
                               return RefreshIndicator(
                                 onRefresh: () => _refreshData(
-                                    widget.settings.arguments as String),
+                                  widget.settings.arguments as String,
+                                  me!.id,
+                                ),
                                 child: CustomScrollView(
                                   key: PageStorageKey<String>(tabs[0]),
                                   slivers: [
@@ -179,10 +200,12 @@ class GridItems extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: Builder(builder: (context) {
-        return SliverGrid.count(
-            crossAxisCount: 3,
-            children: name == '검사결과'
-                ? userData.scanResultList
+        switch (name) {
+          case "검사결과":
+            if (userData.scanResultList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.scanResultList
                     .asMap()
                     .entries
                     .map(
@@ -197,9 +220,26 @@ class GridItems extends StatelessWidget {
                         child: Image.network(data.value.imgUrl),
                       ),
                     )
-                    .toList()
-                : name == '배틀이력'
-                    ? userData.curBattleList
+                    .toList(),
+              );
+            } else {
+              return const SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    SizedBox(height: 32),
+                    Text("검사이력이 없습니다"),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              );
+            }
+
+          case "배틀이력":
+            if (userData.curBattleList.isNotEmpty ||
+                userData.prevBattleList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.curBattleList
                         .asMap()
                         .entries
                         .map(
@@ -207,9 +247,10 @@ class GridItems extends StatelessWidget {
                             onTap: () {
                               Navigator.pushNamed(context, "/ProfileBattleList",
                                   arguments: ProfileBattlesListArgs(
-                                    selectedId: data.key,
-                                    data: userData.curBattleList,
-                                  ));
+                                      selectedId: data.key,
+                                      data: userData.curBattleList +
+                                          userData.prevBattleList,
+                                      userId: userData.user.id));
                             },
                             child: Image.network(
                               userData.user.id == data.value.applicantId
@@ -218,19 +259,91 @@ class GridItems extends StatelessWidget {
                             ),
                           ),
                         )
-                        .toList()
-                    : userData.prevBattleList
+                        .toList() +
+                    userData.prevBattleList
+                        .asMap()
+                        .entries
                         .map(
-                          (battle) => GestureDetector(
-                            onTap: () {},
-                            child: Image.network(
-                              userData.user.id == battle.applicantId
-                                  ? battle.applicantUrl
-                                  : battle.opponentUrl,
+                          (data) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/ProfileBattleList",
+                                  arguments: ProfileBattlesListArgs(
+                                    selectedId: userData.curBattleList.length +
+                                        data.key,
+                                    data: userData.curBattleList +
+                                        userData.prevBattleList,
+                                    userId: userData.user.id,
+                                  ));
+                            },
+                            child: Stack(
+                              children: [
+                                Image.network(
+                                  userData.user.id == data.value.applicantId
+                                      ? data.value.applicantUrl
+                                      : data.value.opponentUrl,
+                                ),
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: MediaQuery.of(context).size.width / 6,
+                                  left: MediaQuery.of(context).size.width / 6,
+                                  child: FractionalTranslation(
+                                    translation: const Offset(-0.5, -0.5),
+                                    child: Transform.rotate(
+                                      angle: -45,
+                                      child: ResultText(
+                                        data: data.value,
+                                        myId: userData.user.id,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         )
-                        .toList());
+                        .toList(),
+              );
+            } else {
+              return const SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    SizedBox(height: 32),
+                    Text("배틀이력이 없습니다"),
+                    SizedBox(height: 16),
+                  ],
+                ),
+              );
+            }
+
+          default:
+            return SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  const Text("아직 검사를 한번도 안했어요!"),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.black87,
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/BattleCreateScreen");
+                      },
+                      child:
+                          const Text("배틀 생성하기", style: TextStyle(fontSize: 16)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+        }
       }),
     );
   }
@@ -241,16 +354,21 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final double height;
   final TabBar tabbar;
+  final String friendStatus;
+  final VoidCallback requestFriend;
 
   HomeSliverAppBar({
     required this.userData,
     required this.expandedHeight,
     required this.tabbar,
     required this.height,
+    required this.friendStatus,
+    required this.requestFriend,
   });
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    var me = Provider.of<AuthProvider>(context).member;
     final double percentage = shrinkOffset / (expandedHeight - height);
     return Stack(
       clipBehavior: Clip.none,
@@ -315,7 +433,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
+                        fontSize: 16,
                       ),
                     ),
                   ],
@@ -364,15 +482,15 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       Text(
                         userData != null ? userData!.user.nickname : "---",
                         style: const TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           height: 1.6,
                         ),
                       ),
                       // SizedBox(height: 32.0),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 32.0),
                       CircleAvatar(
-                        radius: 80,
+                        radius: 64,
                         backgroundImage: NetworkImage(
                           userData != null
                               ? userData!.user.profileImage
@@ -478,6 +596,37 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
             icon: const Icon(Icons.arrow_back_ios_sharp),
             color: Colors.black,
             iconSize: 24,
+          ),
+        ),
+        Positioned(
+          top: 22,
+          right: 16,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              minimumSize: Size.zero,
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () {
+              requestFriend();
+              UserService.requestFriend(
+                  friendId: userData!.user.id, myId: me!.id);
+            },
+            child: Text(
+              friendStatus == "NONE"
+                  ? "친구신청"
+                  : friendStatus == "WAITING"
+                      ? "수락대기중"
+                      : "친구",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: friendStatus == "NONE"
+                    ? Colors.green
+                    : friendStatus == "WAITING"
+                        ? Colors.blueGrey
+                        : Colors.amber,
+              ),
+            ),
           ),
         ),
       ],
