@@ -57,6 +57,9 @@ dependencies {
 	/* mongodb */
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.7.11'
 
+	/* redis */
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.11'
+
 }
 
 tasks.named('test') {

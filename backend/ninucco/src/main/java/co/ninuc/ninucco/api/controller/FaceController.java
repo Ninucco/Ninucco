@@ -6,6 +6,7 @@ import co.ninuc.ninucco.api.dto.Similarity;
 import co.ninuc.ninucco.api.dto.request.SimilarityReq;
 import co.ninuc.ninucco.api.dto.response.SimilarityResultRes;
 import co.ninuc.ninucco.api.service.FaceServiceImpl;
+import co.ninuc.ninucco.api.service.RedisService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FaceController {
     private final FaceServiceImpl faceService;
+    private final RedisService redisService;
     private final boolean SUCCESS = true;
     @ApiOperation(value = "나와 닮은 것 찾기", notes="나와 닮은 것 찾기를 합니다.")
     @RequestMapping(value="", method = RequestMethod.POST,consumes = {"multipart/form-data"})
@@ -53,6 +55,22 @@ public class FaceController {
                                 Similarity.builder().keyword("고양이상").value(0.6).build(),
                                 Similarity.builder().keyword("강아지상").value(0.2).build()
                         }))).build())
+        );
+    }
+    @ApiOperation(value = "키워드 넣는 임시 api", notes = "키워드 넣는 임시 api")
+    @GetMapping("/keyword")
+    public ResponseEntity<?> insertKeyword(@RequestParam String key,
+                                                        @RequestParam String value) {
+        redisService.setRedisStringValue(key, value);
+        return ResponseEntity.ok().body(
+                redisService.getRedisStringValue(key)
+        );
+    }
+    @ApiOperation(value = "키워드 보는 임시 api", notes = "키워드 보는 임시 api")
+    @GetMapping("/keywordlist")
+    public ResponseEntity<?> selectAllKeywords() {
+        return ResponseEntity.ok().body(
+                redisService.getAllRedisKeyValuePairs()
         );
     }
 }
