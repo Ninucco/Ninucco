@@ -26,33 +26,37 @@ class _BattlePastScreenState extends State<BattlePastScreen> {
   @override
   Widget build(BuildContext context) {
     if (inited == false) {
-      _refreshData();
+      initBattles = _refreshData();
       inited = true;
     }
     return Scaffold(
       backgroundColor: Colors.white,
-      body: RefreshIndicator(
-        onRefresh: () {
-          _refreshData();
-          return Future<void>.delayed(const Duration(seconds: 1));
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/bg/bg2.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: (battles != null)
-              ? makeList(battles!)
-              : const Column(
-                  children: [
-                    SizedBox(height: 32),
-                    Text("준비중입니다"),
-                  ],
+      body: FutureBuilder(
+          future: initBattles,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.active) {
+              return const Text("Loading...");
+            }
+            return RefreshIndicator(
+              onRefresh: () => _refreshData(),
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/bg/bg2.png'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-        ),
-      ),
+                child: (battles != null)
+                    ? makeList(battles!)
+                    : const Column(
+                        children: [
+                          SizedBox(height: 32),
+                          Text("준비중입니다"),
+                        ],
+                      ),
+              ),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(

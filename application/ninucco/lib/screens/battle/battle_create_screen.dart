@@ -5,6 +5,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ninucco/models/battle_create_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/utilities/battle_utils.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -35,13 +36,13 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
     final image = await picker.pickImage(source: imageSource);
     if (image == null) return;
 
-    File? cropped_image = File(image.path);
-    cropped_image = await _cropImage(imageFile: cropped_image);
-    if (cropped_image == null) return;
+    File? croppedImage = File(image.path);
+    croppedImage = await _cropImage(imageFile: croppedImage);
+    if (croppedImage == null) return;
 
     setState(() {
-      if (cropped_image != null) {
-        _image = File(cropped_image.path);
+      if (croppedImage != null) {
+        _image = File(croppedImage.path);
       }
     });
   }
@@ -103,6 +104,8 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     bool isOk = categoryValue != null && _image != null;
+    final battleQuestions = BattleUtil().getBattleQuestions as List<String>;
+
     return Scaffold(
       appBar: const MyAppbarWidget(
         titleText: "배틀 생성하기",
@@ -158,23 +161,12 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                           color: Colors.black,
                         ),
                       ),
-                      dropdownMenuEntries: const [
-                        DropdownMenuEntry(
-                            value: "누가 더 백엔드 개발자처럼 생겼나요?",
-                            label: "누가 더 백엔드 개발자처럼 생겼나요?"),
-                        DropdownMenuEntry(
-                            value: "누가 더 피자를 좋아할 것처럼 생겼나요?",
-                            label: "누가 더 피자를 좋아할 것처럼 생겼나요?"),
-                        DropdownMenuEntry(
-                            value: "누가 더 빨리 부자가 될 것 같나요?",
-                            label: "누가 더 빨리 부자가 될 것 같나요?"),
-                      ],
+                      dropdownMenuEntries: battleQuestions
+                          .map((data) =>
+                              DropdownMenuEntry(value: data, label: data))
+                          .toList(),
                       onSelected: (String? selectedQuestion) {
-                        setState(
-                          () {
-                            categoryValue = selectedQuestion;
-                          },
-                        );
+                        setState(() => categoryValue = selectedQuestion);
                       },
                     ),
                   ),
@@ -213,7 +205,7 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                     shadowColor: Colors.black45,
                   ),
                   child: const Text(
-                    'Create Battle',
+                    '배틀 생성하기',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
@@ -223,12 +215,14 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                     if (isOk)
                       {
                         Navigator.pushNamed(
-                            context, '/BattleCreateDetailScreen',
-                            arguments: BattleCreateModel(
-                                authProvider.member!.id,
-                                _image!,
-                                authProvider.member!.nickname,
-                                categoryValue!),),
+                          context,
+                          '/BattleCreateDetailScreen',
+                          arguments: BattleCreateModel(
+                              authProvider.member!.id,
+                              _image!,
+                              authProvider.member!.nickname,
+                              categoryValue!),
+                        ),
                       }
                   },
                 ),

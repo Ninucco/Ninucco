@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/services/user_service.dart';
@@ -64,8 +65,8 @@ class _FormDataState extends State<FormData> {
   bool existNickname = false;
   @override
   void initState() {
-    newProfileUrl == widget.userData.user.profileImage;
-    nickname == widget.userData.user.nickname;
+    newProfileUrl = widget.userData.user.profileImage;
+    nickname = widget.userData.user.nickname;
     super.initState();
   }
 
@@ -276,10 +277,19 @@ class _FormDataState extends State<FormData> {
                   showTopSnackBar(
                     Overlay.of(context),
                     const CustomSnackBar.success(
-                      message:
-                          'Good job, your release is successful. Have a nice day',
+                      message: '프로필이 성공적으로 저장되었어요',
                     ),
                   );
+                  var newMe = MemberModel(
+                    id: me.id,
+                    elo: me.elo,
+                    loseCount: me.loseCount,
+                    point: me.point,
+                    winCount: me.winCount,
+                    nickname: nickname,
+                    url: newProfileUrl,
+                  );
+                  authProvider.setMember(newMe);
                 }
               },
               child: const Text(

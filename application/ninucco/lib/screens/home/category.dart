@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
+import 'package:provider/provider.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -130,6 +132,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    var navIndex = Provider.of<NavProvider>(context).index;
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.expand,
@@ -144,15 +147,17 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
             ),
             color: Colors.white.withOpacity(0.8),
           ),
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            ),
-          ),
+          child: navIndex != 4
+              ? IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                  ),
+                )
+              : const SizedBox(),
         ),
         Center(
           child: Opacity(
