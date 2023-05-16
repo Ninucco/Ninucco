@@ -7,7 +7,8 @@ class BattleInfoModel {
       memberANickname = "",
       memberBNickname = "",
       memberAId = "",
-      memberBId = "";
+      memberBId = "",
+      result = "";
 
   BattleInfoModel(
       this.battleId,
@@ -19,7 +20,8 @@ class BattleInfoModel {
       this.memberBNickname,
       this.question,
       this.ratioA,
-      this.ratioB);
+      this.ratioB,
+      this.result);
 
   BattleInfoModel.fromJson(Map<String, dynamic> json)
       : battleId = json["battleId"],
@@ -31,5 +33,6 @@ class BattleInfoModel {
         memberBId = json["opponentId"],
         question = json['title'],
         memberANickname = json['applicantName'],
-        memberBNickname = json['opponentName'];
+        memberBNickname = json['opponentName'],
+        result = json['result'];
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
-import 'package:ninucco/widgets/battle/battle_item_widget.dart';
+import 'package:ninucco/widgets/battle/battle_past_item.dart';
 
 class BattlePastScreen extends StatefulWidget {
   const BattlePastScreen({super.key});
@@ -76,7 +76,7 @@ class _BattlePastScreenState extends State<BattlePastScreen> {
       itemCount: battleInfo.length,
       itemBuilder: (context, index) {
         var userRank = battleInfo[index];
-        return BattleItem(
+        return BattlePastItem(
           memberAId: userRank.memberAId,
           memberANickname: userRank.memberANickname,
           memberAImage: userRank.memberAImage,
@@ -87,6 +87,7 @@ class _BattlePastScreenState extends State<BattlePastScreen> {
           question: userRank.question,
           ratioA: userRank.ratioA,
           ratioB: userRank.ratioB,
+          result: userRank.result,
         );
       },
       separatorBuilder: (context, index) => const SizedBox(width: 40),
