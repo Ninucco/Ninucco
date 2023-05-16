@@ -11,9 +11,24 @@ class BattleAllScreen extends StatefulWidget {
 }
 
 class _BattleAllScreenState extends State<BattleAllScreen> {
-  final Future<List<BattleInfoModel>> battles = BattleApiService.getBattles();
+  List<BattleInfoModel>? battles;
+  Future<void>? initBattles;
+  bool inited = false;
+  bool refreshed = false;
+
+  Future<void> _refreshData() async {
+    final data = await BattleApiService.getBattles();
+    setState(() {
+      battles = data;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (inited == false) {
+      _refreshData();
+      inited = true;
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -34,7 +49,8 @@ class _BattleAllScreenState extends State<BattleAllScreen> {
       ),
       backgroundColor: Colors.white,
       body: RefreshIndicator(
-        onRefresh: () async {
+        onRefresh: () {
+          _refreshData();
           return Future<void>.delayed(const Duration(seconds: 1));
         },
         child: Container(
@@ -44,19 +60,14 @@ class _BattleAllScreenState extends State<BattleAllScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          child: FutureBuilder(
-            future: battles,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Column(
-                  children: [Expanded(child: makeList(snapshot))],
-                );
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
+          child: (battles != null)
+              ? makeList(battles!)
+              : const Column(
+                  children: [
+                    SizedBox(height: 32),
+                    Text("준비중입니다"),
+                  ],
+                ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -75,13 +86,13 @@ class _BattleAllScreenState extends State<BattleAllScreen> {
     );
   }
 
-  ListView makeList(AsyncSnapshot<List<BattleInfoModel>> snapshot) {
+  ListView makeList(List<BattleInfoModel> battleInfo) {
     return ListView.separated(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
-      itemCount: snapshot.data!.length,
+      itemCount: battleInfo.length,
       itemBuilder: (context, index) {
-        var userRank = snapshot.data![index];
+        var userRank = battleInfo[index];
         return BattleItem(
           memberAId: 1,
           memberANickname: userRank.memberANickname,
