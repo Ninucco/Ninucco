@@ -87,6 +87,7 @@ class _BattleActiveScreenState extends State<BattleActiveScreen> {
           question: userRank.question,
           ratioA: userRank.ratioA,
           ratioB: userRank.ratioB,
+          result: userRank.result,
         );
       },
       separatorBuilder: (context, index) => const SizedBox(width: 40),

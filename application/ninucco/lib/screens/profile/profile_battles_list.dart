@@ -107,8 +107,8 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
                             '/BattleDetailScreen',
                             arguments: BattleInfoModel(
                               battleData.battleId,
-                              "1",
-                              "2",
+                              battleData.applicantId,
+                              battleData.opponentId,
                               battleData.applicantUrl,
                               battleData.applicantName,
                               battleData.opponentUrl,
@@ -116,6 +116,7 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
                               battleData.title,
                               battleData.applicantOdds,
                               battleData.opponentOdds,
+                              battleData.result,
                             ),
                           );
                         } else {

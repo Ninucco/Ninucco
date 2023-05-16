@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ninucco/screens/battle/battle_all_screen.dart';
+import 'package:ninucco/screens/battle/battle_active_screen.dart';
 import 'package:ninucco/screens/battle/battle_past_screen.dart';
 
 class BattleScreen extends StatelessWidget {
