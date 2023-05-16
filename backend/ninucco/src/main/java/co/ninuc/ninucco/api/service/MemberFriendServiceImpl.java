@@ -1,10 +1,8 @@
 package co.ninuc.ninucco.api.service;
 
-import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.FriendListInfo;
 import co.ninuc.ninucco.api.dto.response.MemberFriendListRes;
 import co.ninuc.ninucco.api.dto.response.MemberFriendRes;
-import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.ValidateUtil;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.MemberFriend;
@@ -71,21 +69,15 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     }
 
     @Override
-    public MemberFriendListRes selectAllMemberFriend(String memberId, String status) {
+    public MemberFriendListRes selectAllMemberFriend(String memberId, MemberFriendStatus status) {
         validateUtil.memberValidateById(memberId);
-        MemberFriendStatus memberFriendStatus;
+        return new MemberFriendListRes(memberFriendRepository.findAllByMemberIdAndStatus(memberId, status).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
+    }
 
-        if(status.equals("WAITING")) {
-            memberFriendStatus = MemberFriendStatus.WAITING;
-        }
-        else if(status.equals("FRIEND")) {
-            memberFriendStatus = MemberFriendStatus.FRIEND;
-        }
-        else {
-            throw new CustomException(ErrorRes.BAD_REQUEST);
-        }
-
-        return new MemberFriendListRes(memberFriendRepository.findAllByMemberIdAndStatus(memberId, memberFriendStatus).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
+    @Override
+    public MemberFriendListRes selectAllReceivedFriend(String memberId) {
+        validateUtil.memberValidateById(memberId);
+        return new MemberFriendListRes(memberFriendRepository.findAllByFriendIdAndStatus(memberId, MemberFriendStatus.WAITING).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
     }
 
     @Transactional
