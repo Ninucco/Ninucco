@@ -1,10 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
+import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/screens/profile/my_profile.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   final RouteSettings settings;
@@ -30,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   late String userId;
 
   UserDetailData? _userDetailData;
+  String _isFriend = "NONE";
   Future<void>? _initUserDetail;
 
   @override
@@ -39,24 +42,37 @@ class _ProfileScreenState extends State<ProfileScreen>
     _tabController = TabController(length: 3, vsync: this);
   }
 
-  Future<void> _initDatas(String id) async {
-    final data = await UserService.getUserDetailById(id);
-    _userDetailData = data;
+  Future<void> _initDatas(String id, String myId) async {
+    _userDetailData = await UserService.getUserDetailById(id);
+    _isFriend = await UserService.checkFriend(friendId: id, myId: myId);
   }
 
-  Future<void> _refreshData(String id) async {
+  Future<void> _refreshData(String id, String myId) async {
     final data = await UserService.getUserDetailById(id);
+    final checkFriend = await UserService.checkFriend(friendId: id, myId: myId);
     setState(() {
       _userDetailData = data;
+      _isFriend = checkFriend;
+    });
+  }
+
+  void requestFriend() {
+    setState(() {
+      _isFriend = "WAITING";
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var authProvider = Provider.of<AuthProvider>(context);
+    var me = authProvider.member;
+
     if (inited == false) {
-      _initUserDetail = _initDatas(userId);
+      _initUserDetail = _initDatas(userId, me!.id);
       inited = true;
     }
+    print('친구임?');
+    print(_isFriend);
 
     var myTabBar = TabBar(
       controller: _tabController,
@@ -94,9 +110,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                           pinned: true,
                           delegate: HomeSliverAppBar(
                             expandedHeight: 450.0,
-                            height: 96,
+                            height: 108,
                             tabbar: myTabBar,
                             userData: null,
+                            friendStatus: _isFriend,
+                            requestFriend: requestFriend,
                           ),
                         );
                       }
@@ -104,9 +122,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                         pinned: true,
                         delegate: HomeSliverAppBar(
                           expandedHeight: 450.0,
-                          height: 96,
+                          height: 108,
                           tabbar: myTabBar,
                           userData: _userDetailData,
+                          friendStatus: _isFriend,
+                          requestFriend: requestFriend,
                         ),
                       );
                     }),
@@ -128,7 +148,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                               }
                               return RefreshIndicator(
                                 onRefresh: () => _refreshData(
-                                    widget.settings.arguments as String),
+                                  widget.settings.arguments as String,
+                                  me!.id,
+                                ),
                                 child: CustomScrollView(
                                   key: PageStorageKey<String>(tabs[0]),
                                   slivers: [
@@ -332,16 +354,21 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final double height;
   final TabBar tabbar;
+  final String friendStatus;
+  final VoidCallback requestFriend;
 
   HomeSliverAppBar({
     required this.userData,
     required this.expandedHeight,
     required this.tabbar,
     required this.height,
+    required this.friendStatus,
+    required this.requestFriend,
   });
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    var me = Provider.of<AuthProvider>(context).member;
     final double percentage = shrinkOffset / (expandedHeight - height);
     return Stack(
       clipBehavior: Clip.none,
@@ -406,7 +433,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
+                        fontSize: 16,
                       ),
                     ),
                   ],
@@ -455,15 +482,15 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       Text(
                         userData != null ? userData!.user.nickname : "---",
                         style: const TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           height: 1.6,
                         ),
                       ),
                       // SizedBox(height: 32.0),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 32.0),
                       CircleAvatar(
-                        radius: 80,
+                        radius: 64,
                         backgroundImage: NetworkImage(
                           userData != null
                               ? userData!.user.profileImage
@@ -569,6 +596,37 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
             icon: const Icon(Icons.arrow_back_ios_sharp),
             color: Colors.black,
             iconSize: 24,
+          ),
+        ),
+        Positioned(
+          top: 22,
+          right: 16,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              minimumSize: Size.zero,
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () {
+              requestFriend();
+              UserService.requestFriend(
+                  friendId: userData!.user.id, myId: me!.id);
+            },
+            child: Text(
+              friendStatus == "NONE"
+                  ? "친구신청"
+                  : friendStatus == "WAITING"
+                      ? "수락대기중"
+                      : "친구",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: friendStatus == "NONE"
+                    ? Colors.green
+                    : friendStatus == "WAITING"
+                        ? Colors.blueGrey
+                        : Colors.amber,
+              ),
+            ),
           ),
         ),
       ],

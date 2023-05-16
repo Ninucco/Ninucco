@@ -65,4 +65,29 @@ class UserService {
     request.fields["url"] = profileUrl;
     request.send();
   }
+
+  static Future<String> checkFriend({
+    required String friendId,
+    required String myId,
+  }) async {
+    final url = Uri.parse(
+        "https://k8a605.p.ssafy.io/api/member/friend/check?friendId=$friendId&myId=$myId");
+    final response = await http.get(url);
+    return jsonDecode(response.body)['data']['status'];
+  }
+
+  static void requestFriend({
+    required String friendId,
+    required String myId,
+  }) async {
+    final url = Uri.parse("https://k8a605.p.ssafy.io/api/member/friend");
+
+    Map data = {"friendId": friendId, "myId": myId};
+    var body = json.encode(data);
+    http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+  }
 }
