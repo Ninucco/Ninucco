@@ -77,7 +77,7 @@ public class MemberFriendServiceImpl implements MemberFriendService{
     @Override
     public MemberFriendListRes selectAllReceivedFriend(String memberId) {
         validateUtil.memberValidateById(memberId);
-        return new MemberFriendListRes(memberFriendRepository.findAllByFriendIdAndStatus(memberId, MemberFriendStatus.WAITING).stream().map(this::toMemberFriendListRes).collect(Collectors.toList()));
+        return new MemberFriendListRes(memberFriendRepository.findAllByFriendIdAndStatus(memberId, MemberFriendStatus.WAITING).stream().map(this::toReceivedFriendListRes).collect(Collectors.toList()));
     }
 
     @Transactional
@@ -122,6 +122,17 @@ public class MemberFriendServiceImpl implements MemberFriendService{
                 .friendId(friend.getId())
                 .profileImage(friend.getUrl())
                 .nickname(friend.getNickname())
+                .status(memberFriend.getStatus())
+                .build();
+    }
+
+    FriendListInfo toReceivedFriendListRes(MemberFriend memberFriend) {
+        Member member = validateUtil.memberValidateById(memberFriend.getMember().getId());
+
+        return FriendListInfo.builder()
+                .friendId(member.getId())
+                .profileImage(member.getUrl())
+                .nickname(member.getNickname())
                 .status(memberFriend.getStatus())
                 .build();
     }
