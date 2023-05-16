@@ -73,7 +73,6 @@ class _FaceScanState extends State<FaceScan> {
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text(typeName),
         titleTextStyle: const TextStyle(
           color: Colors.black,
           fontSize: 20,
