@@ -11,7 +11,7 @@ class BattleApiService {
 
   static Future<List<BattleInfoModel>> getBattles() async {
     List<BattleInfoModel> battleInstances = [];
-    final url = Uri.parse('$baseUrl/list?option=latest');
+    final url = Uri.parse('$baseUrl/list?option=latest&status=TERMINATED');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final battles = jsonDecode(response.body)["data"]["battleList"];

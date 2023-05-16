@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ninucco/screens/battle/battle_all_screen.dart';
-import 'package:ninucco/screens/battle/battle_create_detail_screen.dart';
-import 'package:ninucco/screens/battle/battle_create_screen.dart';
-import 'package:ninucco/screens/battle/battle_detail_screen.dart';
-import 'package:ninucco/screens/battle/battle_friend_search.dart';
-import 'package:ninucco/screens/profile/profile.dart';
+import 'package:ninucco/navigators/global_routes.dart';
 
 class BattleNavigator extends StatelessWidget {
   const BattleNavigator({super.key, required this.tabIndex});
@@ -15,26 +10,7 @@ class BattleNavigator extends StatelessWidget {
     return Navigator(
       initialRoute: '/BattleAllScreen',
       onGenerateRoute: ((settings) {
-        return MaterialPageRoute(
-          builder: (context) {
-            switch (settings.name) {
-              case "/BattleAllScreen":
-                return const BattleAllScreen();
-              case "/BattleDetailScreen":
-                return BattleDetailScreen(settings: settings);
-              case "/BattleCreateScreen":
-                return const BattleCreateScreen();
-              case "/BattleCreateDetailScreen":
-                return BattleCreateDetailScreen(settings: settings);
-              case "/BattleFriendSearch":
-                return BattleFriendSearchScreen(settings: settings);
-              case "/Profile":
-                return ProfileScreen(settings: settings);
-              default:
-                return const Placeholder();
-            }
-          },
-        );
+        return globalRoutes(settings);
       }),
     );
   }

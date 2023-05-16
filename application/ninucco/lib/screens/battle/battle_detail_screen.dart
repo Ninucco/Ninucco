@@ -267,7 +267,7 @@ ListView makeList(AsyncSnapshot<List<BattleCommentInfoModel>> snapshot) {
     itemBuilder: (context, index) {
       var battleComment = snapshot.data![index];
       return BattleCommentItem(
-        id: battleComment.id,
+        memberId: 'linga',
         profileImage: battleComment.profileImage,
         nickname: battleComment.nickname,
         content: battleComment.content,
