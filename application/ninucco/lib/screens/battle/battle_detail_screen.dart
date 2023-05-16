@@ -196,8 +196,6 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                                           _resultData.battleId),
                                                       authProvider.member!.id);
                                               _textEditingController.clear();
-                                                  
-
                                               setState(
                                                 () {
                                                   print("I'm listening~~");

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ninucco/models/battle_create_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
@@ -20,12 +21,27 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
 
   final picker = ImagePicker();
 
+  Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage = await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      compressFormat: ImageCompressFormat.png,
+    );
+    if (croppedImage == null) return null;
+    return File(croppedImage.path);
+  }
+
   Future getImage(ImageSource imageSource) async {
     final image = await picker.pickImage(source: imageSource);
+    if (image == null) return;
+
+    File? cropped_image = File(image.path);
+    cropped_image = await _cropImage(imageFile: cropped_image);
+    if (cropped_image == null) return;
 
     setState(() {
-      if (image != null) {
-        _image = File(image.path);
+      if (cropped_image != null) {
+        _image = File(cropped_image.path);
       }
     });
   }
@@ -212,7 +228,7 @@ class _BattleCreateScreenState extends State<BattleCreateScreen> {
                                 authProvider.member!.id,
                                 _image!,
                                 authProvider.member!.nickname,
-                                categoryValue!)),
+                                categoryValue!),),
                       }
                   },
                 ),
