@@ -103,6 +103,11 @@ public class BattleServiceImpl implements BattleService{
     public BettingRes insertBetting(BettingCreateReq bettingCreateReq){
         Battle battle = validateUtil.battleValidateById(bettingCreateReq.getBattleId());
         Member member = validateUtil.memberValidateById(bettingCreateReq.getMemberId());
+        Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(member.getId(), battle.getId());
+        if(optionalBetting.isPresent()) {
+            throw new CustomException(ErrorRes.CONFLICT_BETTING);
+        }
+
         long remainPoint = member.getPoint() - bettingCreateReq.getBetMoney();
 
         if(!battle.getStatus().equals(BattleStatus.PROCEEDING)) {
@@ -167,6 +172,8 @@ public class BattleServiceImpl implements BattleService{
                 );
         //배틀 결과에 따라 battleResult, 멤버들 elo업데이트, 배틀 terminated로 변경
         updateEloAndResultandTerminate(battle, result);
+        //배틀 결과에 따른 베팅 포인트 분배
+        updateBettingPoint(battle, result);// battleId, 승자, 배당
         //배틀 끝남 FCM보내기
 
     }
@@ -239,6 +246,38 @@ public class BattleServiceImpl implements BattleService{
                 .betMoney(null)
                 .build();
     }
+
+    public void updateBettingPoint(Battle battle, BattleResult result) { // battleId, 승자, 배당
+        // 배틀 결과에 따라 승자, 배당 결정
+        double odds;
+        BetSide winner = BetSide.APPLICANT;
+        if(result.equals(BattleResult.DRAW)) {
+            odds = 1.0;
+        }
+        else if(result.equals(BattleResult.APPLICANT)) {
+            odds = battle.getApplicantOdds();
+        }
+        else {
+            winner = BetSide.OPPONENT;
+            odds = battle.getOpponentOdds();
+        }
+
+        List<Betting> winList = bettingRepository.findByBattleIdAndBetSide(battle.getId(), winner);
+        // 승자 쪽에 베팅한 사람들한테
+        for(Betting b : winList) {
+            // 멤버가 유효하지 않다면 그 멤버는 무시하고 진행해야한다.(무시된 멤버는 따로 테이블로 관리하는 등 별도 조치 필요)
+            Member member = validateUtil.memberValidateById(b.getMember().getId());
+            long rewardPoint = (long)Math.ceil(b.getBetMoney() * odds);
+            member.updatePoint(member.getPoint() + rewardPoint);
+            log.info("===> reward  memberId : {}, pointBefore : {}, rewardPoint : {}", member.getId(), member.getPoint(), rewardPoint);
+            memberRepository.save(member);
+            //TODO 각 멤버에게 알림 전송
+        }
+        // 배당에 맞는 포인트 분배
+
+    }
+
+    //TODO 2중 Transactional 문제 없나요?
     @Transactional
     public void updateEloAndResultandTerminate(Battle battle, BattleResult winner){
         if(winner==BattleResult.PROCEEDING)
