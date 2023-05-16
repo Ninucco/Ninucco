@@ -3,21 +3,21 @@ import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_item_widget.dart';
 
-class BattleActiveScreen extends StatefulWidget {
-  const BattleActiveScreen({super.key});
+class BattlePastScreen extends StatefulWidget {
+  const BattlePastScreen({super.key});
 
   @override
-  State<BattleActiveScreen> createState() => _BattleActiveScreenState();
+  State<BattlePastScreen> createState() => _BattlePastScreenState();
 }
 
-class _BattleActiveScreenState extends State<BattleActiveScreen> {
+class _BattlePastScreenState extends State<BattlePastScreen> {
   List<BattleInfoModel>? battles;
   Future<void>? initBattles;
   bool inited = false;
   bool refreshed = false;
 
   Future<void> _refreshData() async {
-    final data = await BattleApiService.getBattles("PROCEEDING");
+    final data = await BattleApiService.getBattles("TERMINATED");
     setState(() {
       battles = data;
     });

@@ -63,7 +63,7 @@ class ProfileNavigator extends StatelessWidget {
               case "/BattleApprove":
                 return BattleApprove(settings: settings);
               case "/BattleAllScreen":
-                return BattleAllScreen();
+                return BattleActiveScreen();
               case "/BattleDetailScreen":
                 return BattleDetailScreen(settings: settings);
               case "/BattleCreateScreen":

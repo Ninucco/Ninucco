@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ninucco/screens/battle/battle_all_screen.dart';
 import 'package:ninucco/screens/battle/battle_create_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_create_screen.dart';
 import 'package:ninucco/screens/battle/battle_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_friend_search.dart';
+import 'package:ninucco/screens/battle/battle_screen.dart';
 import 'package:ninucco/screens/profile/profile.dart';
 
 class BattleNavigator extends StatelessWidget {
@@ -13,13 +13,13 @@ class BattleNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      initialRoute: '/BattleAllScreen',
+      initialRoute: '/BattleScreen',
       onGenerateRoute: ((settings) {
         return MaterialPageRoute(
           builder: (context) {
             switch (settings.name) {
-              case "/BattleAllScreen":
-                return const BattleAllScreen();
+              case "/BattleScreen":
+                return const BattleScreen();
               case "/BattleDetailScreen":
                 return BattleDetailScreen(settings: settings);
               case "/BattleCreateScreen":
