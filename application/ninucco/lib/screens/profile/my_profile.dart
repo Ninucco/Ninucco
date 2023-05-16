@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
@@ -175,6 +176,8 @@ class GridItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: Builder(builder: (context) {
@@ -315,9 +318,9 @@ class GridItems extends StatelessWidget {
                           backgroundColor: Colors.black87,
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, "/BattleCreateScreen");
+                          navProvider.to(2);
                         },
-                        child: const Text("배틀 생성하기",
+                        child: const Text("배틀 하러하기",
                             style: TextStyle(fontSize: 16)),
                       ),
                     ),
@@ -341,7 +344,8 @@ class GridItems extends StatelessWidget {
                         backgroundColor: Colors.black87,
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, "/BattleCreateScreen");
+                        navProvider.to(2);
+                        // Navigator.pushNamed(context, "/BattleCreateScreen");
                       },
                       child:
                           const Text("배틀 생성하기", style: TextStyle(fontSize: 16)),

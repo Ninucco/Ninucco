@@ -82,6 +82,10 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                battleResult == "PROCEEDING"
+                    ? const Text("진행중")
+                    : const Text("배틀결과"),
+                const SizedBox(height: 16),
                 BattleCard(
                   battleData: battleData,
                   battleResult: battleResult,
