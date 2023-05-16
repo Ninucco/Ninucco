@@ -180,7 +180,20 @@ class _FormDataState extends State<FormData> {
               ? SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      String result =
+                          await authProvider.convertAnonymousToGoogle();
+                      if (context.mounted) {
+                        if (result == 'Google Account Already Exist') {
+                          showTopSnackBar(
+                            Overlay.of(context),
+                            const CustomSnackBar.error(
+                              message: '이미 해당 계정과 연동된 유저가 존재합니다.',
+                            ),
+                          );
+                        }
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
@@ -188,14 +201,14 @@ class _FormDataState extends State<FormData> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Image.asset(
+                          'assets/icons/google_logo.png',
+                          height: 15,
+                        ),
+                        const SizedBox(width: 10),
                         const Text(
                           '구글 계정 연동하기',
                           style: TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(width: 8),
-                        Image.asset(
-                          'assets/icons/google_logo.png',
-                          height: 20,
                         ),
                       ],
                     ),

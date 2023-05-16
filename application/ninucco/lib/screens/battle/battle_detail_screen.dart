@@ -187,6 +187,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                             () {
                                               _textEditingController
                                                   .notifyListeners();
+                                                  if(_textEditingController.value.text != ""){
                                               BattleApiCommentService
                                                   .postBattleComments(
                                                       BattleCommentPostModel(
@@ -205,6 +206,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                                                   .battleId);
                                                 },
                                               );
+                                                  };
                                               FocusScope.of(context)
                                                   .requestFocus(FocusNode());
                                             },
