@@ -5,8 +5,8 @@ import 'package:ninucco/services/betting_api_service.dart';
 import 'package:provider/provider.dart';
 
 class BettingPopupWidget extends StatefulWidget {
-  final int memberId, battleId;
-  final String nickname, type;
+  final int battleId;
+  final String nickname, type, memberId;
 
   const BettingPopupWidget({
     super.key,

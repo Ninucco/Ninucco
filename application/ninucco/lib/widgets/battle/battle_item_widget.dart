@@ -3,13 +3,15 @@ import 'package:ninucco/models/battle_info_model.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class BattleItem extends StatelessWidget {
-  final int memberAId, memberBId, battleId;
+  final int battleId;
   final double ratioA, ratioB;
   final String memberAImage,
       memberBImage,
       question,
       memberANickname,
-      memberBNickname;
+      memberBNickname,
+      memberAId,
+      memberBId;
 
   const BattleItem({
     super.key,

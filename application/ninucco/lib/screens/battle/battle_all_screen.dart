@@ -94,10 +94,10 @@ class _BattleAllScreenState extends State<BattleAllScreen> {
       itemBuilder: (context, index) {
         var userRank = battleInfo[index];
         return BattleItem(
-          memberAId: 1,
+          memberAId: userRank.memberAId,
           memberANickname: userRank.memberANickname,
           memberAImage: userRank.memberAImage,
-          memberBId: 1,
+          memberBId: userRank.memberBId,
           memberBNickname: userRank.memberBNickname,
           memberBImage: userRank.memberBImage,
           battleId: userRank.battleId,

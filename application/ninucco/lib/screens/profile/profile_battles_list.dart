@@ -50,9 +50,9 @@ class _ProfileBattlesListState extends State<ProfileBattlesList> {
           return BattleItem(
             memberANickname: battleData.applicantName,
             memberBNickname: battleData.opponentName,
-            memberAId: 1,
+            memberAId: battleData.applicantId,
             memberAImage: battleData.applicantUrl,
-            memberBId: 2,
+            memberBId: battleData.opponentId,
             memberBImage: battleData.opponentUrl,
             battleId: battleData.battleId,
             question: battleData.title,

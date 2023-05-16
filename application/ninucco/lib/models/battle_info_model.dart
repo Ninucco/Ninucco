@@ -1,11 +1,13 @@
 class BattleInfoModel {
-  int memberAId = 0, memberBId = 0, battleId = 0;
+  int battleId = 0;
   double ratioA = 0, ratioB = 0;
   String memberAImage = "",
       memberBImage = "",
       question = "",
       memberANickname = "",
-      memberBNickname = "";
+      memberBNickname = "",
+      memberAId = "",
+      memberBId = "";
 
   BattleInfoModel(
       this.battleId,
@@ -23,10 +25,10 @@ class BattleInfoModel {
       : battleId = json["battleId"],
         memberAImage = json['applicantUrl'],
         memberBImage = json['opponentUrl'],
-        ratioA = json['applicantOdds'],
-        ratioB = json['opponentOdds'],
-        memberAId = 1,
-        memberBId = 1,
+        ratioA = double.parse(json['applicantOdds'].toStringAsFixed(2)),
+        ratioB = double.parse(json['opponentOdds'].toStringAsFixed(2)),
+        memberAId = json["applicantId"],
+        memberBId = json["opponentId"],
         question = json['title'],
         memberANickname = json['applicantName'],
         memberBNickname = json['opponentName'];
