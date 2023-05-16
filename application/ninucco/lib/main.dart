@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/navigators/battle_navigator.dart';
@@ -18,6 +20,13 @@ import 'package:ninucco/screens/tutorial/tutorial_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)..maxConnectionsPerHost = 5;
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -28,7 +37,7 @@ void main() async {
     nativeAppKey: '27f1506378a113d853b372bfa95cc5b1',
     javaScriptAppKey: 'e27d0aa411109cb9f5344f538b5a5282',
   );
-
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const App());
 }
 
