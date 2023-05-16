@@ -36,9 +36,9 @@ public class BattleController {
     //배틀 리스트 조회
     @ApiOperation(value = "배틀 리스트 조회", notes="배틀 리스트를 조회합니다. option: latest(최신순), votes(투표수 높은 순)")
     @GetMapping("/list")
-    public ResponseEntity<ApiResult<Res>> selectAllBattle(@RequestParam String option){
+    public ResponseEntity<ApiResult<Res>> selectAllBattle(@RequestParam String option, @RequestParam BattleStatus status){
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, battleService.selectAllBattle(option))
+                new ApiResult<>(SUCCESS, battleService.selectAllBattle(option, status))
         );
     }
     

@@ -59,9 +59,9 @@ public class BattleServiceImpl implements BattleService{
     }
 
     @Override
-    public BattleListRes selectAllBattle(String option) {
+    public BattleListRes selectAllBattle(String option, BattleStatus status) {
 
-        return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(BattleStatus.PROCEEDING).stream()
+        return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(status).stream()
                 .map(this::toRes).collect(Collectors.toList()));
     }
     @Override
