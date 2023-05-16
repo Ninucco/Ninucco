@@ -65,6 +65,15 @@ public class BattleServiceImpl implements BattleService{
                 .map(this::toRes).collect(Collectors.toList()));
     }
     @Override
+    public BattleListRes selectAllMemberBattle(String memberId, BattleStatus status) {
+        Member member = validateUtil.memberValidateById(memberId);
+        log.info("===> Request Status : {}", status);
+
+        List<Battle> battleList = battleRepository.findAllByMemberIdAndStatus(member.getId(), status);
+        return new BattleListRes(battleList.stream().map(this::toRes).collect(Collectors.toList()));
+    }
+
+    @Override
     public BattleListRes selectAllReceivedBattle(String memberId) {
         Member member = validateUtil.memberValidateById(memberId);
         List<Battle> battleList = battleRepository.findAllByStatusAndOpponentIdOrderByUpdatedAtDesc(BattleStatus.WAITING, member.getId());

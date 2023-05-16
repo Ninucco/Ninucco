@@ -7,12 +7,13 @@ import co.ninuc.ninucco.api.dto.response.BattleListRes;
 import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.dto.response.BattleResultRes;
 import co.ninuc.ninucco.api.dto.response.BettingRes;
+import co.ninuc.ninucco.db.entity.type.BattleStatus;
 
 public interface BattleService {
     BattleRes insertBattle(BattleCreateReq battleCreateReq);
 
     BattleListRes selectAllBattle(String option);
-
+    BattleListRes selectAllMemberBattle(String memberId, BattleStatus status);
     BattleListRes selectAllReceivedBattle(String memberId);
 
     BattleRes selectOneBattle(Long battleId);

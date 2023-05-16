@@ -9,6 +9,7 @@ import co.ninuc.ninucco.api.dto.request.CommentCreateReq;
 import co.ninuc.ninucco.api.dto.response.BattleRes;
 import co.ninuc.ninucco.api.service.BattleService;
 import co.ninuc.ninucco.api.service.CommentService;
+import co.ninuc.ninucco.db.entity.type.BattleStatus;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,34 +41,25 @@ public class BattleController {
                 new ApiResult<>(SUCCESS, battleService.selectAllBattle(option))
         );
     }
-
-    //************************************************************** 노필요
-    // 내 배틀 리스트 조회
-//    @ApiOperation(value = "나의 배틀 리스트 조회", notes = "로그인한 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
-//    @GetMapping("/my-list")
-//    public ResponseEntity<ApiResult<Res>> selectAllMyBattle(@RequestParam String memberId,@RequestParam String status) {
-//        return ResponseEntity.ok().body(
-//                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
-//        );
-//    }
     
     //**************************************************************
-    // 타사용자 배틀 리스트 조회
-//    @ApiOperation(value = "타사용자의 배틀 리스트 조회", notes = "다른 사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)")
-//    @GetMapping("/other-list")
-//    public ResponseEntity<ApiResult<Res>> selectAllOtherBattle(@RequestParam String memberId, @RequestParam String status) {
-//        return ResponseEntity.ok().body(
-//                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
-//        );
-//    }
+    // 사용자 배틀 리스트 조회
+    @ApiOperation(value = "사용자 배틀 리스트 조회", notes = "사용자의 배틀 리스트를 조회합니다. status: TERMINATED(종료된), PROCEEDING(진행중)\n" +
+            "WAITING은 여기서 사용되지 않습니다.(수락대기중인 리스트)")
+    @GetMapping("/member/list")
+    public ResponseEntity<ApiResult<Res>> selectAllOtherBattle(@RequestParam String memberId, @RequestParam BattleStatus status) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.selectAllMemberBattle(memberId, status))
+        );
+    }
     //**************************************************************
     // 신청받은 배틀 리스트 조회
-//    @ApiOperation(value = "신청받은 배틀 리스트 조회", notes = "신청받은 배틀 리스트를 조회합니다.")
-//    @GetMapping("/received-list")
-//    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle(@RequestParam String memberId) {
-//        return ResponseEntity.ok().body(
-//                new ApiResult<>(SUCCESS, battleService.selectAllReceivedBattle(memberId)));
-//    }
+    @ApiOperation(value = "신청받은 배틀 리스트 조회", notes = "신청받은 배틀 리스트를 조회합니다.")
+    @GetMapping("/received-list")
+    public ResponseEntity<ApiResult<Res>> selectAllReceivedBattle(@RequestParam String memberId) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, battleService.selectAllReceivedBattle(memberId)));
+    }
 
     //배틀 상세정보 조회
     @ApiOperation(value = "배틀 상세정보 조회", notes = "배틀 진행중의 상세정보를 조회합니다.")
