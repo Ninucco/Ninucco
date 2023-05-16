@@ -8,7 +8,7 @@ class BattleNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      initialRoute: '/BattleAllScreen',
+      initialRoute: '/BattleScreen',
       onGenerateRoute: ((settings) {
         return globalRoutes(settings);
       }),
