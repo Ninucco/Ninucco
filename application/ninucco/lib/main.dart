@@ -23,7 +23,7 @@ import 'firebase_options.dart';
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)..maxConnectionsPerHost = 5;
+    return super.createHttpClient(context)..maxConnectionsPerHost = 50;
   }
 }
 

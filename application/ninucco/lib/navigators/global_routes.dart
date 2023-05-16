@@ -12,6 +12,8 @@ import 'package:ninucco/screens/home/home.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
 import 'package:ninucco/screens/home/search.dart';
 import 'package:ninucco/screens/login/login_screen.dart';
+import 'package:ninucco/screens/profile/friends_list_screen.dart';
+import 'package:ninucco/screens/profile/received_friends_list_screen.dart';
 import 'package:ninucco/screens/profile/my_profile.dart';
 import 'package:ninucco/screens/profile/profile.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
@@ -67,6 +69,10 @@ MaterialPageRoute<dynamic> globalRoutes(RouteSettings settings) {
           return BattlePrevDetailScreen(settings: settings);
         case "/Ranking":
           return const RankingScreen();
+        case "/ReceivedFriendsListScreen":
+          return ReceivedFriendsListScreen(settings: settings);
+        case "/FriendsListScreen":
+          return FriendsListScreen(settings: settings);
 
         default:
           return const Placeholder();
