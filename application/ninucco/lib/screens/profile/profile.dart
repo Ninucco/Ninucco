@@ -33,6 +33,8 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   UserDetailData? _userDetailData;
   String _isFriend = "NONE";
+  List<Friend> _friendList = [];
+
   Future<void>? _initUserDetail;
 
   @override
@@ -43,16 +45,26 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Future<void> _initDatas(String id, String myId) async {
-    _userDetailData = await UserService.getUserDetailById(id);
-    _isFriend = await UserService.checkFriend(friendId: id, myId: myId);
+    final userDetailData = await UserService.getUserDetailById(id);
+    final isFriend = await UserService.checkFriend(friendId: id, myId: myId);
+    final friendsList = await UserService.getFriends(id);
+
+    setState(() {
+      _userDetailData = userDetailData;
+      _isFriend = isFriend;
+      _friendList = friendsList;
+    });
   }
 
   Future<void> _refreshData(String id, String myId) async {
     final data = await UserService.getUserDetailById(id);
     final checkFriend = await UserService.checkFriend(friendId: id, myId: myId);
+    final friendsList = await UserService.getFriends(id);
+
     setState(() {
       _userDetailData = data;
       _isFriend = checkFriend;
+      _friendList = friendsList;
     });
   }
 
@@ -71,8 +83,6 @@ class _ProfileScreenState extends State<ProfileScreen>
       _initUserDetail = _initDatas(userId, me!.id);
       inited = true;
     }
-    print('친구임?');
-    print(_isFriend);
 
     var myTabBar = TabBar(
       controller: _tabController,
@@ -115,6 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             userData: null,
                             friendStatus: _isFriend,
                             requestFriend: requestFriend,
+                            friendsCount: _friendList.length,
                           ),
                         );
                       }
@@ -127,6 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           userData: _userDetailData,
                           friendStatus: _isFriend,
                           requestFriend: requestFriend,
+                          friendsCount: _friendList.length,
                         ),
                       );
                     }),
@@ -356,6 +368,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   final TabBar tabbar;
   final String friendStatus;
   final VoidCallback requestFriend;
+  final int friendsCount;
 
   HomeSliverAppBar({
     required this.userData,
@@ -364,6 +377,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
     required this.height,
     required this.friendStatus,
     required this.requestFriend,
+    required this.friendsCount,
   });
   @override
   Widget build(
@@ -502,30 +516,37 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/icons/friends.png',
-                                  color: Colors.black,
-                                  fit: BoxFit.fitWidth,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                                const SizedBox(height: 6),
-                                Builder(builder: (context) {
-                                  return Text(
-                                    userData != null
-                                        ? userData!.friendList.length.toString()
-                                        : '-',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  );
-                                }),
-                                const SizedBox(height: 6),
-                                const Text('친구목록'),
-                              ],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/FriendsListScreen",
+                                  arguments: userData!.user.id,
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/friends.png',
+                                    color: Colors.black,
+                                    fit: BoxFit.fitWidth,
+                                    width: 48,
+                                    height: 48,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Builder(builder: (context) {
+                                    return Text(
+                                      friendsCount.toString(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 6),
+                                  const Text('친구목록'),
+                                ],
+                              ),
                             ),
                           ),
                           Container(
