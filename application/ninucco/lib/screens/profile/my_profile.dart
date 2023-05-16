@@ -93,7 +93,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                         return SliverPersistentHeader(
                           pinned: true,
                           delegate: HomeSliverAppBar(
-                            expandedHeight: 450.0,
+                            expandedHeight: 480.0,
                             height: 96,
                             tabbar: myTabBar,
                             userData: null,
@@ -103,7 +103,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                       return SliverPersistentHeader(
                         pinned: true,
                         delegate: HomeSliverAppBar(
-                          expandedHeight: 450.0,
+                          expandedHeight: 480.0,
                           height: 96,
                           tabbar: myTabBar,
                           userData: _userDetailData,
@@ -251,6 +251,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final double percentage = shrinkOffset / (expandedHeight - height);
+    var authProvider = Provider.of<AuthProvider>(context);
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.expand,
@@ -378,6 +379,17 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                         ),
                       ),
                       const SizedBox(height: 32.0),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 20,
+                        ),
+                        child: Text(
+                          "${authProvider.member?.point} 니누꼬인을 보유하고 있어요.",
+                          style: const TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -467,7 +479,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           ),
         ),
         Positioned(
-          top: 8,
+          top: 0,
           right: 8,
           child: IconButton(
             onPressed: () {
