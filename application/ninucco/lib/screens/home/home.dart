@@ -17,7 +17,8 @@ class NoonLoopingDemo extends StatefulWidget {
 }
 
 class _NoonLoopingDemoState extends State<NoonLoopingDemo> {
-  final Future<List<BattleInfoModel>> battles = BattleApiService.getBattles();
+  final Future<List<BattleInfoModel>> battles =
+      BattleApiService.getBattles("PROCEEDING");
 
   @override
   Widget build(BuildContext context) {
