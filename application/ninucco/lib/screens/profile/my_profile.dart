@@ -30,6 +30,9 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   late String userId;
 
   UserDetailData? _userDetailData;
+  List<Friend> _receivedFriendList = [];
+  List<Friend> _friendList = [];
+
   Future<void>? _initUserDetail;
 
   @override
@@ -40,13 +43,25 @@ class _MyProfileScreenState extends State<MyProfileScreen>
 
   Future<void> _initDatas(String id) async {
     final data = await UserService.getUserDetailById(id);
-    _userDetailData = data;
+    final receivedFriendsData = await UserService.getReceivedFriends(id);
+    final friendsData = await UserService.getFriends(id);
+
+    setState(() {
+      _userDetailData = data;
+      _receivedFriendList = receivedFriendsData;
+      _friendList = friendsData;
+    });
   }
 
   Future<void> _refreshData(String id) async {
     final data = await UserService.getUserDetailById(id);
+    final receivedFriendsData = await UserService.getReceivedFriends(id);
+    final friendsData = await UserService.getFriends(id);
+
     setState(() {
       _userDetailData = data;
+      _receivedFriendList = receivedFriendsData;
+      _friendList = friendsData;
     });
   }
 
@@ -98,6 +113,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                             height: 96,
                             tabbar: myTabBar,
                             userData: null,
+                            receivedFriendsCount: _receivedFriendList.length,
+                            friendsCount: _friendList.length,
                           ),
                         );
                       }
@@ -108,6 +125,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           height: 96,
                           tabbar: myTabBar,
                           userData: _userDetailData,
+                          receivedFriendsCount: _receivedFriendList.length,
+                          friendsCount: _friendList.length,
                         ),
                       );
                     }),
@@ -402,12 +421,16 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final double height;
   final TabBar tabbar;
+  final int receivedFriendsCount;
+  final int friendsCount;
 
   HomeSliverAppBar({
     required this.userData,
+    required this.receivedFriendsCount,
     required this.expandedHeight,
     required this.tabbar,
     required this.height,
+    required this.friendsCount,
   });
   @override
   Widget build(
@@ -545,41 +568,93 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                         margin: const EdgeInsets.only(
                           bottom: 20,
                         ),
-                        child: Text(
-                          "${authProvider.member?.point} 니누꼬인을 보유하고 있어요.",
-                          style: const TextStyle(
-                            fontSize: 15,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.monetization_on_rounded,
+                              color: Colors.amber,
+                            ),
+                            Text(
+                              "${authProvider.member?.point} 니누꼬인을 보유하고 있어요.",
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/icons/friends.png',
-                                  color: Colors.black,
-                                  fit: BoxFit.fitWidth,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                                const SizedBox(height: 6),
-                                Builder(builder: (context) {
-                                  return Text(
-                                    userData != null
-                                        ? userData!.friendList.length.toString()
-                                        : '-',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  );
-                                }),
-                                const SizedBox(height: 6),
-                                const Text('친구목록'),
-                              ],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/ReceivedFriendsListScreen",
+                                  arguments: authProvider.member!.id,
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.person_pin_outlined,
+                                    size: 48,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Builder(builder: (context) {
+                                    return Text(
+                                      receivedFriendsCount.toString(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 6),
+                                  const Text('받은 친구요청'),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 2,
+                            height: 124,
+                            color: Colors.black.withOpacity(0.2),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/FriendsListScreen",
+                                  arguments: authProvider.member!.id,
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/friends.png',
+                                    color: Colors.black,
+                                    fit: BoxFit.fitWidth,
+                                    width: 48,
+                                    height: 48,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Builder(builder: (context) {
+                                    return Text(
+                                      friendsCount.toString(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 6),
+                                  const Text('친구목록'),
+                                ],
+                              ),
                             ),
                           ),
                           Container(

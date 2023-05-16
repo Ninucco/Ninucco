@@ -56,14 +56,15 @@ class UserDetailData {
   final List<Battle> curBattleList;
   final List<Battle> prevBattleList;
 
-  UserDetailData(
-      {required this.user,
-      required this.friendList,
-      required this.itemList,
-      required this.curBattleList,
-      required this.prevBattleList,
-      required this.scanResultList,
-      required this.receivedBattles});
+  UserDetailData({
+    required this.user,
+    required this.friendList,
+    required this.itemList,
+    required this.curBattleList,
+    required this.prevBattleList,
+    required this.scanResultList,
+    required this.receivedBattles,
+  });
 
   factory UserDetailData.fromJson(Map<String, dynamic> json) {
     var list = json['scanResults'] as List;
@@ -94,6 +95,29 @@ class UserDetailData {
       curBattleList: curBattleList,
       prevBattleList: prevBattleList,
       itemList: [],
+    );
+  }
+}
+
+class Friend {
+  final String friendId;
+  final String profileImage;
+  final String nickname;
+  final String status;
+
+  Friend({
+    required this.friendId,
+    required this.profileImage,
+    required this.nickname,
+    required this.status,
+  });
+
+  factory Friend.fromJson(Map<String, dynamic> json) {
+    return Friend(
+      friendId: json['friendId'],
+      nickname: json['nickname'],
+      profileImage: json['profileImage'],
+      status: json['status'],
     );
   }
 }

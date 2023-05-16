@@ -90,4 +90,47 @@ class UserService {
       body: body,
     );
   }
+
+  static Future<List<Friend>> getReceivedFriends(String id) async {
+    final url = Uri.parse(
+        "https://k8a605.p.ssafy.io/api/member/received-friend-list?memberId=$id");
+
+    final response = await http.get(url);
+    var list = jsonDecode(response.body)['data']['friendList'] as List;
+    List<Friend> friendList = list.map((i) => Friend.fromJson(i)).toList();
+    return friendList;
+  }
+
+  static Future<List<Friend>> getFriends(String id) async {
+    final url = Uri.parse(
+        "https://k8a605.p.ssafy.io/api/member/friend-list?memberId=$id&status=FRIEND");
+
+    final response = await http.get(url);
+    var list = jsonDecode(response.body)['data']['friendList'] as List;
+    List<Friend> friendList = list.map((i) => Friend.fromJson(i)).toList();
+    return friendList;
+  }
+
+  static void allowFriend({
+    required String friendId,
+    required String myId,
+  }) {
+    final url = Uri.parse("https://k8a605.p.ssafy.io/api/member/friend/allow");
+    Map data = {"friendId": friendId, "myId": myId};
+    var body = json.encode(data);
+    http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+  }
+
+  static void deleteFriend({
+    required String friendId,
+    required String myId,
+  }) {
+    final url = Uri.parse(
+        "https://k8a605.p.ssafy.io/api/member/friend/delete?friendId=$friendId&myId=$myId");
+    http.delete(url);
+  }
 }
