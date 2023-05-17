@@ -30,10 +30,13 @@ do
     echo "TEST_API_STATUS_CODE : ${TEST_API_STATUS_CODE}"
     if [ "$TEST_API_STATUS_CODE" == 200 ]; then
       echo "TEST API SUCCESS !! >> ${AFTER_COMPOSE_COLOR} Container WAS Running!"
+
+      # 새로운 컨테이너에 대한 nginx 설정파일 복사 후 nginx reload
       echo "COPY nginx.conf"
       docker cp ../settings/r_proxy/nginx.${AFTER_COMPOSE_COLOR}.conf r_proxy:/etc/nginx/conf.d/default.conf
-      echo "restart nginx"
+      echo "reload nginx"
       docker exec r_proxy service nginx reload
+
       # 이전 컨테이너 종료
       docker-compose -p ${APP_NAME}-${BEFORE_COMPOSE_COLOR} -f docker-compose.${BEFORE_COMPOSE_COLOR}.yml down
       echo "$BEFORE_COMPOSE_COLOR down"
@@ -41,6 +44,8 @@ do
       break
     fi
   fi
+
+  # 대기시간 15초초과시 TIME OUT 에러
   if [$SECONDS -gt 15]; then
     echo "[server] ERROR: TIMEOUT"
     exit 1
