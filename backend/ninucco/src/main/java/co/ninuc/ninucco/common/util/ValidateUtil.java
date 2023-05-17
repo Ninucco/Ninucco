@@ -8,10 +8,8 @@ import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.MemberFriendRepository;
 import co.ninuc.ninucco.db.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @RequiredArgsConstructor
 @Component
 public class ValidateUtil {
@@ -21,18 +19,15 @@ public class ValidateUtil {
     private final MemberFriendRepository memberFriendRepository;
 
     public Member memberValidateById(String memberId) {
-        log.info("memberValidateById : {}", memberId);
         return memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_MEMBER));
     }
 
     public void memberConflictCheckById(String memberId) {
-        log.info("memberConflictCheckById : {}", memberId);
         if(memberRepository.existsById(memberId))
             throw new CustomException(ErrorRes.CONFLICT_MEMBER);
     }
 
     public boolean memberExistByNickname(String nickname) {
-        log.info("memberExistByNickname : {}", nickname);
         return memberRepository.existsByNickname(nickname);
     }
 
@@ -42,7 +37,6 @@ public class ValidateUtil {
     }
 
     public Battle battleValidateById(Long battleId) {
-        log.info("battleValidateById : {}", battleId);
         return battleRepository.findById(battleId).orElseThrow(() -> new CustomException(ErrorRes.NOT_FOUND_BATTLE));
     }
 }
