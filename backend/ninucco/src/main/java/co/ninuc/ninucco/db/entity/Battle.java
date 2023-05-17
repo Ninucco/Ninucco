@@ -70,8 +70,7 @@ public class Battle extends BaseEntity {
         this.status = BattleStatus.PROCEEDING;
         this.result = BattleResult.PROCEEDING;
         this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-//        this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(2); //예: 5월 15일에 등록했으면, 5월 17일 00:00에 종료
-        this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(1).minusMinutes(1); //오는 자정에 종료
+        this.finishAt = LocalDateTime.of(LocalDate.now(ZoneId.of("Asia/Seoul")), LocalTime.MIDNIGHT).plusDays(2).minusMinutes(1);
     }
     @Builder
     public Battle(String title, Member applicant, Member opponent, String applicantUrl, String opponentUrl, Double applicantOdds, LocalDateTime updatedAt, LocalDateTime finishAt, Double opponentOdds){
