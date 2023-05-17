@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
+import 'package:ninucco/utilities/photo_utils.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -107,33 +109,12 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
           return Column(
             children: [
               GestureDetector(
-                onLongPress: () async {
-                  (await showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('이미지 저장'),
-                      content: const Text('이미지를 저장하시겠습니까?'),
-                      actions: <Widget>[
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('No'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('No'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            _saveImage(context, _resultDataList[index].imgUrl);
-                          },
-                          child: const Text('Yes'),
-                        ),
-                      ],
-                    ),
-                  ));
-                },
-                child: Image.network(
-                  _resultDataList[index].imgUrl,
+                onLongPress: () => PhotoUtility.photoLongPress(
+                  context,
+                  _resultDataList[index],
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: _resultDataList[index].imgUrl,
                   fit: BoxFit.fitWidth,
                 ),
               ),

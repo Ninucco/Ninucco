@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
@@ -102,8 +103,8 @@ class ReceivedBattles extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(12))),
                           width: MediaQuery.of(context).size.width * 0.8,
                           height: MediaQuery.of(context).size.width * 0.8,
-                          child: Image.network(
-                            battleData.applicantUrl,
+                          child: CachedNetworkImage(
+                            imageUrl: battleData.applicantUrl,
                             fit: BoxFit.fitWidth,
                           ),
                         ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/widgets/betting/betting_popup_widget.dart';
 
@@ -34,8 +35,8 @@ class BattleMemberWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: Colors.amber,
             ),
-            child: Image.network(
-              profileImage,
+            child: CachedNetworkImage(
+              imageUrl: profileImage,
               fit: BoxFit.cover,
             ),
           ),

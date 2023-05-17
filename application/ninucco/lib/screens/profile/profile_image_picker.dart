@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 
@@ -37,7 +38,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                       onTap: () {
                         Navigator.pop(context, el.imgUrl);
                       },
-                      child: Image.network(el.imgUrl),
+                      child: CachedNetworkImage(imageUrl: el.imgUrl),
                     ))
                 .toList(),
           )

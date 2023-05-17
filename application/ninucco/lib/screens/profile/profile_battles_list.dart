@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/models/user_detail_model.dart';
@@ -182,8 +183,8 @@ class BattleCard extends StatelessWidget {
               ),
               width: MediaQuery.of(context).size.width * 0.5 - 18,
               height: MediaQuery.of(context).size.width * 0.5 - 18,
-              child: Image.network(
-                battleData.applicantUrl,
+              child: CachedNetworkImage(
+                imageUrl: battleData.applicantUrl,
                 fit: BoxFit.cover,
               ),
             ),
@@ -228,8 +229,8 @@ class BattleCard extends StatelessWidget {
               ),
               width: MediaQuery.of(context).size.width * 0.5 - 18,
               height: MediaQuery.of(context).size.width * 0.5 - 18,
-              child: Image.network(
-                battleData.opponentUrl,
+              child: CachedNetworkImage(
+                imageUrl: battleData.opponentUrl,
                 fit: BoxFit.cover,
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/services/user_service.dart';
@@ -91,7 +92,8 @@ class _FriendsListScreenState extends State<FriendsListScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               clipBehavior: Clip.hardEdge,
-                              child: Image.network(friendData.profileImage),
+                              child: CachedNetworkImage(
+                                  imageUrl: friendData.profileImage),
                             ),
                             const SizedBox(width: 8),
                             SizedBox(

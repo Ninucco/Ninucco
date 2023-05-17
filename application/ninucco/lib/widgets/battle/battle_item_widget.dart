@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -102,8 +103,8 @@ class BattleItem extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.teal,
                                   ),
-                                  child: Image.network(
-                                    memberAImage,
+                                  child: CachedNetworkImage(
+                                    imageUrl: memberAImage,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -128,8 +129,8 @@ class BattleItem extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.amber,
                                   ),
-                                  child: Image.network(
-                                    memberBImage,
+                                  child: CachedNetworkImage(
+                                    imageUrl: memberBImage,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

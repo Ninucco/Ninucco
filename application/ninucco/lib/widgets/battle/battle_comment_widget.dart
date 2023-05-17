@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BattleCommentItem extends StatelessWidget {
@@ -37,8 +38,8 @@ class BattleCommentItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.pink.shade200,
                       ),
-                      child: Image.network(
-                        profileImage,
+                      child: CachedNetworkImage(
+                        imageUrl: profileImage,
                         fit: BoxFit.cover,
                       ),
                     ),

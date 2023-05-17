@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
@@ -110,7 +111,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                           pinned: true,
                           delegate: HomeSliverAppBar(
                             expandedHeight: 480.0,
-                            height: 96,
+                            height: 108,
                             tabbar: myTabBar,
                             userData: null,
                             receivedFriendsCount: _receivedFriendList.length,
@@ -122,7 +123,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                         pinned: true,
                         delegate: HomeSliverAppBar(
                           expandedHeight: 480.0,
-                          height: 96,
+                          height: 108,
                           tabbar: myTabBar,
                           userData: _userDetailData,
                           receivedFriendsCount: _receivedFriendList.length,
@@ -217,7 +218,7 @@ class GridItems extends StatelessWidget {
                                 data: userData.scanResultList,
                               ));
                         },
-                        child: Image.network(data.value.imgUrl),
+                        child: CachedNetworkImage(imageUrl: data.value.imgUrl),
                       ),
                     )
                     .toList(),
@@ -237,7 +238,8 @@ class GridItems extends StatelessWidget {
                           backgroundColor: Colors.black87,
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, "/Category");
+                          navProvider.to(4);
+                          // Navigator.pushNamed(context, "/Category");
                         },
                         child: const Text("검사하러 가기",
                             style: TextStyle(fontSize: 16)),
@@ -267,10 +269,11 @@ class GridItems extends StatelessWidget {
                                     userId: userData.user.id,
                                   ));
                             },
-                            child: Image.network(
-                              userData.user.id == data.value.applicantId
-                                  ? data.value.applicantUrl
-                                  : data.value.opponentUrl,
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  userData.user.id == data.value.applicantId
+                                      ? data.value.applicantUrl
+                                      : data.value.opponentUrl,
                             ),
                           ),
                         )
@@ -292,10 +295,11 @@ class GridItems extends StatelessWidget {
                             },
                             child: Stack(
                               children: [
-                                Image.network(
-                                  userData.user.id == data.value.applicantId
-                                      ? data.value.applicantUrl
-                                      : data.value.opponentUrl,
+                                CachedNetworkImage(
+                                  imageUrl:
+                                      userData.user.id == data.value.applicantId
+                                          ? data.value.applicantUrl
+                                          : data.value.opponentUrl,
                                 ),
                                 Container(
                                   decoration: const BoxDecoration(
@@ -499,7 +503,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
+                        fontSize: 16,
                       ),
                     ),
                   ],
@@ -548,15 +552,15 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       Text(
                         userData != null ? userData!.user.nickname : "---",
                         style: const TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           height: 1.6,
                         ),
                       ),
                       // SizedBox(height: 32.0),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 32.0),
                       CircleAvatar(
-                        radius: 80,
+                        radius: 64,
                         backgroundImage: NetworkImage(
                           userData != null
                               ? userData!.user.profileImage
@@ -716,7 +720,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           ),
         ),
         Positioned(
-          top: 0,
+          top: 6,
           right: 8,
           child: IconButton(
             onPressed: () {
