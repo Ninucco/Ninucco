@@ -34,7 +34,7 @@ class BattlePastItem extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(
           context,
-          '/BattleDetailScreen',
+          '/BattlePastDetailScreen',
           arguments: BattleInfoModel(
             battleId,
             memberAId,
@@ -86,136 +86,229 @@ class BattlePastItem extends StatelessWidget {
                           Flexible(
                             flex: 2,
                             fit: FlexFit.tight,
-                            child: (result == "APPLICANT")
-                                ? Stack(
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: 150,
+                                  height: 150,
+                                  margin: const EdgeInsets.only(
+                                    right: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.teal,
+                                  ),
+                                  child: Image.network(
+                                    memberAImage,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Container(
+                                  width: 150,
+                                  height: 150,
+                                  margin: const EdgeInsets.only(
+                                    right: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Container(
+                                  width: 150,
+                                  height: 150,
+                                  margin: const EdgeInsets.only(
+                                    right: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        width: 150,
-                                        height: 150,
-                                        margin: const EdgeInsets.only(
-                                          right: 20,
-                                          bottom: 10,
-                                          top: 10,
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.teal,
-                                        ),
-                                        child: Image.network(
-                                          memberAImage,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      const Text(
-                                        "WIN",
-                                        style: TextStyle(
-                                          fontSize: 50,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Stack(
-                                    children: [
-                                      Container(
-                                        width: 150,
-                                        height: 150,
-                                        margin: const EdgeInsets.only(
-                                          right: 20,
-                                          bottom: 10,
-                                          top: 10,
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.teal,
-                                        ),
-                                        child: Image.network(
-                                          memberAImage,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      const Text(
-                                        "LOSE",
-                                        style: TextStyle(
-                                          fontSize: 50,
-                                        ),
-                                      ),
+                                      (result == "APPLICANT")
+                                          ? const Text(
+                                              "WIN",
+                                              style: TextStyle(
+                                                fontSize: 40,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xffA459D1),
+                                                shadows: [
+                                                  Shadow(
+                                                    blurRadius:
+                                                        2.0, // shadow blur
+                                                    color: Colors
+                                                        .white, // shadow color
+                                                    offset: Offset(1.0,
+                                                        1.0), // how much shadow will be shown
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : (result == "DRAW")
+                                              ? const Text(
+                                                  "DRAW",
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xffFFB84C),
+                                                    shadows: [
+                                                      Shadow(
+                                                        blurRadius:
+                                                            2.0, // shadow blur
+                                                        color: Colors
+                                                            .white, // shadow color
+                                                        offset: Offset(1.0,
+                                                            1.0), // how much shadow will be shown
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : const Text(
+                                                  "LOSE",
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xffF266AB),
+                                                  ),
+                                                ),
                                     ],
                                   ),
+                                ),
+                              ],
+                            ),
                           ),
                           Flexible(
                             flex: 2,
                             fit: FlexFit.tight,
-                            child: (result == "OPPONENT")
-                                ? Stack(
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: 150,
+                                  height: 150,
+                                  margin: const EdgeInsets.only(
+                                    left: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.amber,
+                                  ),
+                                  child: Image.network(
+                                    memberBImage,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Container(
+                                  width: 150,
+                                  height: 150,
+                                  margin: const EdgeInsets.only(
+                                    left: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Container(
+                                  width: 150,
+                                  height: 150,
+                                  margin: const EdgeInsets.only(
+                                    left: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      Container(
-                                        width: 150,
-                                        height: 150,
-                                        margin: const EdgeInsets.only(
-                                          left: 20,
-                                          bottom: 10,
-                                          top: 10,
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.amber,
-                                        ),
-                                        child: Image.network(
-                                          memberBImage,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      const Text(
-                                        "WIN",
-                                        style: TextStyle(
-                                          fontSize: 50,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Stack(
-                                    children: [
-                                      Container(
-                                        width: 150,
-                                        height: 150,
-                                        margin: const EdgeInsets.only(
-                                          left: 20,
-                                          bottom: 10,
-                                          top: 10,
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.amber,
-                                        ),
-                                        child: Image.network(
-                                          memberBImage,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      const Text(
-                                        "LOSE",
-                                        style: TextStyle(
-                                          fontSize: 50,
-                                        ),
-                                      ),
+                                      (result == "OPPONENT")
+                                          ? const Text(
+                                              "WIN",
+                                              style: TextStyle(
+                                                fontSize: 40,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xffA459D1),
+                                                shadows: [
+                                                  Shadow(
+                                                    blurRadius:
+                                                        2.0, // shadow blur
+                                                    color: Colors
+                                                        .white, // shadow color
+                                                    offset: Offset(1.0,
+                                                        1.0), // how much shadow will be shown
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : (result == "DRAW")
+                                              ? const Text(
+                                                  "DRAW",
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xffFFB84C),
+                                                    shadows: [
+                                                      Shadow(
+                                                        blurRadius:
+                                                            2.0, // shadow blur
+                                                        color: Colors
+                                                            .white, // shadow color
+                                                        offset: Offset(1.0,
+                                                            1.0), // how much shadow will be shown
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : const Text(
+                                                  "LOSE",
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xffF266AB),
+                                                    shadows: [
+                                                      Shadow(
+                                                        blurRadius:
+                                                            2.0, // shadow blur
+                                                        color: Colors
+                                                            .white, // shadow color
+                                                        offset: Offset(1.0,
+                                                            1.0), // how much shadow will be shown
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                     ],
                                   ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      Image.asset(
-                        'assets/images/vs.png',
-                        fit: BoxFit.contain,
-                        width: 70,
-                        height: 70,
+                      Container(
+                        margin: const EdgeInsets.only(
+                          right: 5,
+                        ),
+                        child: Image.asset(
+                          'assets/images/vs.png',
+                          fit: BoxFit.contain,
+                          width: 70,
+                          height: 70,
+                        ),
                       ),
                     ],
                   ),
@@ -223,9 +316,19 @@ class BattlePastItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(memberANickname),
+                    Text(
+                      memberANickname,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text(
                       memberBNickname,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),

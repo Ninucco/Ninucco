@@ -151,9 +151,19 @@ class BattleItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(memberANickname),
+                    Text(
+                      memberANickname,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text(
                       memberBNickname,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -168,12 +178,14 @@ class BattleItem extends StatelessWidget {
                         "여기가 이기면 $ratioA배",
                         style: const TextStyle(
                           fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         "여기가 이기면 $ratioB배",
                         style: const TextStyle(
                           fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.right,
                       ),
