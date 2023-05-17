@@ -97,10 +97,11 @@ class _BettingPopupWidgetState extends State<BettingPopupWidget> {
                           width: 20,
                         ),
                         SizedBox(
-                          width: 80,
+                          width: 100,
                           height: 20,
                           child: TextField(
                             controller: myController,
+                            keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             showCursor: true,
                             style: const TextStyle(
@@ -202,56 +203,99 @@ class _BettingPopupWidgetState extends State<BettingPopupWidget> {
                               ),
                             ),
                             onPressed: () => {
-                              Navigator.pop(context),
-                              BettingApiService.postBetting(
-                                BattleBettingRequestModel(
-                                  widget.battleId,
-                                  int.parse(myController.text),
-                                  widget.type,
-                                  authProvider.member!.id,
-                                ),
-                              ),
-                              authProvider.setMember(
-                                MemberModel(
-                                    id: authProvider.member!.id,
-                                    elo: authProvider.member!.elo,
-                                    loseCount: authProvider.member!.loseCount,
-                                    nickname: authProvider.member!.nickname,
-                                    point: authProvider.member!.point -
-                                        int.parse(myController.text),
-                                    url: authProvider.member!.url,
-                                    winCount: authProvider.member!.winCount),
-                              ),
-                              showDialog<String>(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                  title: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '베팅이 완료됐어요',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                              (int.parse(myController.text) <=
+                                      authProvider.member!.point)
+                                  ? {
+                                      Navigator.pop(context),
+                                      BettingApiService.postBetting(
+                                        BattleBettingRequestModel(
+                                          widget.battleId,
+                                          int.parse(myController.text),
+                                          widget.type,
+                                          authProvider.member!.id,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, '야호!'),
-                                      child: const Text(
-                                        '야호!',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                                      authProvider.setMember(
+                                        MemberModel(
+                                            id: authProvider.member!.id,
+                                            elo: authProvider.member!.elo,
+                                            loseCount:
+                                                authProvider.member!.loseCount,
+                                            nickname:
+                                                authProvider.member!.nickname,
+                                            point: authProvider.member!.point -
+                                                int.parse(myController.text),
+                                            url: authProvider.member!.url,
+                                            winCount:
+                                                authProvider.member!.winCount),
+                                      ),
+                                      showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                '베팅이 완료됐어요',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, '야호!'),
+                                              child: const Text(
+                                                '야호!',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                                    }
+                                  : {
+                                      showDialog<String>(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                          title: const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                '니누꼬인이 부족해요',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, '힝'),
+                                              child: const Text(
+                                                '힝',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    }
                             },
                           ),
                         ),
