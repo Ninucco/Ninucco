@@ -7,7 +7,8 @@ class BattleUtil {
     "누가 민초파 일까요?",
     "누가 더 백엔드 개발자처럼 생겼나요?",
     "기부를 더 잘할 것 같은 사람은?",
-    ""
+    "누가 더 프론트 개발자처럼 생겼나요?",
+    "요리를 더 잘할 것 같은 사람은?"
   ];
   get getBattleQuestions => battleQuestions;
 }

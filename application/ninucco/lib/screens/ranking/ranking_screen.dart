@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/screens/ranking/ranking_battle_screen.dart';
 import 'package:ninucco/screens/ranking/ranking_elo_screen.dart';
 import 'package:ninucco/screens/ranking/ranking_point_screen.dart';
+import 'package:provider/provider.dart';
 
 class RankingScreen extends StatelessWidget {
   const RankingScreen({super.key});
@@ -35,6 +37,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
 
   @override
   Widget build(BuildContext context) {
+    var navIndex = Provider.of<NavProvider>(context).index;
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -42,6 +45,17 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
         backgroundColor: Colors.white,
         titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
         title: const Text('명예의 전당'),
+        leading: navIndex == 1
+            ? const SizedBox()
+            : IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Colors.black,
+                ),
+              ),
         bottom: TabBar(
           indicatorWeight: 2,
           unselectedLabelColor: Colors.black54,

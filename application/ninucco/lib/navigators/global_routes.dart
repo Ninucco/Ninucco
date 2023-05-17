@@ -76,6 +76,8 @@ MaterialPageRoute<dynamic> globalRoutes(RouteSettings settings) {
           return FriendsListScreen(settings: settings);
         case "/BattlePastDetailScreen":
           return BattlePastDetailScreen(settings: settings);
+        case "/RankingScreen":
+          return const RankingScreen();
 
         default:
           return const Placeholder();
