@@ -1,4 +1,3 @@
-import { Header, Footer } from "../../components";
 import {
   Hero,
   Services,
@@ -12,7 +11,6 @@ import {
 const IntroducePage: React.FC = () => {
   return (
     <>
-      <Header />
       <Hero />
       <Services />
       <Feature />
@@ -20,7 +18,6 @@ const IntroducePage: React.FC = () => {
       <Works />
       <Contact />
       <Banner />
-      <Footer />
     </>
   );
 };

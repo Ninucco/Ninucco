@@ -1,13 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { heroBackground } from "../../../assets";
+import { heroBackground, googlePlayLogo } from "../../../assets";
 import { Button } from "../../../components";
 
 const S = {
   Background: styled.section`
     position: absolute;
     top: 0;
-    width: 100%;
+    width: 100vw;
     height: 780px;
     background: no-repeat center/cover url(${heroBackground});
   `,
@@ -38,17 +38,19 @@ const Hero: React.FC = () => {
     <S.Background>
       <S.Wrapper>
         <S.Title>
-          Lorem ipsum
+          ninucco
           <br />
-          Dolor sit amet
+          니, 누꼬?
         </S.Title>
         <S.Description>
-          Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+          다양한 사람들과 함께 내가 어떤 모습인지 공유하세요.
           <br />
-          labore et dolore magna aliqua. Nisl tincidunt eget nullam non.
+          배틀을 통해 좀 더 어울리는 사람을 골라보아요.
         </S.Description>
         <Button fill="solid" type="button">
-          Our Services
+          <div>
+            <img src={googlePlayLogo} alt="google play" width={100} />
+          </div>
         </Button>
       </S.Wrapper>
     </S.Background>

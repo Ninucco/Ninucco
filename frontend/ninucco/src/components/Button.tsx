@@ -15,12 +15,12 @@ const S = {
     cursor: pointer;
     ${({ theme }) => theme.typography.button};
     background-color: ${({ theme, fill }) =>
-      fill === "solid" ? theme.palette.primary : "transparent"};
+      fill === "solid" ? theme.palette.white : "transparent"};
     width: fit-content;
     color: ${({ theme, fill }) =>
-      fill === "solid" ? theme.palette.white : theme.palette.primary};
+      fill === "solid" ? theme.palette.white : theme.palette.white};
     border: ${({ theme, fill }) =>
-      fill === "solid" ? "none" : `1px solid ${theme.palette.primary}`};
+      fill === "solid" ? "none" : `1px solid ${theme.palette.white}`};
     &:focus {
       outline: none;
     }
