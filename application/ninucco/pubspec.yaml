@@ -1,0 +1,73 @@
+name: ninucco
+description: A new Flutter project.
+publish_to: "none"
+version: 1.0.0+4
+
+environment:
+  sdk: ">=2.19.6-417.0.dev <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  provider: ^6.0.5
+  http: ^0.13.5
+  firebase_core: ^2.10.0
+  firebase_auth: ^4.4.2
+  google_sign_in: ^6.1.0
+  flutter_staggered_grid_view: ^0.6.2
+  image_picker: ^0.8.7+4
+  percent_indicator: ^4.2.3
+  wrapped_korean_text: ^0.0.3
+  dotted_border: ^2.0.0+3
+  cached_network_image: ^3.2.3
+  kakao_flutter_sdk: ^1.4.2
+  image_cropper: ^3.0.3
+  carousel_slider: ^4.2.1
+  dio: ^4.0.6
+  image: ^4.0.17
+  scrollable_positioned_list: ^0.3.8
+  shared_preferences: ^2.1.0
+  top_snackbar_flutter: ^3.0.0+1
+  flutter_file_dialog: ^3.0.0
+  path_provider: ^2.0.15
+  permission_handler: ^10.2.0
+  uuid: ^3.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  image_path: "assets/appIcon/icon.png"
+  android: "launcher_icon"
+  ios: true
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/tutorial/
+    - assets/images/dummy/
+    - assets/images/dummy.md
+    - assets/images/scan_items/
+    - assets/images/bg/
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
+    - assets/appIcon/
+
+  fonts:
+    - family: NexonGothic
+      fonts:
+        - asset: assets/fonts/NEXONLv1GothicLight.ttf
+          weight: 300
+        - asset: assets/fonts/NEXONLv1GothicRegular.ttf
+          weight: 500
+        - asset: assets/fonts/NEXONLv1GothicBold.ttf
+          weight: 700
+    - family: milkyway
+      fonts:
+        - asset: assets/fonts/TAEBAEK.otf
