@@ -31,7 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -155,18 +156,15 @@ public class BattleServiceImpl implements BattleService{
         return bettingRes;
     }
 
-
-    //TODO: 배틀 결과 조회 필요?
     @Override
     public BattleResultRes selectOneBattleResult(Long battleId){
         return null;
     }
-    //TODO: 시간마다 배틀 끝났는지 체크
-//    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
-    @Scheduled(cron = "0 0 0 * * * ", zone = "Asia/Seoul") //every midnight
+    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
+//    @Scheduled(cron = "0 0 0 * * * ", zone = "Asia/Seoul") //every midnight
     public void finishAtMidnight(){
-        log.info("finish() called: "+LocalDateTime.now());
-        battleRepository.findByFinishAtLessThanAndStatus(LocalDateTime.now(), BattleStatus.PROCEEDING)
+        log.info("finish() called: "+ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
+        battleRepository.findByFinishAtLessThanAndStatus(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(), BattleStatus.PROCEEDING)
                 .forEach((battle -> finishBattle(battle.getId())));
     }
     //배틀이 끝나면 콜되는 함수
