@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/point_rank_info_model.dart';
 import 'package:ninucco/widgets/ranking/ranking_item_widget.dart';
 import 'package:ninucco/services/user_rank_api_service.dart';
-import 'package:ninucco/models/user_rank_info_model.dart';
 
-class RankingBettingScreen extends StatelessWidget {
-  RankingBettingScreen({super.key});
+class RankingPointScreen extends StatelessWidget {
+  RankingPointScreen({super.key});
 
-  final Future<List<UserRankInfoModel>> userRanks =
-      UserRankApiService.getUserRanks();
+  final Future<List<PointRankInfoModel>> userRanks =
+      UserRankApiService.getPointRanks();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class RankingBettingScreen extends StatelessWidget {
     );
   }
 
-  ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
+  ListView makeList(AsyncSnapshot<List<PointRankInfoModel>> snapshot) {
     return ListView.separated(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
@@ -56,6 +56,7 @@ class RankingBettingScreen extends StatelessWidget {
           nickname: userRank.nickname,
           winCount: userRank.winCount,
           index: index,
+          type: "POINT",
           onTap: () {},
         );
       },

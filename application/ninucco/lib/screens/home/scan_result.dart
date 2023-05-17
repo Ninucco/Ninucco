@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:ninucco/providers/nav_provider.dart';
+import 'package:ninucco/utilities/photo_utils.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -131,14 +132,20 @@ class _ScanResultState extends State<ScanResult> {
                           )
                         ],
                       ),
-                      child: CachedNetworkImage(
-                        imageUrl: _resultData.imgUrl,
-                        width: double.infinity,
-                        fit: BoxFit.fill,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                    value: downloadProgress.progress),
+                      child: GestureDetector(
+                        onLongPress: () => PhotoUtility.photoLongPress(
+                          context,
+                          _resultData,
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: _resultData.imgUrl,
+                          width: double.infinity,
+                          fit: BoxFit.fill,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 32),

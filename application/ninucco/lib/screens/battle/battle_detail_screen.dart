@@ -26,7 +26,6 @@ class BattleDetailScreen extends StatefulWidget {
 }
 
 class _BattleDetailScreenState extends State<BattleDetailScreen> {
-  late Future<BattleInfoModel> battle;
   late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();
   late BattleInfoModel _resultData;
@@ -35,7 +34,6 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   void initState() {
     super.initState();
     _resultData = widget.settings.arguments as BattleInfoModel;
-    battle = BattleApiService.getBattlesById(_resultData.battleId);
     battleComments =
         BattleApiCommentService.getBattleComments(_resultData.battleId);
   }
@@ -187,24 +185,30 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                                             () {
                                               _textEditingController
                                                   .notifyListeners();
-                                              BattleApiCommentService
-                                                  .postBattleComments(
-                                                      BattleCommentPostModel(
-                                                          _textEditingController
-                                                              .value.text,
-                                                          _resultData.battleId),
-                                                      authProvider.member!.id);
-                                              _textEditingController.clear();
-                                              setState(
-                                                () {
-                                                  print("I'm listening~~");
-                                                  battleComments =
-                                                      BattleApiCommentService
-                                                          .getBattleComments(
-                                                              _resultData
-                                                                  .battleId);
-                                                },
-                                              );
+                                              if (_textEditingController
+                                                      .value.text !=
+                                                  "") {
+                                                BattleApiCommentService
+                                                    .postBattleComments(
+                                                        BattleCommentPostModel(
+                                                            _textEditingController
+                                                                .value.text,
+                                                            _resultData
+                                                                .battleId),
+                                                        authProvider
+                                                            .member!.id);
+                                                _textEditingController.clear();
+                                                setState(
+                                                  () {
+                                                    print("I'm listening~~");
+                                                    battleComments =
+                                                        BattleApiCommentService
+                                                            .getBattleComments(
+                                                                _resultData
+                                                                    .battleId);
+                                                  },
+                                                );
+                                              }
                                               FocusScope.of(context)
                                                   .requestFocus(FocusNode());
                                             },
@@ -265,7 +269,7 @@ ListView makeList(AsyncSnapshot<List<BattleCommentInfoModel>> snapshot) {
     itemBuilder: (context, index) {
       var battleComment = snapshot.data![index];
       return BattleCommentItem(
-        id: battleComment.id,
+        memberId: 'linga',
         profileImage: battleComment.profileImage,
         nickname: battleComment.nickname,
         content: battleComment.content,

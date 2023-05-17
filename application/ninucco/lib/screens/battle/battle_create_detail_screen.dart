@@ -81,23 +81,17 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    List tmpResult;
-                    (await Navigator.pushNamed(context, '/BattleFriendSearch',
-                                arguments: "") ==
-                            Null)
-                        ? tmpResult = await Navigator.pushNamed(
-                                context, '/BattleFriendSearch', arguments: "")
-                            as List
-                        : tmpResult = [];
+                    var tmpResult = await Navigator.pushNamed(
+                        context, '/BattleFriendSearch') as List;
 
                     setState(() {
-                      (tmpResult.isNotEmpty)
-                          ? result = tmpResult[1] as String
-                          : result = "???";
-
-                      (tmpResult.isNotEmpty)
-                          ? resultId = tmpResult[0] as String
-                          : resultId = "";
+                      if (tmpResult.isNotEmpty) {
+                        resultId = tmpResult[0] as String;
+                        result = tmpResult[1] as String;
+                      } else {
+                        resultId = "???";
+                        result = "???";
+                      }
                     });
                   },
                 ),

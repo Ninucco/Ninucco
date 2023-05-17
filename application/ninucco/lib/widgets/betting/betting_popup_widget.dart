@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_betting_request_model.dart';
+import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/services/betting_api_service.dart';
 import 'package:provider/provider.dart';
 
 class BettingPopupWidget extends StatefulWidget {
-  final int memberId, battleId;
-  final String nickname, type;
+  final int battleId;
+  final String nickname, type, memberId;
 
   const BettingPopupWidget({
     super.key,
@@ -203,12 +204,24 @@ class _BettingPopupWidgetState extends State<BettingPopupWidget> {
                             onPressed: () => {
                               Navigator.pop(context),
                               BettingApiService.postBetting(
-                                  BattleBettingRequestModel(
-                                widget.battleId,
-                                int.parse(myController.text),
-                                widget.type,
-                                authProvider.member!.id,
-                              )),
+                                BattleBettingRequestModel(
+                                  widget.battleId,
+                                  int.parse(myController.text),
+                                  widget.type,
+                                  authProvider.member!.id,
+                                ),
+                              ),
+                              authProvider.setMember(
+                                MemberModel(
+                                    id: authProvider.member!.id,
+                                    elo: authProvider.member!.elo,
+                                    loseCount: authProvider.member!.loseCount,
+                                    nickname: authProvider.member!.nickname,
+                                    point: authProvider.member!.point -
+                                        int.parse(myController.text),
+                                    url: authProvider.member!.url,
+                                    winCount: authProvider.member!.winCount),
+                              ),
                               showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(

@@ -11,12 +11,14 @@ class Battle {
   final String applicantId;
   final String opponentId;
   final String opponentUrl;
+  final String result;
 
   final double applicantOdds;
   final double opponentOdds;
 
   Battle({
     required this.battleId,
+    required this.result,
     required this.title,
     required this.applicantName,
     required this.opponentName,
@@ -40,6 +42,7 @@ class Battle {
       opponentUrl: json['opponentUrl'] ?? '',
       applicantOdds: json['applicantOdds'] ?? 2.0,
       opponentOdds: json['opponentOdds'] ?? 2.0,
+      result: json['result'] ?? "null",
     );
   }
 }
@@ -53,14 +56,15 @@ class UserDetailData {
   final List<Battle> curBattleList;
   final List<Battle> prevBattleList;
 
-  UserDetailData(
-      {required this.user,
-      required this.friendList,
-      required this.itemList,
-      required this.curBattleList,
-      required this.prevBattleList,
-      required this.scanResultList,
-      required this.receivedBattles});
+  UserDetailData({
+    required this.user,
+    required this.friendList,
+    required this.itemList,
+    required this.curBattleList,
+    required this.prevBattleList,
+    required this.scanResultList,
+    required this.receivedBattles,
+  });
 
   factory UserDetailData.fromJson(Map<String, dynamic> json) {
     var list = json['scanResults'] as List;
@@ -91,6 +95,29 @@ class UserDetailData {
       curBattleList: curBattleList,
       prevBattleList: prevBattleList,
       itemList: [],
+    );
+  }
+}
+
+class Friend {
+  final String friendId;
+  final String profileImage;
+  final String nickname;
+  final String status;
+
+  Friend({
+    required this.friendId,
+    required this.profileImage,
+    required this.nickname,
+    required this.status,
+  });
+
+  factory Friend.fromJson(Map<String, dynamic> json) {
+    return Friend(
+      friendId: json['friendId'],
+      nickname: json['nickname'],
+      profileImage: json['profileImage'],
+      status: json['status'],
     );
   }
 }

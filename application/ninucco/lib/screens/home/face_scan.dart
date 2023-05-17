@@ -73,7 +73,6 @@ class _FaceScanState extends State<FaceScan> {
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text(typeName),
         titleTextStyle: const TextStyle(
           color: Colors.black,
           fontSize: 20,
@@ -147,18 +146,11 @@ class _FaceScanState extends State<FaceScan> {
                 Positioned(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  bottom: 0,
+                  top: 0,
+                  left: 0,
                   child: Container(
                     color: Colors.black.withOpacity(0.5),
-                    child: const Center(
-                      child: Text(
-                        "Loading...",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
+                    child: Image.asset('assets/images/loading_1.gif'),
                   ),
                 ),
             ],

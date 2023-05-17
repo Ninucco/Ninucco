@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/services/user_service.dart';
@@ -34,7 +35,10 @@ class ProfileSettings extends StatelessWidget {
         ),
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(child: FormData(userData: userData)),
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: FormData(userData: userData),
+          ),
         ),
       ),
     );
@@ -62,8 +66,8 @@ class _FormDataState extends State<FormData> {
 
   @override
   void initState() {
-    newProfileUrl == widget.userData.user.profileImage;
-    nickname == widget.userData.user.nickname;
+    newProfileUrl = widget.userData.user.profileImage;
+    nickname = widget.userData.user.nickname;
     super.initState();
   }
 
@@ -74,6 +78,7 @@ class _FormDataState extends State<FormData> {
         .currentUser;
 
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
+    var me = authProvider.member;
 
     bool isAnonymous = currentUser!.isAnonymous;
 
@@ -160,8 +165,11 @@ class _FormDataState extends State<FormData> {
                     setState(() => existNickname = check);
                   },
                   validator: (value) {
+                    if (widget.userData.user.nickname == value) {
+                      return null;
+                    }
                     if (value!.length < 3 || value.length > 15) {
-                      return "닉네임은 3~5글자 사이로 설정해주세요";
+                      return "닉네임은 3~15글자 사이로 설정해주세요";
                     }
                     if (!existNickname) {
                       return "존재하는 닉네임 입니다.";
@@ -272,13 +280,29 @@ class _FormDataState extends State<FormData> {
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   formKey.currentState!.save();
+                  UserService.updateProfile(
+                    memberId: me!.id,
+                    nickname: nickname,
+                    profileUrl: newProfileUrl != ''
+                        ? newProfileUrl
+                        : widget.userData.user.profileImage,
+                  );
                   showTopSnackBar(
                     Overlay.of(context),
                     const CustomSnackBar.success(
-                      message:
-                          'Good job, your release is successful. Have a nice day',
+                      message: '프로필이 성공적으로 저장되었어요',
                     ),
                   );
+                  var newMe = MemberModel(
+                    id: me.id,
+                    elo: me.elo,
+                    loseCount: me.loseCount,
+                    point: me.point,
+                    winCount: me.winCount,
+                    nickname: nickname,
+                    url: newProfileUrl,
+                  );
+                  authProvider.setMember(newMe);
                 }
               },
               child: const Text(

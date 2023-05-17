@@ -1,15 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class BattleItem extends StatelessWidget {
-  final int memberAId, memberBId, battleId;
+  final int battleId;
   final double ratioA, ratioB;
   final String memberAImage,
       memberBImage,
       question,
       memberANickname,
-      memberBNickname;
+      memberBNickname,
+      memberAId,
+      memberBId,
+      result;
 
   const BattleItem({
     super.key,
@@ -23,6 +27,7 @@ class BattleItem extends StatelessWidget {
     required this.question,
     required this.ratioA,
     required this.ratioB,
+    required this.result,
   });
 
   @override
@@ -43,12 +48,16 @@ class BattleItem extends StatelessWidget {
             question,
             ratioA,
             ratioB,
+            result,
           ),
         );
       },
       child: Column(
         children: [
           Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
             margin: const EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
@@ -57,7 +66,19 @@ class BattleItem extends StatelessWidget {
             ),
             child: Column(
               children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  question,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 17),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
                 Material(
+                  color: Colors.transparent,
                   child: Stack(
                     alignment: AlignmentDirectional.center,
                     children: [
@@ -72,18 +93,21 @@ class BattleItem extends StatelessWidget {
                                 Container(
                                   width: 150,
                                   height: 150,
-                                  margin: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(
+                                    right: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.teal,
                                   ),
-                                  child: Image.network(
-                                    memberAImage,
+                                  child: CachedNetworkImage(
+                                    imageUrl: memberAImage,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                Text(memberANickname),
                               ],
                             ),
                           ),
@@ -95,18 +119,21 @@ class BattleItem extends StatelessWidget {
                                 Container(
                                   width: 150,
                                   height: 150,
-                                  margin: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(
+                                    left: 20,
+                                    bottom: 10,
+                                    top: 10,
+                                  ),
                                   clipBehavior: Clip.hardEdge,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.amber,
                                   ),
-                                  child: Image.network(
-                                    memberBImage,
+                                  child: CachedNetworkImage(
+                                    imageUrl: memberBImage,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                Text(memberBNickname),
                               ],
                             ),
                           ),
@@ -121,34 +148,44 @@ class BattleItem extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  question,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      memberANickname,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      memberBNickname,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "$memberANickname이\n이기면 $ratioA배",
+                        "여기가 이기면 $ratioA배",
                         style: const TextStyle(
                           fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        "$memberBNickname이\n이기면 $ratioB배",
+                        "여기가 이기면 $ratioB배",
                         style: const TextStyle(
                           fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -160,6 +197,7 @@ class BattleItem extends StatelessWidget {
                 ),
                 LinearPercentIndicator(
                   animation: true,
+                  padding: const EdgeInsets.all(0),
                   animationDuration: 500,
                   lineHeight: 10.0,
                   percent: (ratioA) / (ratioA + ratioB),

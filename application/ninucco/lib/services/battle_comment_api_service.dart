@@ -24,6 +24,20 @@ class BattleApiCommentService {
     }
   }
 
+  static Future<List<BattleCommentInfoModel>> fetchBattleComments(
+      int battleId) async {
+    List<BattleCommentInfoModel> battleInstances = [];
+    final url = Uri.parse('$baseUrl/$battleId/comment');
+    final response = await http.get(url);
+    final battles = jsonDecode(response.body)["data"]["commentList"];
+    for (var battle in battles) {
+      final instance = BattleCommentInfoModel.fromJson(battle);
+      battleInstances.add(instance);
+    }
+
+    return battleInstances;
+  }
+
   static Future<BattleCommentInfoModel> postBattleComments(
       BattleCommentPostModel battleCommentPost, String memberId) async {
     final url = Uri.parse('$baseUrl/comment?memberId=$memberId');

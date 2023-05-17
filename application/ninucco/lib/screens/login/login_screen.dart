@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/member_model.dart';
@@ -8,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  // final RouteSettings settings;
   const LoginScreen({
     super.key,
     // required this.settings,
@@ -29,16 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    // final apiService = MemberApiService(authProvider);
 
     return Scaffold(
-        // appBar: AppBar(
-        //   elevation: 2,
-        //   centerTitle: true,
-        //   backgroundColor: Colors.white,
-        //   titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
-        //   title: const Text('Sign In'),
-        // ),
         body: isLoading
             ? Container(
                 decoration: const BoxDecoration(
@@ -136,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'id': user.uid,
                                 'nickname': user.email,
                                 'url':
-                                    'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/default.png',
+                                    'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/${Random().nextInt(8)}',
                               };
 
                               var response = await http.post(url,
@@ -195,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'id': user?.uid,
                               'nickname': user?.email,
                               'url':
-                                  'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/default.png',
+                                  'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/${Random().nextInt(8)}',
                             };
 
                             var response = await http.post(url,

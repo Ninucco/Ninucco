@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/widgets/betting/betting_popup_widget.dart';
 
 class BattleMemberWidget extends StatelessWidget {
-  final String nickname, profileImage, type;
+  final String nickname, profileImage, type, memberId;
   final double ratio;
-  final int memberId, battleId;
+  final int battleId;
 
   const BattleMemberWidget({
     super.key,
@@ -34,8 +35,8 @@ class BattleMemberWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: Colors.amber,
             ),
-            child: Image.network(
-              profileImage,
+            child: CachedNetworkImage(
+              imageUrl: profileImage,
               fit: BoxFit.cover,
             ),
           ),
@@ -45,73 +46,82 @@ class BattleMemberWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              (split.length >= 5)
-                  ? Column(
-                      // 처음 배부된 기본 닉네임 형식인 경우
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${split[0]} ${split[1]}",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    "/Profile",
+                    arguments: memberId,
+                  );
+                },
+                child: (split.length >= 5)
+                    ? Column(
+                        // 처음 배부된 기본 닉네임 형식인 경우
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${split[0]} ${split[1]}",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.left,
                           ),
-                          textAlign: TextAlign.left,
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          "${split[2]} ${split[3]} ${split[4]}",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(
+                            height: 5,
                           ),
-                        ),
-                      ],
-                    )
-                  : (nickname.length > 6)
-                      ? Column(
-                          // 수정된 닉네임이 7글자 이상인 경우
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              nickname.substring(0, 6),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          Text(
+                            "${split[2]} ${split[3]} ${split[4]}",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )
+                    : (nickname.length > 6)
+                        ? Column(
+                            // 수정된 닉네임이 7글자 이상인 경우
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                nickname.substring(0, 6),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.left,
                               ),
-                              textAlign: TextAlign.left,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              nickname.substring(6),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          // 수정된 닉네임이 6글자 이하인 경우
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              nickname,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                nickname.substring(6),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
-                        ),
+                            ],
+                          )
+                        : Column(
+                            // 수정된 닉네임이 6글자 이하인 경우
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                nickname,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            ],
+                          ),
+              ),
               const SizedBox(
                 height: 40,
               ),

@@ -9,9 +9,9 @@ import 'package:http_parser/http_parser.dart';
 class BattleApiService {
   static const String baseUrl = "https://k8a605.p.ssafy.io/api/battle";
 
-  static Future<List<BattleInfoModel>> getBattles() async {
+  static Future<List<BattleInfoModel>> getBattles(String battleStatus) async {
     List<BattleInfoModel> battleInstances = [];
-    final url = Uri.parse('$baseUrl/list?option=latest');
+    final url = Uri.parse('$baseUrl/list?option=latest&status=$battleStatus');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final battles = jsonDecode(response.body)["data"]["battleList"];

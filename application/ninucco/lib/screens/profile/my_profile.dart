@@ -1,7 +1,9 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/providers/nav_provider.dart';
 import 'package:ninucco/screens/profile/profile_battles_list.dart';
 import 'package:ninucco/screens/profile/profile_scan_result.dart';
 import 'package:ninucco/services/user_service.dart';
@@ -29,6 +31,9 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   late String userId;
 
   UserDetailData? _userDetailData;
+  List<Friend> _receivedFriendList = [];
+  List<Friend> _friendList = [];
+
   Future<void>? _initUserDetail;
 
   @override
@@ -39,13 +44,25 @@ class _MyProfileScreenState extends State<MyProfileScreen>
 
   Future<void> _initDatas(String id) async {
     final data = await UserService.getUserDetailById(id);
-    _userDetailData = data;
+    final receivedFriendsData = await UserService.getReceivedFriends(id);
+    final friendsData = await UserService.getFriends(id);
+
+    setState(() {
+      _userDetailData = data;
+      _receivedFriendList = receivedFriendsData;
+      _friendList = friendsData;
+    });
   }
 
   Future<void> _refreshData(String id) async {
     final data = await UserService.getUserDetailById(id);
+    final receivedFriendsData = await UserService.getReceivedFriends(id);
+    final friendsData = await UserService.getFriends(id);
+
     setState(() {
       _userDetailData = data;
+      _receivedFriendList = receivedFriendsData;
+      _friendList = friendsData;
     });
   }
 
@@ -93,20 +110,24 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                         return SliverPersistentHeader(
                           pinned: true,
                           delegate: HomeSliverAppBar(
-                            expandedHeight: 450.0,
-                            height: 96,
+                            expandedHeight: 480.0,
+                            height: 108,
                             tabbar: myTabBar,
                             userData: null,
+                            receivedFriendsCount: _receivedFriendList.length,
+                            friendsCount: _friendList.length,
                           ),
                         );
                       }
                       return SliverPersistentHeader(
                         pinned: true,
                         delegate: HomeSliverAppBar(
-                          expandedHeight: 450.0,
-                          height: 96,
+                          expandedHeight: 480.0,
+                          height: 108,
                           tabbar: myTabBar,
                           userData: _userDetailData,
+                          receivedFriendsCount: _receivedFriendList.length,
+                          friendsCount: _friendList.length,
                         ),
                       );
                     }),
@@ -175,13 +196,17 @@ class GridItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NavProvider navProvider = Provider.of<NavProvider>(context);
+
     return SliverPadding(
       padding: const EdgeInsets.all(8.0),
       sliver: Builder(builder: (context) {
-        return SliverGrid.count(
-            crossAxisCount: 3,
-            children: name == '검사결과'
-                ? userData.scanResultList
+        switch (name) {
+          case "검사결과":
+            if (userData.scanResultList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.scanResultList
                     .asMap()
                     .entries
                     .map(
@@ -193,12 +218,44 @@ class GridItems extends StatelessWidget {
                                 data: userData.scanResultList,
                               ));
                         },
-                        child: Image.network(data.value.imgUrl),
+                        child: CachedNetworkImage(imageUrl: data.value.imgUrl),
                       ),
                     )
-                    .toList()
-                : name == '배틀이력'
-                    ? userData.curBattleList
+                    .toList(),
+              );
+            } else {
+              return SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    const Text("지금 바로 검사 하고 프로필을 받아보세요!"),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.black87,
+                        ),
+                        onPressed: () {
+                          navProvider.to(4);
+                          // Navigator.pushNamed(context, "/Category");
+                        },
+                        child: const Text("검사하러 가기",
+                            style: TextStyle(fontSize: 16)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+          case "배틀이력":
+            if (userData.curBattleList.isNotEmpty ||
+                userData.prevBattleList.isNotEmpty) {
+              return SliverGrid.count(
+                crossAxisCount: 3,
+                children: userData.curBattleList
                         .asMap()
                         .entries
                         .map(
@@ -207,31 +264,159 @@ class GridItems extends StatelessWidget {
                               Navigator.pushNamed(context, "/ProfileBattleList",
                                   arguments: ProfileBattlesListArgs(
                                     selectedId: data.key,
-                                    data: userData.curBattleList,
+                                    data: userData.curBattleList +
+                                        userData.prevBattleList,
+                                    userId: userData.user.id,
                                   ));
                             },
-                            child: Image.network(
-                              userData.user.id == data.value.applicantId
-                                  ? data.value.applicantUrl
-                                  : data.value.opponentUrl,
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  userData.user.id == data.value.applicantId
+                                      ? data.value.applicantUrl
+                                      : data.value.opponentUrl,
                             ),
                           ),
                         )
-                        .toList()
-                    : userData.prevBattleList
+                        .toList() +
+                    userData.prevBattleList
+                        .asMap()
+                        .entries
                         .map(
-                          (battle) => GestureDetector(
-                            onTap: () {},
-                            child: Image.network(
-                              userData.user.id == battle.applicantId
-                                  ? battle.applicantUrl
-                                  : battle.opponentUrl,
+                          (data) => GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "/ProfileBattleList",
+                                  arguments: ProfileBattlesListArgs(
+                                    selectedId: userData.curBattleList.length +
+                                        data.key,
+                                    data: userData.curBattleList +
+                                        userData.prevBattleList,
+                                    userId: userData.user.id,
+                                  ));
+                            },
+                            child: Stack(
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl:
+                                      userData.user.id == data.value.applicantId
+                                          ? data.value.applicantUrl
+                                          : data.value.opponentUrl,
+                                ),
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: MediaQuery.of(context).size.width / 6,
+                                  left: MediaQuery.of(context).size.width / 6,
+                                  child: FractionalTranslation(
+                                    translation: const Offset(-0.5, -0.5),
+                                    child: Transform.rotate(
+                                      angle: -45,
+                                      child: ResultText(
+                                        data: data.value,
+                                        myId: userData.user.id,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         )
-                        .toList());
+                        .toList(),
+              );
+            } else {
+              return SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    const Text("지금 바로 친구와 경쟁해보세요!"),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.black87,
+                        ),
+                        onPressed: () {
+                          navProvider.to(2);
+                        },
+                        child: const Text("배틀 하러하기",
+                            style: TextStyle(fontSize: 16)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+          default:
+            return SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  const Text("지금 바로 검사 하고 프로필을 받아보세요!"),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Colors.black87,
+                      ),
+                      onPressed: () {
+                        navProvider.to(2);
+                        // Navigator.pushNamed(context, "/BattleCreateScreen");
+                      },
+                      child:
+                          const Text("배틀 생성하기", style: TextStyle(fontSize: 16)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+        }
       }),
     );
+  }
+}
+
+class ResultText extends StatelessWidget {
+  final Battle data;
+  final String myId;
+  const ResultText({
+    super.key,
+    required this.data,
+    required this.myId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var isApplicant = data.applicantId == myId;
+    var isWin = isApplicant && data.result == "APPLICANT" ||
+        !isApplicant && data.result != "APPLICANT";
+    var battleResult = data.result == "DRAW"
+        ? "DRAW"
+        : isWin
+            ? "WIN"
+            : "LOSE";
+    Map colorMap = {
+      "DRAW": const Color(0xffE4E5E7),
+      "WIN": const Color(0xff00fc00),
+      "LOSE": const Color.fromARGB(255, 245, 73, 73),
+    };
+    return Builder(builder: (context) {
+      return Text(
+        battleResult,
+        style: TextStyle(
+          color: colorMap[battleResult],
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    });
   }
 }
 
@@ -240,17 +425,22 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final double height;
   final TabBar tabbar;
+  final int receivedFriendsCount;
+  final int friendsCount;
 
   HomeSliverAppBar({
     required this.userData,
+    required this.receivedFriendsCount,
     required this.expandedHeight,
     required this.tabbar,
     required this.height,
+    required this.friendsCount,
   });
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final double percentage = shrinkOffset / (expandedHeight - height);
+    var authProvider = Provider.of<AuthProvider>(context);
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.expand,
@@ -313,7 +503,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
+                        fontSize: 16,
                       ),
                     ),
                   ],
@@ -362,15 +552,15 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                       Text(
                         userData != null ? userData!.user.nickname : "---",
                         style: const TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           height: 1.6,
                         ),
                       ),
                       // SizedBox(height: 32.0),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 32.0),
                       CircleAvatar(
-                        radius: 80,
+                        radius: 64,
                         backgroundImage: NetworkImage(
                           userData != null
                               ? userData!.user.profileImage
@@ -378,34 +568,97 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
                         ),
                       ),
                       const SizedBox(height: 32.0),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.monetization_on_rounded,
+                              color: Colors.amber,
+                            ),
+                            Text(
+                              "${authProvider.member?.point} 니누꼬인을 보유하고 있어요.",
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  'assets/icons/friends.png',
-                                  color: Colors.black,
-                                  fit: BoxFit.fitWidth,
-                                  width: 48,
-                                  height: 48,
-                                ),
-                                const SizedBox(height: 6),
-                                Builder(builder: (context) {
-                                  return Text(
-                                    userData != null
-                                        ? userData!.friendList.length.toString()
-                                        : '-',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  );
-                                }),
-                                const SizedBox(height: 6),
-                                const Text('친구목록'),
-                              ],
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/ReceivedFriendsListScreen",
+                                  arguments: authProvider.member!.id,
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.person_pin_outlined,
+                                    size: 48,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Builder(builder: (context) {
+                                    return Text(
+                                      receivedFriendsCount.toString(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 6),
+                                  const Text('받은 친구요청'),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 2,
+                            height: 124,
+                            color: Colors.black.withOpacity(0.2),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/FriendsListScreen",
+                                  arguments: authProvider.member!.id,
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/icons/friends.png',
+                                    color: Colors.black,
+                                    fit: BoxFit.fitWidth,
+                                    width: 48,
+                                    height: 48,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Builder(builder: (context) {
+                                    return Text(
+                                      friendsCount.toString(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 6),
+                                  const Text('친구목록'),
+                                ],
+                              ),
                             ),
                           ),
                           Container(
@@ -467,7 +720,7 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
           ),
         ),
         Positioned(
-          top: 8,
+          top: 6,
           right: 8,
           child: IconButton(
             onPressed: () {
