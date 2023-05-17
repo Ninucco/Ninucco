@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ninucco/models/battle_info_model.dart';
@@ -41,8 +42,11 @@ class _NoonLoopingDemoState extends State<NoonLoopingDemo> {
                             const BorderRadius.all(Radius.circular(5.0)),
                         child: Stack(
                           children: <Widget>[
-                            Image.network(item.memberAImage,
-                                fit: BoxFit.cover, width: 1000.0),
+                            CachedNetworkImage(
+                              imageUrl: item.memberAImage,
+                              fit: BoxFit.cover,
+                              width: 1000.0,
+                            ),
                             Positioned(
                               bottom: 0.0,
                               left: 0.0,

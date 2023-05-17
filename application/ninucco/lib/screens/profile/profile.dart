@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ninucco/models/user_detail_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
@@ -229,7 +230,7 @@ class GridItems extends StatelessWidget {
                                 data: userData.scanResultList,
                               ));
                         },
-                        child: Image.network(data.value.imgUrl),
+                        child: CachedNetworkImage(imageUrl: data.value.imgUrl),
                       ),
                     )
                     .toList(),
@@ -264,10 +265,11 @@ class GridItems extends StatelessWidget {
                                           userData.prevBattleList,
                                       userId: userData.user.id));
                             },
-                            child: Image.network(
-                              userData.user.id == data.value.applicantId
-                                  ? data.value.applicantUrl
-                                  : data.value.opponentUrl,
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  userData.user.id == data.value.applicantId
+                                      ? data.value.applicantUrl
+                                      : data.value.opponentUrl,
                             ),
                           ),
                         )
@@ -289,10 +291,11 @@ class GridItems extends StatelessWidget {
                             },
                             child: Stack(
                               children: [
-                                Image.network(
-                                  userData.user.id == data.value.applicantId
-                                      ? data.value.applicantUrl
-                                      : data.value.opponentUrl,
+                                CachedNetworkImage(
+                                  imageUrl:
+                                      userData.user.id == data.value.applicantId
+                                          ? data.value.applicantUrl
+                                          : data.value.opponentUrl,
                                 ),
                                 Container(
                                   decoration: const BoxDecoration(

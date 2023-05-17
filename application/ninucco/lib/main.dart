@@ -35,8 +35,8 @@ void main() async {
   );
 
   KakaoSdk.init(
-    nativeAppKey: '27f1506378a113d853b372bfa95cc5b1',
-    javaScriptAppKey: 'e27d0aa411109cb9f5344f538b5a5282',
+    nativeAppKey: 'ce38806c8fa40331c80fc9471e75483e',
+    javaScriptAppKey: 'c04733f3dbfc4f5a1e27c6e4217af2ba',
   );
   HttpOverrides.global = MyHttpOverrides();
   runApp(const App());

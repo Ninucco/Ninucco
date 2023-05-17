@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class RankingItem extends StatelessWidget {
@@ -70,8 +71,8 @@ class RankingItem extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Image.network(
-                          profileImage,
+                        child: CachedNetworkImage(
+                          imageUrl: profileImage,
                           fit: BoxFit.cover,
                         ),
                       ),

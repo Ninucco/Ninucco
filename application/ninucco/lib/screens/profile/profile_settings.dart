@@ -166,7 +166,7 @@ class _FormDataState extends State<FormData> {
                       return null;
                     }
                     if (value!.length < 3 || value.length > 15) {
-                      return "닉네임은 3~5글자 사이로 설정해주세요";
+                      return "닉네임은 3~15글자 사이로 설정해주세요";
                     }
                     if (!existNickname) {
                       return "존재하는 닉네임 입니다.";

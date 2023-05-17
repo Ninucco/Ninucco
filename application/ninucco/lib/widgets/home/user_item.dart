@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class UserItem extends StatelessWidget {
@@ -36,8 +37,8 @@ class UserItem extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(9999),
               ),
-              child: Image.network(
-                profileImage,
+              child: CachedNetworkImage(
+                imageUrl: profileImage,
                 fit: BoxFit.cover,
               ),
             ),
