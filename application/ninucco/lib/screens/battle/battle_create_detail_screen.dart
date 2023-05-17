@@ -126,7 +126,7 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                             resultId,
                             _resultData.question,
                           ));
-                          Navigator.pushNamed(context, '/BattleAllScreen');
+                          Navigator.pushNamed(context, '/BattleScreen');
                         },
                       ),
                     )
