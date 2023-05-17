@@ -160,8 +160,7 @@ public class BattleServiceImpl implements BattleService{
     public BattleResultRes selectOneBattleResult(Long battleId){
         return null;
     }
-    @Scheduled(cron = "0 */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
-//    @Scheduled(cron = "0 0 0 * * * ", zone = "Asia/Seoul") //every midnight
+    @Scheduled(cron = "0 0 0 * * * ", zone = "Asia/Seoul") //every midnight
     public void finishAtMidnight(){
         log.info("finish() called: "+ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
         battleRepository.findByFinishAtLessThanAndStatus(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(), BattleStatus.PROCEEDING)
