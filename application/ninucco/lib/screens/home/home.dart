@@ -282,7 +282,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(fontSize: 17),
                       ),
                       TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/BattleScreen');
+                          },
                           child: const Row(
                             children: [
                               Text(
@@ -313,7 +315,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(fontSize: 17),
                       ),
                       TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/RankingScreen');
+                          },
                           child: const Row(
                             children: [
                               Text(
