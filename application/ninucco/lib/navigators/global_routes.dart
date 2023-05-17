@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/screens/battle/battle_past_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_screen.dart';
 import 'package:ninucco/screens/battle/battle_approve.dart';
 import 'package:ninucco/screens/battle/battle_create_detail_screen.dart';
@@ -6,7 +7,6 @@ import 'package:ninucco/screens/battle/battle_create_screen.dart';
 import 'package:ninucco/screens/battle/battle_detail_screen.dart';
 import 'package:ninucco/screens/battle/battle_friend_search.dart';
 import 'package:ninucco/screens/battle/battle_prev_detail_screen.dart';
-import 'package:ninucco/screens/battle/battle_screen.dart';
 import 'package:ninucco/screens/home/category.dart';
 import 'package:ninucco/screens/home/face_scan.dart';
 import 'package:ninucco/screens/home/home.dart';
@@ -74,6 +74,8 @@ MaterialPageRoute<dynamic> globalRoutes(RouteSettings settings) {
           return ReceivedFriendsListScreen(settings: settings);
         case "/FriendsListScreen":
           return FriendsListScreen(settings: settings);
+        case "/BattlePastDetailScreen":
+          return BattlePastDetailScreen(settings: settings);
 
         default:
           return const Placeholder();
