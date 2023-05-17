@@ -1,24 +1,24 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-import { Button, TextField } from '../../../components';
-import { contactImage } from '../../../assets';
-import { useScrollFadeIn } from '../../../hooks';
+import { Button, TextField } from "../../../components";
+import { contactImage } from "../../../assets";
+import { useScrollFadeIn } from "../../../hooks";
 
 const S = {
   Wrapper: styled.section`
     width: 100%;
-    width: 1180px;
+    max-width: 1180px;
     margin: auto;
     padding: 120px 0;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
   `,
-  Image: styled.div`
+  Image: styled.div<{ image: string }>`
     width: 580px;
     height: 580px;
-    background: no-repeat center/cover url(${contactImage});
+    background: no-repeat center/cover url(${(props) => props.image});
   `,
   TextWrapper: styled.div`
     box-sizing: border-box;
@@ -30,18 +30,18 @@ const S = {
   `,
   Label: styled.p`
     display: inline-block;
-    ${props => props.theme.typography.label};
-    color: ${props => props.theme.palette.primary};
+    ${({ theme }) => theme.typography.label};
+    color: ${({ theme }) => theme.palette.primary};
     margin-bottom: 1rem;
   `,
   Title: styled.h2`
-    ${props => props.theme.typography.subtitle};
-    color: ${props => props.theme.palette.black};
+    ${({ theme }) => theme.typography.subtitle};
+    color: ${({ theme }) => theme.palette.black};
     margin-bottom: 1rem;
   `,
   Description: styled.p`
-    ${props => props.theme.typography.description};
-    color: ${props => props.theme.palette.black};
+    ${({ theme }) => theme.typography.description};
+    color: ${({ theme }) => theme.palette.black};
     margin-bottom: 2rem;
   `,
   Form: styled.form`
@@ -57,12 +57,12 @@ const S = {
   `,
 };
 
-const Contact = () => {
-  const animatedItem = {
-    0: useScrollFadeIn('up', 1, 0),
-    1: useScrollFadeIn('up', 1, 0.2),
-    2: useScrollFadeIn('up', 1, 0.3),
-    3: useScrollFadeIn('up', 1, 0.4),
+const Contact: React.FC = () => {
+  const animatedItem: { [key: number]: any } = {
+    0: useScrollFadeIn("up", 1, 0),
+    1: useScrollFadeIn("up", 1, 0.2),
+    2: useScrollFadeIn("up", 1, 0.3),
+    3: useScrollFadeIn("up", 1, 0.4),
   };
 
   return (

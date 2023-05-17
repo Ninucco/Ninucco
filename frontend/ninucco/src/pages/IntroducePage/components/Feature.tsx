@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import { featureImage } from '../../../assets';
-import { useScrollClipPath } from '../../../hooks';
+import React from "react";
+import styled from "styled-components";
+import { featureImage } from "../../../assets";
+import { useScrollClipPath } from "../../../hooks";
 
 const S = {
   Wrapper: styled.section`
@@ -21,18 +21,18 @@ const S = {
   `,
   Label: styled.p`
     display: inline-block;
-    ${props => props.theme.typography.label};
-    color: ${props => props.theme.palette.primary};
+    ${({ theme }) => theme.typography.label};
+    color: ${({ theme }) => theme.palette.primary};
     margin-bottom: 1rem;
   `,
   Title: styled.h2`
-    ${props => props.theme.typography.subtitle};
-    color: ${props => props.theme.palette.black};
+    ${({ theme }) => theme.typography.subtitle};
+    color: ${({ theme }) => theme.palette.black};
     margin-bottom: 1rem;
   `,
   Description: styled.p`
-    ${props => props.theme.typography.description};
-    color: ${props => props.theme.palette.black};
+    ${({ theme }) => theme.typography.description};
+    color: ${({ theme }) => theme.palette.black};
     margin-bottom: 2rem;
   `,
   List: styled.ul`
@@ -40,17 +40,17 @@ const S = {
     margin-bottom: 2rem;
   `,
   ListItem: styled.p`
-    ${props => props.theme.typography.description};
+    ${({ theme }) => theme.typography.description};
     padding: 1rem 1rem 1rem 0;
-    border-bottom: 1px solid ${props => props.theme.palette.lightgray};
+    border-bottom: 1px solid ${({ theme }) => theme.palette.lightgray};
     span {
-      color: ${props => props.theme.palette.secondary};
+      color: ${({ theme }) => theme.palette.secondary};
     }
   `,
   TextButton: styled.button`
     width: fit-content;
-    ${props => props.theme.typography.textbutton};
-    color: ${props => props.theme.palette.secondary};
+    ${({ theme }) => theme.typography.textbutton};
+    color: ${({ theme }) => theme.palette.secondary};
     cursor: pointer;
   `,
   Image: styled.div`
@@ -61,12 +61,12 @@ const S = {
 };
 
 const FEAURE_ITEMS = [
-  'A lacus vestibulum sed arcu non odio euismod lacinia.',
-  'In tellus integer feugiat scelerisque.',
-  'Feugiat in fermentum posuere urna nec tincidunt',
+  "A lacus vestibulum sed arcu non odio euismod lacinia.",
+  "In tellus integer feugiat scelerisque.",
+  "Feugiat in fermentum posuere urna nec tincidunt",
 ];
 
-const Feature = () => {
+const Feature: React.FC = () => {
   const animatedImage = useScrollClipPath();
 
   return (
@@ -82,7 +82,7 @@ const Feature = () => {
           ullamcorper malesuada proin. Neque convallis a cras semper auctor.
         </S.Description>
         <S.List>
-          {FEAURE_ITEMS.map((item, index) => (
+          {FEAURE_ITEMS.map((item) => (
             <S.ListItem key={item}>
               <span>•</span> {item}
             </S.ListItem>

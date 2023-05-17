@@ -1,12 +1,14 @@
-import IntroducePage from "./pages/IntroducePage";
+import { ThemeProvider } from "styled-components";
+import { GlobalStyle, theme } from "./styles";
 
-import "./App.css";
+import { IntroducePage } from "./pages";
 
 function App() {
   return (
-    <>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
       <IntroducePage />
-    </>
+    </ThemeProvider>
   );
 }
 

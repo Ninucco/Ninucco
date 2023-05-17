@@ -1,5 +1,4 @@
-import React from 'react';
-import { Header, Footer } from '../../components';
+import { Header, Footer } from "../../components";
 import {
   Hero,
   Services,
@@ -8,9 +7,9 @@ import {
   Works,
   Contact,
   Banner,
-} from './components';
+} from "../../pages/IntroducePage/components";
 
-const Home = () => {
+const IntroducePage: React.FC = () => {
   return (
     <>
       <Header />
@@ -26,4 +25,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default IntroducePage;

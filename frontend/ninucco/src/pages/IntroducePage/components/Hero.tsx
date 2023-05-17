@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import { heroBackground } from '../../../assets';
-import { Button } from '../../../components';
+import React from "react";
+import styled from "styled-components";
+import { heroBackground } from "../../../assets";
+import { Button } from "../../../components";
 
 const S = {
   Background: styled.section`
@@ -22,18 +22,18 @@ const S = {
     justify-content: center;
   `,
   Title: styled.h1`
-    ${props => props.theme.typography.title};
+    ${({ theme }) => theme.typography.title};
     color: #fff;
     margin-bottom: 0.5rem;
   `,
   Description: styled.p`
-    ${props => props.theme.typography.description};
-    color: ${props => props.theme.palette.white};
+    ${({ theme }) => theme.typography.description};
+    color: ${({ theme }) => theme.palette.white};
     margin-bottom: 2rem;
   `,
 };
 
-const Hero = () => {
+const Hero: React.FC = () => {
   return (
     <S.Background>
       <S.Wrapper>

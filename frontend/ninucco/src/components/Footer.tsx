@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import Button from './Button';
-import TextField from './TextField';
+import React from "react";
+import styled from "styled-components";
+import Button from "./Button";
+import TextField from "./TextField";
 
 const S = {
   Wrapper: styled.footer`
@@ -19,16 +19,16 @@ const S = {
     max-width: 30%;
   `,
   Logo: styled.span`
-    ${props => props.theme.typography.label};
-    color: ${props => props.theme.palette.darkgray};
+    ${({ theme }) => theme.typography.label};
+    color: ${({ theme }) => theme.palette.darkgray};
     display: inline-block;
     font-weight: 900;
     font-size: 1.5rem;
     margin-bottom: 2rem;
   `,
   Text: styled.p`
-    ${props => props.theme.typography.body};
-    color: ${props => props.theme.palette.gray};
+    ${({ theme }) => theme.typography.body};
+    color: ${({ theme }) => theme.palette.gray};
     span {
       display: block;
       margin-bottom: 1.5rem;
@@ -41,13 +41,13 @@ const S = {
     flex-direction: column;
   `,
   MenuTitle: styled.h4`
-    ${props => props.theme.typography.label};
-    color: ${props => props.theme.palette.secondary};
+    ${({ theme }) => theme.typography.label};
+    color: ${({ theme }) => theme.palette.secondary};
     margin-bottom: 2.5rem;
   `,
   MenuItem: styled.a`
-    ${props => props.theme.typography.body};
-    color: ${props => props.theme.palette.gray};
+    ${({ theme }) => theme.typography.body};
+    color: ${({ theme }) => theme.palette.gray};
     display: inline-block;
     margin-bottom: 1.5rem;
     cursor: pointer;
@@ -70,19 +70,19 @@ const S = {
   `,
   Bottom: styled.div`
     width: 100%;
-    color: ${props => props.theme.palette.gray};
+    color: ${({ theme }) => theme.palette.gray};
     margin-top: 120px;
     padding-top: 30px;
     display: flex;
     justify-content: center;
-    border-top: 1px solid ${props => props.theme.palette.lightgray};
+    border-top: 1px solid ${({ theme }) => theme.palette.lightgray};
     span {
-      ${props => props.theme.typography.caption};
+      ${({ theme }) => theme.typography.caption};
     }
   `,
 };
 
-const Footer = () => (
+const Footer: React.FC = () => (
   <S.Wrapper>
     <S.Info>
       <S.Logo>Lorem</S.Logo>
@@ -114,7 +114,7 @@ const Footer = () => (
       </S.Form>
       <S.Text>
         Et magnis dis parturient montes nascetur. Est placerat in egestas erat
-        imperdiet.{' '}
+        imperdiet.{" "}
       </S.Text>
     </S.Subscribe>
     <S.Bottom>

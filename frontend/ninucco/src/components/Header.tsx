@@ -1,30 +1,30 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import styled from 'styled-components';
-import Button from './Button';
+import React, { useEffect, useState, useCallback } from "react";
+import styled from "styled-components";
+import Button from "./Button";
 
 const S = {
-  Wrapper: styled.div`
-    width: 100%;
+  Wrapper: styled.div<{ isScroll: boolean }>`
+    width: 100vw;
     position: sticky;
     top: 0;
     z-index: 1000;
     transition: all 0.2s ease-in-out;
     background-color: ${({ isScroll, theme }) =>
-      isScroll ? theme.palette.white : 'none'};
-    box-shadow: ${props =>
-      props.isScroll ? '0 0 16px 8px rgba(0, 0, 0, 0.03)' : 'none'};
+      isScroll ? theme.palette.white : "none"};
+    box-shadow: ${({ isScroll }) =>
+      isScroll ? "0 0 16px 8px rgba(0, 0, 0, 0.03)" : "none"};
   `,
-  Header: styled.header`
+  Header: styled.header<{ isScroll: boolean }>`
     width: 100%;
     max-width: 1180px;
     margin: auto;
     transition: all 0.2s ease-in-out;
-    height: ${props => (props.isScroll ? '70px' : '100px')};
+    height: ${({ isScroll }) => (isScroll ? "70px" : "100px")};
     display: flex;
     flex-direction: row;
     align-items: center;
   `,
-  Logo: styled.span`
+  Logo: styled.span<{ isScroll: boolean }>`
     color: ${({ isScroll, theme }) =>
       isScroll ? theme.palette.black : theme.palette.white};
     font-weight: 900;
@@ -38,8 +38,7 @@ const S = {
     display: flex;
     justify-content: center;
   `,
-  NavigationItem: styled.a`
-    color: ${props => props.theme.palette.white};
+  NavigationItem: styled.a<{ isScroll: boolean }>`
     color: ${({ isScroll, theme }) =>
       isScroll ? theme.palette.black : theme.palette.white};
     margin: 0 1rem;
@@ -56,24 +55,23 @@ const S = {
   `,
 };
 
-const NAVIGATION_ITEMS = ['Home', 'About', 'Services', 'Blog', 'Contact'];
+const NAVIGATION_ITEMS = ["Home", "About", "Services", "Blog", "Contact"];
 
-const Header = () => {
+const Header: React.FC = () => {
   const [isScroll, setIsScroll] = useState(false);
 
   const handleScroll = useCallback(() => {
     if (window.pageYOffset > 0) {
       setIsScroll(true);
-    }
-    if (window.pageYOffset === 0) {
+    } else {
       setIsScroll(false);
     }
   }, []);
 
   useEffect(() => {
-    window.addEventListener('mousewheel', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('mousewheel', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
 
@@ -82,14 +80,14 @@ const Header = () => {
       <S.Header isScroll={isScroll}>
         <S.Logo isScroll={isScroll}>Lorem</S.Logo>
         <S.Navigation>
-          {NAVIGATION_ITEMS.map(item => (
+          {NAVIGATION_ITEMS.map((item) => (
             <S.NavigationItem key={item} isScroll={isScroll}>
               {item}
             </S.NavigationItem>
           ))}
         </S.Navigation>
         <S.ButtonWrapper>
-          <Button fill="solid" type="button" style={{ marginLeft: 'auto' }}>
+          <Button fill="solid" type="button" style={{ marginLeft: "auto" }}>
             Get a Quote
           </Button>
         </S.ButtonWrapper>
