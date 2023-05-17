@@ -63,6 +63,7 @@ class _FormDataState extends State<FormData> {
   String nickname = '';
   String newProfileUrl = '';
   bool existNickname = false;
+
   @override
   void initState() {
     newProfileUrl = widget.userData.user.profileImage;
@@ -78,6 +79,8 @@ class _FormDataState extends State<FormData> {
 
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
     var me = authProvider.member;
+
+    bool isAnonymous = currentUser!.isAnonymous;
 
     return Form(
       key: formKey,
@@ -177,7 +180,7 @@ class _FormDataState extends State<FormData> {
               ],
             ),
           ),
-          currentUser!.isAnonymous
+          isAnonymous
               ? SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
@@ -192,6 +195,16 @@ class _FormDataState extends State<FormData> {
                               message: '이미 해당 계정과 연동된 유저가 존재합니다.',
                             ),
                           );
+                        } else if (result == 'Convert Process Done') {
+                          showTopSnackBar(
+                            Overlay.of(context),
+                            const CustomSnackBar.success(
+                              message: '계정 연동 성공!',
+                            ),
+                          );
+                          setState(() {
+                            isAnonymous = true;
+                          });
                         }
                       }
                     },
