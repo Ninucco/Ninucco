@@ -59,15 +59,8 @@ public class FaceServiceImpl {
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
         String keyword = similarityResultList.get(0).getKeyword();
         String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
-
         //프롬프트 생성
-        String basePrompt = "sitting in a office typing code,unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render";
-        String prompt=new StringBuilder().append("Cute small ")
-                .append(keyword)
-                .append(personalityKeyword)
-                //기본 프롬프트
-                .append(basePrompt)
-                .toString();
+        String prompt=this.getPrompt(r.getModelType(), personalityKeyword, keyword);
 
         //4. 이미지 생성
         byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
@@ -89,20 +82,23 @@ public class FaceServiceImpl {
         // 5. resultTitle, resultDescription을 얻는다.
 
         String personalityKeywordKor = redisService.getRedisStringValue("kor:"+personalityKeyword);
-        String keywordKor = redisService.getRedisStringValue("kor:"+keyword);
+        String keywordKor = r.getModelType().equals("programming")?keyword:redisService.getRedisStringValue("kor:"+keyword);
 
         String titleModifier = redisService.getRedisStringValue("title-modifier:"+personalityKeywordKor);
-        String descriptionModifier = redisService.getRedisStringValue("description-modifier:"+personalityKeywordKor);
+        String personalityDescriptionModifier = redisService.getRedisStringValue("description-modifier:"+personalityKeywordKor);
+        String descriptionModifier = redisService.getRedisStringValue("description-modifier:"+keywordKor);
 
         StringBuilder resultTitle = new StringBuilder().append(titleModifier).append(' ')
                 .append(personalityKeywordKor).append(' ')
                 .append(keywordKor)
                 .append("상");
-        String resultDescription = descriptionModifier;
+        String resultDescription = descriptionModifier+personalityDescriptionModifier;
         //6. 유저 아이디로 FCM을 보낸다.
 
         //6. HTTPResponse로 보낸다.
         List<Similarity> listTop5 = new ArrayList<>(similarityResultList.subList(0, Math.min(5, similarityResultList.size())));
+        if(!r.getModelType().equals("programming"))
+            listTop5.forEach(result->result.setKeyword(redisService.getRedisStringValue("kor:"+result.getKeyword())));
 
         similarityResultRepository.save(
                 SimilarityResult.builder()
@@ -120,13 +116,19 @@ public class FaceServiceImpl {
                 .resultDescription(resultDescription)
                 .resultList(listTop5).build();
     }
-//    public SimilarityResultListRes findSimilarityResultsByMemberId(String memberId){
-//        return new SimilarityResultListRes(similarityResultRepository.findAllByMemberId(memberId).stream()
-//                .map((r -> SimilarityResultRes.builder()
-//                        .modelType(r.getModelType())
-//                        .imgUrl(r.getImgUrl())
-//                        .resultTitle(r.getResultTitle())
-//                        .resultDescription(r.getResultDescription())
-//                        .resultList(r.getResultList()).build())).collect(Collectors.toList()));
-//    }
+    private String getPrompt(String modelType, String personalityKeyword, String keyword){
+        final String basePrompt1 = "";//"Cute and adorable cartoon, ";
+        final String basePrompt2 = "unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render";
+                //"fantasy, dreamlike, surrealism, super cute, trending on artstation";
+        StringBuilder sb =  new StringBuilder().append(basePrompt1);
+        if(modelType.equals("programming")){
+            sb.append("developer sitting in a office typing code,");
+        }
+        sb.append(personalityKeyword);
+        if(modelType.equals("fruit")){
+            sb.append("many ").append(keyword).append(" on hands");
+        }
+        sb.append(basePrompt2);
+        return sb.toString();
+    }
 }
