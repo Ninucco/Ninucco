@@ -1,8 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:http/http.dart' as http;
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:uuid/uuid.dart';
 
 class ProfileScanResultsArgs {
   final List<ResultData> data;
@@ -49,6 +57,39 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
     0xffA8AAAE
   ];
 
+  Future<void> _saveImage(BuildContext context, String url) async {
+    var uuid = const Uuid();
+
+    try {
+      final http.Response response = await http.get(Uri.parse(url));
+      final dir = await getTemporaryDirectory();
+      var filename = '${dir.path}/${uuid.v1()}.png';
+      final file = File(filename);
+      await file.writeAsBytes(response.bodyBytes);
+
+      // Ask the user to save it
+      final params = SaveFileDialogParams(sourceFilePath: file.path);
+      final finalPath = await FlutterFileDialog.saveFile(params: params);
+
+      if (finalPath != null) {
+        if (!mounted) return;
+        showTopSnackBar(
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message: '저장 되었습니다.',
+          ),
+        );
+      }
+    } catch (e) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: '에러로 저장하지 못했습니다.',
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,9 +106,36 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
         itemBuilder: (context, index) {
           return Column(
             children: [
-              Image.network(
-                _resultDataList[index].imgUrl,
-                fit: BoxFit.fitWidth,
+              GestureDetector(
+                onLongPress: () async {
+                  (await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('이미지 저장'),
+                      content: const Text('이미지를 저장하시겠습니까?'),
+                      actions: <Widget>[
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('No'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('No'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            _saveImage(context, _resultDataList[index].imgUrl);
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    ),
+                  ));
+                },
+                child: Image.network(
+                  _resultDataList[index].imgUrl,
+                  fit: BoxFit.fitWidth,
+                ),
               ),
               ExpansionTile(
                 title: Text(

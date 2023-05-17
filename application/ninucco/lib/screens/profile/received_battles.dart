@@ -21,6 +21,17 @@ class ReceivedBattles extends StatelessWidget {
       ),
       body: SingleChildScrollView(
           child: Container(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height -
+              AppBar().preferredSize.height -
+              92,
+        ),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg/bg2.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
         padding: const EdgeInsetsDirectional.symmetric(
           vertical: 16,
           horizontal: 12,
