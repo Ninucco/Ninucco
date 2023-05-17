@@ -5,10 +5,9 @@ import 'package:ninucco/models/battle_comment_info_model.dart';
 import 'package:ninucco/models/battle_comment_post_model.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
-import 'package:ninucco/services/battle_api_service.dart';
 import 'package:ninucco/services/battle_comment_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_comment_widget.dart';
-import 'package:ninucco/widgets/battle/battle_member_widget.dart';
+import 'package:ninucco/widgets/battle/battle_past_member_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +25,6 @@ class BattlePastDetailScreen extends StatefulWidget {
 }
 
 class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
-  late Future<BattleInfoModel> battle;
   late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();
   late BattleInfoModel _resultData;
@@ -35,7 +33,6 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
   void initState() {
     super.initState();
     _resultData = widget.settings.arguments as BattleInfoModel;
-    battle = BattleApiService.getBattlesById(_resultData.battleId);
     battleComments =
         BattleApiCommentService.getBattleComments(_resultData.battleId);
   }
@@ -88,24 +85,26 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
                             ),
                             Column(
                               children: [
-                                BattleMemberWidget(
+                                BattlePastMemberWidget(
                                   type: "APPLICANT",
                                   battleId: _resultData.battleId,
                                   memberId: _resultData.memberAId,
                                   nickname: _resultData.memberANickname,
                                   profileImage: _resultData.memberAImage,
                                   ratio: _resultData.ratioA,
+                                  result: _resultData.result,
                                 ),
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                BattleMemberWidget(
+                                BattlePastMemberWidget(
                                   type: "OPPONENT",
                                   battleId: _resultData.battleId,
                                   memberId: _resultData.memberBId,
                                   nickname: _resultData.memberBNickname,
                                   profileImage: _resultData.memberBImage,
                                   ratio: _resultData.ratioB,
+                                  result: _resultData.result,
                                 ),
                               ],
                             ),

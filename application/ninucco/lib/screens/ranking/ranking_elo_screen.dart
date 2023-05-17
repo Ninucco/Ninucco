@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/elo_rank_info_model.dart';
 import 'package:ninucco/widgets/ranking/ranking_item_widget.dart';
 import 'package:ninucco/services/user_rank_api_service.dart';
-import 'package:ninucco/models/user_rank_info_model.dart';
 
-class RankingLookalikeScreen extends StatelessWidget {
-  RankingLookalikeScreen({super.key});
+class RankingEloScreen extends StatelessWidget {
+  RankingEloScreen({super.key});
 
-  final Future<List<UserRankInfoModel>> userRanks =
-      UserRankApiService.getUserRanks();
+  final Future<List<EloRankInfoModel>> userRanks =
+      UserRankApiService.getEloRanks();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class RankingLookalikeScreen extends StatelessWidget {
     );
   }
 
-  ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
+  ListView makeList(AsyncSnapshot<List<EloRankInfoModel>> snapshot) {
     return ListView.separated(
       shrinkWrap: true,
       scrollDirection: Axis.vertical,
@@ -55,6 +55,7 @@ class RankingLookalikeScreen extends StatelessWidget {
           nickname: userRank.nickname,
           winCount: userRank.winCount,
           index: index,
+          type: "ELO",
           onTap: () {},
         );
       },

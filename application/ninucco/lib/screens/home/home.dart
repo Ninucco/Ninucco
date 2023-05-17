@@ -371,6 +371,7 @@ ListView makeList(AsyncSnapshot<List<UserRankInfoModel>> snapshot) {
         nickname: userRank.nickname,
         winCount: userRank.winCount,
         index: index,
+        type: "BATTLE",
         onTap: () {
           Navigator.pushNamed(
             context,

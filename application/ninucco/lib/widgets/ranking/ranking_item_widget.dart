@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class RankingItem extends StatelessWidget {
-  final String profileImage, nickname, memberId;
+  final String profileImage, nickname, memberId, type;
   final int winCount, index;
   final VoidCallback onTap;
 
@@ -14,6 +14,7 @@ class RankingItem extends StatelessWidget {
     required this.winCount,
     required this.index,
     required this.onTap,
+    required this.type,
   });
 
   @override
@@ -97,7 +98,11 @@ class RankingItem extends StatelessWidget {
                         const SizedBox(
                           height: 5,
                         ),
-                        Text("우승 총 $winCount 회"),
+                        (type == "BATTLE")
+                            ? Text("우승 총 $winCount 회")
+                            : (type == "ELO")
+                                ? Text("$winCount 점")
+                                : Text("$winCount 포인트 보유"),
                       ],
                     ),
                   ),
