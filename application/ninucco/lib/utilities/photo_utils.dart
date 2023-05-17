@@ -112,7 +112,7 @@ class PhotoUtility {
     return FeedTemplate(
       content: Content(
         title: data.resultTitle,
-        description: data.resultDescription.split('\n').sublist(0, 2).join(' '),
+        description: data.resultDescription,
         imageUrl: Uri.parse(data.imgUrl),
         link: Link(
           webUrl: Uri.parse('https://developers.kakao.com'),

@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'id': user.uid,
                                 'nickname': user.email,
                                 'url':
-                                    'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/${Random().nextInt(8)}',
+                                    'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/default_${Random().nextInt(8)}.png',
                               };
 
                               var response = await http.post(url,
@@ -187,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'id': user?.uid,
                               'nickname': user?.email,
                               'url':
-                                  'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/${Random().nextInt(8)}',
+                                  'https://ninucco-bucket.s3.ap-northeast-2.amazonaws.com/static/default_${Random().nextInt(8)}.png',
                             };
 
                             var response = await http.post(url,

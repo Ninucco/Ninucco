@@ -368,7 +368,6 @@ class GridItems extends StatelessWidget {
                       ),
                       onPressed: () {
                         navProvider.to(2);
-                        // Navigator.pushNamed(context, "/BattleCreateScreen");
                       },
                       child:
                           const Text("배틀 생성하기", style: TextStyle(fontSize: 16)),
