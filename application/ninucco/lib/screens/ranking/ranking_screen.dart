@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ninucco/screens/ranking/ranking_battle_screen.dart';
-import 'package:ninucco/screens/ranking/ranking_lookalike_screen.dart';
-import 'package:ninucco/screens/ranking/ranking_betting_screen.dart';
+import 'package:ninucco/screens/ranking/ranking_elo_screen.dart';
+import 'package:ninucco/screens/ranking/ranking_point_screen.dart';
 
 class RankingScreen extends StatelessWidget {
   const RankingScreen({super.key});
@@ -54,10 +54,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
               text: "배틀",
             ),
             Tab(
-              text: "닮은꼴",
+              text: "ELO",
             ),
             Tab(
-              text: "베팅왕",
+              text: "포인트",
             ),
           ],
         ),
@@ -69,10 +69,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
             child: RankingBattleScreen(),
           ),
           Center(
-            child: RankingLookalikeScreen(),
+            child: RankingEloScreen(),
           ),
           Center(
-            child: RankingBettingScreen(),
+            child: RankingPointScreen(),
           ),
         ],
       ),

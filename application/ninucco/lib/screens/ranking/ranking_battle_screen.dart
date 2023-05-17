@@ -55,6 +55,7 @@ class RankingBattleScreen extends StatelessWidget {
           nickname: userRank.nickname,
           winCount: userRank.winCount,
           index: index,
+          type: "BATTLE",
           onTap: () {
             Navigator.of(context).pushNamed(
               "/Profile",
