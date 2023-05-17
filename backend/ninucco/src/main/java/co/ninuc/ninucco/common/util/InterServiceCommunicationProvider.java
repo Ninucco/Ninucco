@@ -16,7 +16,9 @@ public class InterServiceCommunicationProvider {
     private final OkHttpClient client;
     public InterServiceCommunicationProvider(){
         client = new OkHttpClient.Builder()
-                .connectTimeout(Integer.MAX_VALUE, TimeUnit.MILLISECONDS)
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100,TimeUnit.SECONDS)
+                .writeTimeout(100,TimeUnit.SECONDS)
                 .build();
     }
     public Optional<String> getRequestToUrlGetString(String url){
