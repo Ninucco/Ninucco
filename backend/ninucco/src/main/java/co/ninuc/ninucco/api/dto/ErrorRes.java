@@ -39,7 +39,10 @@ public enum ErrorRes implements Res{
     INTERNAL_SERVER_ERROR_5("N305"),
     INTERNAL_SERVER_ERROR_6("N306"),
     INTERNAL_SERVER_ERROR_FILE_NOT_PICTURE("N307"),
-    ERROR_POINT_DEFICIENT("N401");
+
+    // CUSTOM ERROR
+    NOT_PROCEEDING_BATTLE("N401"),
+    NOT_ENOUGH_POINT("N402");
 
     private final String code;
 

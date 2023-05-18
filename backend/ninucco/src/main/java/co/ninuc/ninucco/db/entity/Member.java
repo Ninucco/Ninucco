@@ -73,10 +73,14 @@ public class Member implements UserDetails{
     public void updateElo(int elo){
         this.elo =elo;
     }
-    public boolean subtractCoin(int amount){
-        if(this.point<amount) return false;
-        this.point-=amount;
-        return true;
+    public void updatePoint(long point){
+        this.point =point;
+    }
+    public void updateWinCount(int winCount) {
+        this.winCount = winCount;
+    }
+    public void updateLoseCount(int loseCount) {
+        this.loseCount = loseCount;
     }
 
     @Override

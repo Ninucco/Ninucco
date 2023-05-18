@@ -12,6 +12,7 @@ public interface MemberFriendRepository extends JpaRepository<MemberFriend, Long
     Optional<MemberFriend> findByMemberIdAndFriendId(String memberId, String friendId);
 
     List<MemberFriend> findAllByMemberIdAndStatus(String memberId, MemberFriendStatus status);
+    List<MemberFriend> findAllByFriendIdAndStatus(String friendId, MemberFriendStatus status);
     Boolean existsByMemberIdAndFriendId(String memberId, String friendId);
 
     void deleteMemberFriendByMember_IdAndFriend_Id(String memberId, String friendId);

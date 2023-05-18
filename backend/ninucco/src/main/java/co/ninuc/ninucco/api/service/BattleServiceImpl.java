@@ -15,8 +15,10 @@ import co.ninuc.ninucco.db.entity.Betting;
 import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.type.BattleResult;
 import co.ninuc.ninucco.db.entity.type.BattleStatus;
+import co.ninuc.ninucco.db.entity.type.BetSide;
 import co.ninuc.ninucco.db.repository.BattleRepository;
 import co.ninuc.ninucco.db.repository.BettingRepository;
+import co.ninuc.ninucco.db.repository.MemberRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,6 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService{
+    private final MemberRepository memberRepository;
     private final BattleRepository battleRepository;
     private final BettingRepository bettingRepository;
     private final ValidateUtil validateUtil;
@@ -55,30 +60,17 @@ public class BattleServiceImpl implements BattleService{
     }
 
     @Override
-    public BattleListRes selectAllBattle(String option) {
+    public BattleListRes selectAllBattle(String option, BattleStatus status) {
 
-        return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(BattleStatus.PROCEEDING).stream()
+        return new BattleListRes(battleRepository.findAllByStatusOrderByUpdatedAtDesc(status).stream()
                 .map(this::toRes).collect(Collectors.toList()));
     }
-
     @Override
-    public BattleListRes selectAllMemberBattle(String memberId, String status) {
+    public BattleListRes selectAllMemberBattle(String memberId, BattleStatus status) {
         Member member = validateUtil.memberValidateById(memberId);
         log.info("===> Request Status : {}", status);
-        BattleStatus battleStatus;
-        if(status.equals("TERMINATED")) {
-            log.info("===> TERMINATED");
-            battleStatus = BattleStatus.TERMINATED;
-        }
-        else if(status.equals("PROCEEDING")) {
-            log.info("===> PROCEEDING");
-            battleStatus = BattleStatus.PROCEEDING;
-        }
-        else {
-            throw new CustomException(ErrorRes.BAD_REQUEST);
-        }
 
-        List<Battle> battleList = battleRepository.findAllByStatus(member.getId(), member.getId(), battleStatus);
+        List<Battle> battleList = battleRepository.findAllByMemberIdAndStatus(member.getId(), status);
         return new BattleListRes(battleList.stream().map(this::toRes).collect(Collectors.toList()));
     }
 
@@ -119,6 +111,27 @@ public class BattleServiceImpl implements BattleService{
     @Transactional
     @Override
     public BettingRes insertBetting(BettingCreateReq bettingCreateReq){
+        Battle battle = validateUtil.battleValidateById(bettingCreateReq.getBattleId());
+        Member member = validateUtil.memberValidateById(bettingCreateReq.getMemberId());
+        Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(member.getId(), battle.getId());
+
+        // 배틀이 진행중이 아님
+        if(!battle.getStatus().equals(BattleStatus.PROCEEDING)) {
+            throw new CustomException(ErrorRes.NOT_PROCEEDING_BATTLE);
+        }
+
+        // 이미 베팅을 했음
+        if(optionalBetting.isPresent()) {
+            throw new CustomException(ErrorRes.CONFLICT_BETTING);
+        }
+
+        // 포인트가 부족함
+        long remainPoint = member.getPoint() - bettingCreateReq.getBetMoney();
+        if(remainPoint < 0) {
+            throw new CustomException(ErrorRes.NOT_ENOUGH_POINT);
+        }
+
+        member.updatePoint(remainPoint);
         return toBettingRes(bettingRepository.save(toEntity(bettingCreateReq)));
     }
 
@@ -133,7 +146,7 @@ public class BattleServiceImpl implements BattleService{
         /* 본인이 해당 배틀에 베팅했었다면 validate를 true로 설정하고
            베팅 정보를 Response에 전달한다.
            베팅을 하지 않았다면 validate를 false로 설정하고,
-           Response로 isExist만을 전달한다.
+           Response로 validate만을 전달한다.
         */
         if(optionalBetting.isPresent()) {
             Betting betting = optionalBetting.get();
@@ -146,37 +159,41 @@ public class BattleServiceImpl implements BattleService{
         return bettingRes;
     }
 
-
-    //TODO: 배틀 결과 조회 필요?
     @Override
     public BattleResultRes selectOneBattleResult(Long battleId){
         return null;
     }
-    //TODO: 시간마다 배틀 끝났는지 체크
-    @Scheduled(cron = "* */5 * * * *", zone = "Asia/Seoul") //every 5 minutes
-    //every 00:01
+    @Scheduled(cron = "0 0 0 * * * ", zone = "Asia/Seoul") //every midnight
     public void finishAtMidnight(){
-//        battleRepository.findAllToBeFinished()
-//                .stream().forEach((battle -> {
-//                    log.info("finish battle "+battle.getId());
-//                    finishBattle(battle.getId());
-//                }));
+        log.info("finish() called: "+ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
+        battleRepository.findByFinishAtLessThanAndStatus(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(), BattleStatus.PROCEEDING)
+                .forEach((battle -> finishBattle(battle.getId())));
     }
     //배틀이 끝나면 콜되는 함수
     @Transactional
     public void finishBattle(Long battleId){
+        log.info("finish battle "+battleId);
         Battle battle = validateUtil.battleValidateById(battleId);
-        /*배틀 결과 구하기
-         * ...
-         * */
-        BattleResult result = BattleResult.APPLICANT;
-        //배틀 결과에 따라 battleResult, 멤버들 elo업데이트
-        updateEloAndResultByResult(battle, result);
-
-        //배틀 상태 TERMINATED로 변경
-        battle.updateStatusTerminated();
+        int applicant_cnt = bettingRepository.countByBattleIdAndBetSide(battleId, BetSide.APPLICANT);
+        int opponent_cnt = bettingRepository.countByBattleIdAndBetSide(battleId, BetSide.OPPONENT);
+        BattleResult result = applicant_cnt > opponent_cnt? BattleResult.APPLICANT : (
+                applicant_cnt < opponent_cnt? BattleResult.OPPONENT: BattleResult.DRAW
+                );
+        //배틀 결과에 따라 battleResult, 멤버들 elo업데이트, 배틀 terminated로 변경
+        updateEloAndResultandTerminate(battle, result);
+        //배틀 결과에 따른 베팅 포인트 분배
+        updateBettingPoint(battle, result);// battleId, 승자, 배당
         //배틀 끝남 FCM보내기
 
+    }
+
+    public void setAllTerminatedBattleProceeding(){
+        battleRepository.findAllByStatus(BattleStatus.TERMINATED).forEach(
+                battle->{
+                    battle.updateStatusProceeding();
+                    battleRepository.save(battle);
+                }
+        );
     }
 
     // toEntity, toRes
@@ -214,6 +231,7 @@ public class BattleServiceImpl implements BattleService{
                 .applicantOdds(battle.getApplicantOdds())
                 .opponentOdds(battle.getOpponentOdds())
                 .finishTime(battle.getFinishAt())
+                .result(battle.getResult())
                 .build();
     }
     BattleRes toNullRes() {
@@ -238,7 +256,50 @@ public class BattleServiceImpl implements BattleService{
                 .betMoney(null)
                 .build();
     }
-    public void updateEloAndResultByResult(Battle battle, BattleResult winner){
+
+    public void updateBettingPoint(Battle battle, BattleResult result) { // battleId, 승자, 배당
+        // 배틀 결과에 따라 승자, 배당 결정
+        double odds;
+        BetSide winner;
+        List<Betting> winList;
+
+        // 비겼다면 해당 배틀에 베팅한 모든 사람들을 리스트에 담고, 배율은 1.0으로 설정
+        if(result.equals(BattleResult.DRAW)) {
+            winList = bettingRepository.findAllByBattleId(battle.getId());
+            odds = 1.0;
+
+        }
+        // 누군가 이겼다면 승자와 해당 배율을 설정한다.
+        else {
+            if(result.equals(BattleResult.APPLICANT)) {
+                winner = BetSide.APPLICANT;
+                odds = battle.getApplicantOdds();
+            }
+            else {
+                winner = BetSide.OPPONENT;
+                odds = battle.getOpponentOdds();
+            }
+            // 승자측에 베팅한 모든 사람들을 리스트에 담는다.
+            winList = bettingRepository.findAllByBattleIdAndBetSide(battle.getId(), winner);
+        }
+
+        // 승자 쪽에 베팅한 사람들한테
+        for(Betting b : winList) {
+            // 멤버가 유효하지 않다면 그 멤버는 무시하고 진행해야한다.(무시된 멤버는 따로 테이블로 관리하는 등 별도 조치 필요)
+            Member member = validateUtil.memberValidateById(b.getMember().getId());
+            long rewardPoint = (long)Math.ceil(b.getBetMoney() * odds);
+            log.info("===> reward  memberId : {}, pointBefore : {}, rewardPoint : {}", member.getId(), member.getPoint(), rewardPoint);
+            member.updatePoint(member.getPoint() + rewardPoint);
+            memberRepository.save(member);
+            //TODO 각 멤버에게 알림 전송
+        }
+        // 배당에 맞는 포인트 분배
+
+    }
+
+    //TODO 2중 Transactional 문제 없나요?
+    @Transactional
+    public void updateEloAndResultandTerminate(Battle battle, BattleResult winner){
         if(winner==BattleResult.PROCEEDING)
             throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
         Member mWin, mLose;
@@ -254,8 +315,15 @@ public class BattleServiceImpl implements BattleService{
         int d = (int)((double)C*2*rLose/rSum);
         if(d==0) d=1;
         mWin.updateElo(mWin.getElo()+d);
+        mWin.updateWinCount(mWin.getWinCount() + 1);
+        memberRepository.save(mWin);
         mLose.updateElo(rLose-d);
+        mLose.updateLoseCount(mLose.getLoseCount() + 1);
+        memberRepository.save(mLose);
         battle.updateResult(winner);
+        //배틀 상태 TERMINATED로 변경
+        battle.updateStatusTerminated();
+        battleRepository.save(battle);
     }
     private static double[] calcOddsByElos(int elo1, int elo2){
         int eloSum = elo1+elo2;

@@ -23,6 +23,7 @@ public class Betting extends BaseEntity {
     @JoinColumn(referencedColumnName = "id", name="member_id")
     private Member member;
     @Column(name="bet_side", nullable = false)
+    @Enumerated(EnumType.STRING)
     BetSide betSide;
     @Column(name="bet_money", nullable = false)
     Long betMoney;

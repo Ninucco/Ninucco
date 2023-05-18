@@ -5,6 +5,7 @@ import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.*;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
+import co.ninuc.ninucco.db.entity.type.MemberFriendStatus;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +54,7 @@ public class MemberController {
         );
     }
 
-    @ApiOperation(value = "멤버 사진 업데이트", notes="멤버 사진주소를 업데이트 합니다.")
+    @ApiOperation(value = "멤버 사진을 파일로 업데이트", notes="멤버 사진을 파일로 업데이트 합니다.")
     @PatchMapping("/photo")
     public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestPart String memberId, @RequestPart MultipartFile img){
         MemberUpdatePhotoReq memberUpdatePhotoReq= MemberUpdatePhotoReq.builder()
@@ -62,6 +63,14 @@ public class MemberController {
                 .build();
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoReq))
+        );
+    }
+
+    @ApiOperation(value = "멤버 사진을 url로 업데이트", notes="멤버 사진을 주소로 업데이트 합니다.")
+    @PatchMapping("/photo/url")
+    public ResponseEntity<ApiResult<Res>> updateMemberPhotoByUrl(@ModelAttribute MemberUpdatePhotoUrlReq memberUpdatePhotoUrlReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoUrlReq))
         );
     }
 
@@ -118,11 +127,18 @@ public class MemberController {
                 new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend(myId, friendId)));
     }
 
-    @ApiOperation(value = "친구 목록 조회", notes = "해당 사용자의 친구 목록을 조회합니다. status => WAITING : 받은 신청 목록, FRIEND : 친구 목록 조회")
+    @ApiOperation(value = "친구 목록 조회", notes = "해당 사용자의 친구 목록을 조회합니다. status => WAITING : 보낸 신청 목록, FRIEND : 친구 목록 조회")
     @GetMapping("/friend-list")
-    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId,@RequestParam String status) {
+    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId,@RequestParam MemberFriendStatus status) {
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend(memberId,status)));
+    }
+
+    @ApiOperation(value = "받은 친구 신청 목록 조회", notes = "해당 사용자의 받은 친구 신청 목록을 조회합니다.")
+    @GetMapping("/received-friend-list")
+    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberFriendService.selectAllReceivedFriend(memberId)));
     }
 
     @ApiOperation(value = "친구 삭제", notes = "친구를 삭제합니다.")

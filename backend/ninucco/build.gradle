@@ -16,6 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	google()
 }
 
 dependencies {
@@ -39,8 +40,11 @@ dependencies {
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 
-	/* FCM */
+	/* Firebase Admin sdk */
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	/* Firebase Messaging */
+	implementation 'com.google.firebase:firebase-core:21.1.1'
+	implementation 'com.google.firebase:firebase-messaging:23.1.2'
 
 	/* okhttp3 */
 	implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
