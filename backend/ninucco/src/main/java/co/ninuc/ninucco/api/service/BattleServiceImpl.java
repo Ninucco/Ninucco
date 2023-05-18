@@ -114,16 +114,19 @@ public class BattleServiceImpl implements BattleService{
         Battle battle = validateUtil.battleValidateById(bettingCreateReq.getBattleId());
         Member member = validateUtil.memberValidateById(bettingCreateReq.getMemberId());
         Optional<Betting> optionalBetting = bettingRepository.findByMemberIdAndBattleId(member.getId(), battle.getId());
-        if(optionalBetting.isPresent()) {
-            throw new CustomException(ErrorRes.CONFLICT_BETTING);
-        }
 
-        long remainPoint = member.getPoint() - bettingCreateReq.getBetMoney();
-
+        // 배틀이 진행중이 아님
         if(!battle.getStatus().equals(BattleStatus.PROCEEDING)) {
             throw new CustomException(ErrorRes.NOT_PROCEEDING_BATTLE);
         }
 
+        // 이미 베팅을 했음
+        if(optionalBetting.isPresent()) {
+            throw new CustomException(ErrorRes.CONFLICT_BETTING);
+        }
+
+        // 포인트가 부족함
+        long remainPoint = member.getPoint() - bettingCreateReq.getBetMoney();
         if(remainPoint < 0) {
             throw new CustomException(ErrorRes.NOT_ENOUGH_POINT);
         }
