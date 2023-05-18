@@ -11,6 +11,6 @@ public interface BettingRepository extends JpaRepository<Betting, Long> {
     Long countByBattleId(Long battleId);
     Optional<Betting> findByMemberIdAndBattleId(String memberId, Long battleId);
     int countByBattleIdAndBetSide(Long battleId, BetSide betSide);
-
-    List<Betting> findByBattleIdAndBetSide(Long battleId, BetSide betSide);
+    List<Betting> findAllByBattleId(Long battleId);
+    List<Betting> findAllByBattleIdAndBetSide(Long battleId, BetSide betSide);
 }
