@@ -84,6 +84,7 @@ class BattleCommentItem extends StatelessWidget {
                       left: 15,
                     ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,16 +108,14 @@ class BattleCommentItem extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              content,
-                              style: const TextStyle(
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          content,
+                          style: const TextStyle(
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
                         ),
                       ],
                     ),

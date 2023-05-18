@@ -41,7 +41,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
 
   void toggleBetCheck() {
     setState(() {
-      _resultBetCheck = false;
+      _resultBetCheck = true;
     });
   }
 

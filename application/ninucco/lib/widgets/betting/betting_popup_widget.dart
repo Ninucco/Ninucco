@@ -27,8 +27,6 @@ class BettingPopupWidget extends StatefulWidget {
 
 class _BettingPopupWidgetState extends State<BettingPopupWidget> {
   final myController = TextEditingController();
-  late bool _betCheck;
-  bool inited = false;
   @override
   void initState() {
     super.initState();
@@ -39,6 +37,9 @@ class _BettingPopupWidgetState extends State<BettingPopupWidget> {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     return ElevatedButton(
       onPressed: () {
+        if (widget.betCheck) {
+          return;
+        }
         showModalBottomSheet(
           isScrollControlled: true,
           useRootNavigator: true,
