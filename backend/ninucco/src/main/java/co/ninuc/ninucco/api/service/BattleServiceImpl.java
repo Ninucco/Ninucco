@@ -315,8 +315,10 @@ public class BattleServiceImpl implements BattleService{
         int d = (int)((double)C*2*rLose/rSum);
         if(d==0) d=1;
         mWin.updateElo(mWin.getElo()+d);
+        mWin.updateWinCount(mWin.getWinCount() + 1);
         memberRepository.save(mWin);
         mLose.updateElo(rLose-d);
+        mLose.updateLoseCount(mLose.getLoseCount() + 1);
         memberRepository.save(mLose);
         battle.updateResult(winner);
         //배틀 상태 TERMINATED로 변경

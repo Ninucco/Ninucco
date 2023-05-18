@@ -76,6 +76,12 @@ public class Member implements UserDetails{
     public void updatePoint(long point){
         this.point =point;
     }
+    public void updateWinCount(int winCount) {
+        this.winCount = winCount;
+    }
+    public void updateLoseCount(int loseCount) {
+        this.loseCount = loseCount;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
