@@ -45,13 +45,24 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
     _initBattleComment = _initDatas(_resultData.battleId);
   }
 
+  DateTime dateTime = DateTime.now();
+
   void handleSubmit({value, me}) {
     setState(() {
+      List<int> currentTime = [
+        dateTime.year,
+        dateTime.month,
+        dateTime.day,
+        dateTime.hour,
+        dateTime.minute,
+        dateTime.second,
+      ];
       var newComment = BattleCommentInfoModel(
         content: value,
         id: me.id,
         nickname: me!.nickname,
         profileImage: me.url,
+        createdAt: currentTime,
       );
       _battleComments = [newComment] + _battleComments!;
     });
