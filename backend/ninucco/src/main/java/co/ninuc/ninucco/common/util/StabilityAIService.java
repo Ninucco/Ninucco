@@ -30,14 +30,14 @@ public class StabilityAIService{
                 "Authorization", stabilityAIKey
         );
     }
-    private JSONObject getJsonObjectImgToImg(byte[] imgByteArray, String prompt){
+    private JSONObject getJsonObjectImgToImg(byte[] imgByteArray, String prompt, String imageStrength, String stylePreset){
         RequestBody requestBody = new MultipartBody.Builder()
                 .addFormDataPart("init_image", "", RequestBody.create(imgByteArray, MediaType.parse("image/png")))
                 .addFormDataPart("text_prompts[0][text]", prompt)
                 .addFormDataPart("init_image_mode", "IMAGE_STRENGTH")
-                .addFormDataPart("image_strength", "0.35")
-                .addFormDataPart("style_preset", "low-poly")
-//                .addFormDataPart("cfg_scale", "7")
+                .addFormDataPart("image_strength", imageStrength)
+                .addFormDataPart("style_preset", stylePreset)
+                .addFormDataPart("cfg_scale", "9")
                 .addFormDataPart("clip_guidance_preset", "FAST_BLUE")
                 .addFormDataPart("samples", "1")
                 .addFormDataPart("steps", "30")
@@ -49,8 +49,8 @@ public class StabilityAIService{
         if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_STABILITY_AI);
         else return res.get();
     }
-    public byte[] getByteArrayImgToImg(byte[] imgByteArray, String prompt){
-        JSONArray picArray = (JSONArray) this.getJsonObjectImgToImg(imgByteArray,prompt).get("artifacts");
+    public byte[] getByteArrayImgToImg(byte[] imgByteArray, String prompt, String imageStrength, String stylePreset){
+        JSONArray picArray = (JSONArray) this.getJsonObjectImgToImg(imgByteArray,prompt,imageStrength, stylePreset).get("artifacts");
         JSONObject fstPic = (JSONObject)picArray.get(0);
         String fstPicBase64 = (String)fstPic.get("base64");
         return Base64.decodeBase64(fstPicBase64);
