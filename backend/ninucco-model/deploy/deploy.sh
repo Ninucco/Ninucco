@@ -31,9 +31,20 @@ do
     if [ "$TEST_API_STATUS_CODE" == 200 ]; then
       echo "TEST API SUCCESS !! >> ${AFTER_COMPOSE_COLOR} Container WAS Running!"
 
+      file_path="../settings/r_proxy/nginx.all.conf"
+      if [ "$BEFORE_COMPOSE_COLOR" == "green" ]; then
+        old_string="8002"
+        new_string="8001"
+      else
+        old_string="8001"
+        new_string="8002"
+      fi
+      sed -i "s/$old_string/$new_string/g" "$file_path"
+      echo "switch port : $old_string to $new_string"
+
       # 새로운 컨테이너에 대한 nginx 설정파일 복사 후 nginx reload
       echo "COPY nginx.conf"
-      docker cp ../settings/model/model.${AFTER_COMPOSE_COLOR}.conf r_proxy:/etc/nginx/conf.d/model.conf
+      docker cp ${file_path} r_proxy:/etc/nginx/conf.d/default.conf
       echo "reload nginx"
       docker exec r_proxy service nginx reload
 
