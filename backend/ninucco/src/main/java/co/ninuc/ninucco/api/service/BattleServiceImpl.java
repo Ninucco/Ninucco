@@ -257,26 +257,36 @@ public class BattleServiceImpl implements BattleService{
     public void updateBettingPoint(Battle battle, BattleResult result) { // battleId, 승자, 배당
         // 배틀 결과에 따라 승자, 배당 결정
         double odds;
-        BetSide winner = BetSide.APPLICANT;
+        BetSide winner;
+        List<Betting> winList;
+
+        // 비겼다면 해당 배틀에 베팅한 모든 사람들을 리스트에 담고, 배율은 1.0으로 설정
         if(result.equals(BattleResult.DRAW)) {
+            winList = bettingRepository.findAllByBattleId(battle.getId());
             odds = 1.0;
+
         }
-        else if(result.equals(BattleResult.APPLICANT)) {
-            odds = battle.getApplicantOdds();
-        }
+        // 누군가 이겼다면 승자와 해당 배율을 설정한다.
         else {
-            winner = BetSide.OPPONENT;
-            odds = battle.getOpponentOdds();
+            if(result.equals(BattleResult.APPLICANT)) {
+                winner = BetSide.APPLICANT;
+                odds = battle.getApplicantOdds();
+            }
+            else {
+                winner = BetSide.OPPONENT;
+                odds = battle.getOpponentOdds();
+            }
+            // 승자측에 베팅한 모든 사람들을 리스트에 담는다.
+            winList = bettingRepository.findAllByBattleIdAndBetSide(battle.getId(), winner);
         }
 
-        List<Betting> winList = bettingRepository.findByBattleIdAndBetSide(battle.getId(), winner);
         // 승자 쪽에 베팅한 사람들한테
         for(Betting b : winList) {
             // 멤버가 유효하지 않다면 그 멤버는 무시하고 진행해야한다.(무시된 멤버는 따로 테이블로 관리하는 등 별도 조치 필요)
             Member member = validateUtil.memberValidateById(b.getMember().getId());
             long rewardPoint = (long)Math.ceil(b.getBetMoney() * odds);
-            member.updatePoint(member.getPoint() + rewardPoint);
             log.info("===> reward  memberId : {}, pointBefore : {}, rewardPoint : {}", member.getId(), member.getPoint(), rewardPoint);
+            member.updatePoint(member.getPoint() + rewardPoint);
             memberRepository.save(member);
             //TODO 각 멤버에게 알림 전송
         }
