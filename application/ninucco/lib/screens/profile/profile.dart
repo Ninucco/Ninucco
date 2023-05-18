@@ -632,16 +632,20 @@ class HomeSliverAppBar extends SliverPersistentHeaderDelegate {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             onPressed: () {
-              requestFriend();
-              UserService.requestFriend(
-                  friendId: userData!.user.id, myId: me!.id);
+              if (friendStatus == "NONE") {
+                requestFriend();
+                UserService.requestFriend(
+                    friendId: userData!.user.id, myId: me!.id);
+              }
             },
             child: Text(
               friendStatus == "NONE"
                   ? "친구신청"
                   : friendStatus == "WAITING"
                       ? "수락대기중"
-                      : "친구",
+                      : friendStatus == "ME"
+                          ? "나 입니다"
+                          : "친구",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: friendStatus == "NONE"

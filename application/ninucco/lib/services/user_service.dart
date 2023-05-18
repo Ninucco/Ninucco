@@ -70,6 +70,9 @@ class UserService {
     required String friendId,
     required String myId,
   }) async {
+    if (myId == friendId) {
+      return "ME";
+    }
     final url = Uri.parse(
         "https://k8a605.p.ssafy.io/api/member/friend/check?friendId=$friendId&myId=$myId");
     final response = await http.get(url);

@@ -85,7 +85,7 @@ class _SubmitButtonState extends State<SubmitButton> {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.error(
-          message: '분석하는데 ninu코인이 50개 필요해요!',
+          message: 'ninu코인이 50개 필요해요. \n 배틀에서 이기고 ninu코인을 얻어보세요!',
         ),
       );
       return;
