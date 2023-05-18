@@ -4,7 +4,7 @@ class ScanUtility {
     "job",
     'highschool',
     'fruit',
-    'fruit',
+    'programming',
     'fruit',
   ];
   get getTypeList => typeList;
@@ -13,6 +13,7 @@ class ScanUtility {
     "job": "직업상 테스트",
     "highschool": "학창시절 테스트",
     "fruit": "과일상 테스트",
+    "programming": "개발자상 테스트",
   };
   get getTypeMap => typeMap;
   final scanTitleList = [

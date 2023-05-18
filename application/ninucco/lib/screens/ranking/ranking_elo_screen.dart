@@ -56,7 +56,12 @@ class RankingEloScreen extends StatelessWidget {
           winCount: userRank.winCount,
           index: index,
           type: "ELO",
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              "/Profile",
+              arguments: userRank.memberId,
+            );
+          },
         );
       },
       separatorBuilder: (context, index) => const SizedBox(width: 20),

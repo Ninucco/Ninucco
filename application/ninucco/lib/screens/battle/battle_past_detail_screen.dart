@@ -5,41 +5,72 @@ import 'package:ninucco/models/battle_comment_info_model.dart';
 import 'package:ninucco/models/battle_comment_post_model.dart';
 import 'package:ninucco/models/battle_info_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
+import 'package:ninucco/screens/battle/battle_prev_detail_screen.dart';
 import 'package:ninucco/services/battle_comment_api_service.dart';
-import 'package:ninucco/widgets/battle/battle_comment_widget.dart';
 import 'package:ninucco/widgets/battle/battle_past_member_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 import 'package:provider/provider.dart';
 
 class BattlePastDetailScreen extends StatefulWidget {
   final RouteSettings settings;
+  final FocusNode textFocus = FocusNode();
   BattlePastDetailScreen({
     super.key,
     required this.settings,
   });
-
-  FocusNode textFocus = FocusNode();
 
   @override
   State<BattlePastDetailScreen> createState() => _BattlePastDetailScreenState();
 }
 
 class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
-  late Stream<List<BattleCommentInfoModel>> battleComments;
   final TextEditingController _textEditingController = TextEditingController();
   late BattleInfoModel _resultData;
+
+  bool inited = false;
+  List<BattleCommentInfoModel>? _battleComments;
+  Future<void>? _initBattleComment;
+
+  Future<void> _initDatas(int id) async {
+    final data = await BattleApiCommentService.fetchBattleComments(id);
+    setState(() {
+      _battleComments = data;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _resultData = widget.settings.arguments as BattleInfoModel;
-    battleComments =
-        BattleApiCommentService.getBattleComments(_resultData.battleId);
+    _initBattleComment = _initDatas(_resultData.battleId);
+  }
+
+  void handleSubmit({value, me}) {
+    setState(() {
+      var newComment = BattleCommentInfoModel(
+        content: value,
+        id: me.id,
+        nickname: me!.nickname,
+        profileImage: me.url,
+      );
+      _battleComments = [newComment] + _battleComments!;
+    });
+    BattleApiCommentService.postBattleComments(
+      BattleCommentPostModel(value, _resultData.battleId),
+      me!.id,
+    );
+    _textEditingController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    var me = Provider.of<AuthProvider>(context).member;
+
+    if (inited == false) {
+      _initBattleComment = _initDatas(_resultData.battleId);
+      inited = true;
+    }
+
     return Scaffold(
       appBar: const MyAppbarWidget(
         titleText: "지난 배틀 다시보기",
@@ -56,9 +87,7 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
           SingleChildScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: GestureDetector(
-              onTap: () {
-                widget.textFocus.unfocus();
-              },
+              onTap: () => widget.textFocus.unfocus(),
               child: Column(
                 children: [
                   const SizedBox(
@@ -132,29 +161,11 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
                                 Flexible(
                                   flex: 4,
                                   child: TextFormField(
-                                    onFieldSubmitted: (value) => {
-                                      _textEditingController.notifyListeners(),
-                                      BattleApiCommentService
-                                          .postBattleComments(
-                                              BattleCommentPostModel(
-                                                _textEditingController
-                                                    .value.text,
-                                                _resultData.battleId,
-                                              ),
-                                              authProvider.member!.id),
-                                      _textEditingController.clear(),
-                                      setState(
-                                        () {
-                                          battleComments =
-                                              BattleApiCommentService
-                                                  .getBattleComments(
-                                                      _resultData.battleId);
-                                        },
-                                      ),
-                                      FocusScope.of(context)
-                                          .requestFocus(FocusNode()),
-                                    },
-                                    focusNode: widget.textFocus,
+                                    textInputAction: TextInputAction.done,
+                                    onFieldSubmitted: (value) => handleSubmit(
+                                      me: me,
+                                      value: _textEditingController.value.text,
+                                    ),
                                     controller: _textEditingController,
                                     decoration: const InputDecoration(
                                       hintText: "댓글을 입력하세요..",
@@ -184,40 +195,11 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
                                             MaterialStateMouseCursor.clickable,
                                         color: Colors.white,
                                         tooltip: "댓글 달기",
-                                        onPressed: () {
-                                          setState(
-                                            () {
-                                              _textEditingController
-                                                  .notifyListeners();
-                                              if (_textEditingController
-                                                      .value.text !=
-                                                  "") {
-                                                BattleApiCommentService
-                                                    .postBattleComments(
-                                                        BattleCommentPostModel(
-                                                            _textEditingController
-                                                                .value.text,
-                                                            _resultData
-                                                                .battleId),
-                                                        authProvider
-                                                            .member!.id);
-                                                _textEditingController.clear();
-                                                setState(
-                                                  () {
-                                                    print("I'm listening~~");
-                                                    battleComments =
-                                                        BattleApiCommentService
-                                                            .getBattleComments(
-                                                                _resultData
-                                                                    .battleId);
-                                                  },
-                                                );
-                                              }
-                                              FocusScope.of(context)
-                                                  .requestFocus(FocusNode());
-                                            },
-                                          );
-                                        },
+                                        onPressed: () => handleSubmit(
+                                          me: me,
+                                          value:
+                                              _textEditingController.value.text,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -227,24 +209,9 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
                             const SizedBox(
                               height: 10,
                             ),
-                            StreamBuilder(
-                              stream: battleComments,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: makeList(snapshot),
-                                      ),
-                                    ],
-                                  );
-                                }
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.pink.shade200,
-                                  ),
-                                );
-                              },
+                            Comments(
+                              initBattleComment: _initBattleComment,
+                              battleComments: _battleComments,
                             ),
                             const SizedBox(
                               height: 50,
@@ -262,23 +229,4 @@ class _BattlePastDetailScreenState extends State<BattlePastDetailScreen> {
       ),
     );
   }
-}
-
-ListView makeList(AsyncSnapshot<List<BattleCommentInfoModel>> snapshot) {
-  return ListView.separated(
-    physics: const NeverScrollableScrollPhysics(),
-    shrinkWrap: true,
-    scrollDirection: Axis.vertical,
-    itemCount: snapshot.data!.length,
-    itemBuilder: (context, index) {
-      var battleComment = snapshot.data![index];
-      return BattleCommentItem(
-        memberId: 'linga',
-        profileImage: battleComment.profileImage,
-        nickname: battleComment.nickname,
-        content: battleComment.content,
-      );
-    },
-    separatorBuilder: (context, index) => const SizedBox(width: 40),
-  );
 }

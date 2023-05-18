@@ -103,7 +103,7 @@ class _BattlePrevDetailScreenState extends State<BattlePrevDetailScreen> {
                     setState(() {
                       var newComment = BattleCommentInfoModel(
                         content: value,
-                        id: 1,
+                        id: me.id,
                         nickname: me.nickname,
                         profileImage: me.url,
                       );
@@ -160,7 +160,7 @@ class Comments extends StatelessWidget {
             children: _battleComments!
                 .map(
                   (data) => BattleCommentItem(
-                    memberId: "linga",
+                    memberId: data.id,
                     content: data.content,
                     nickname: data.nickname,
                     profileImage: data.profileImage,

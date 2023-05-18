@@ -116,16 +116,16 @@ class _LayoutState extends State<Layout> {
     return (await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Are you sure?'),
-            content: const Text('Do you want to exit an App'),
+            title: const Text('앱을 나가시겠습니까?'),
+            content: const Text(' 정말...? 😥'),
             actions: <Widget>[
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
+                child: const Text('아니요'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Yes'),
+                child: const Text('네'),
               ),
             ],
           ),

@@ -47,7 +47,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 ),
                 SliverMasonryGrid.count(
                   crossAxisCount: 2,
-                  childCount: 6,
+                  childCount: 5,
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 15,
                   itemBuilder: (context, i) {

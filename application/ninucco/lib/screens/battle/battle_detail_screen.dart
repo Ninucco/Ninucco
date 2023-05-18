@@ -13,12 +13,11 @@ import 'package:provider/provider.dart';
 
 class BattleDetailScreen extends StatefulWidget {
   final RouteSettings settings;
+  final FocusNode textFocus = FocusNode();
   BattleDetailScreen({
     super.key,
     required this.settings,
   });
-
-  FocusNode textFocus = FocusNode();
 
   @override
   State<BattleDetailScreen> createState() => _BattleDetailScreenState();
@@ -50,7 +49,7 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
     setState(() {
       var newComment = BattleCommentInfoModel(
         content: value,
-        id: 1,
+        id: me.id,
         nickname: me!.nickname,
         profileImage: me.url,
       );
@@ -197,12 +196,12 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                       ],
                     ),
 
-                    const SizedBox(
-                      height: 50,
-                    ),
                     Comments(
                       initBattleComment: _initBattleComment,
                       battleComments: _battleComments,
+                    ),
+                    const SizedBox(
+                      height: 50,
                     ),
                   ],
                 ),
