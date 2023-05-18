@@ -137,7 +137,7 @@ class BattleMemberWidget extends StatelessWidget {
                     textAlign: TextAlign.right,
                   ),
                   Text(
-                    " $ratio배",
+                    " ${ratio.toStringAsFixed(2)}배",
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

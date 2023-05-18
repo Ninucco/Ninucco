@@ -106,21 +106,22 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
         initialScrollIndex: _selectedId,
         itemCount: _resultDataList.length,
         itemBuilder: (context, index) {
+          var scanData = _resultDataList[_resultDataList.length - index - 1];
           return Column(
             children: [
               GestureDetector(
                 onLongPress: () => PhotoUtility.photoLongPress(
                   context,
-                  _resultDataList[index],
+                  scanData,
                 ),
                 child: CachedNetworkImage(
-                  imageUrl: _resultDataList[index].imgUrl,
+                  imageUrl: scanData.imgUrl,
                   fit: BoxFit.fitWidth,
                 ),
               ),
               ExpansionTile(
                 title: Text(
-                  "${_scanUtility!.getTypeMap[_resultDataList[index].modelType]} 결과",
+                  "${_scanUtility!.getTypeMap[scanData.modelType]} 결과",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 childrenPadding:
@@ -132,7 +133,7 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
                     child: FittedBox(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        _resultDataList[index].resultTitle,
+                        scanData.resultTitle,
                         style: const TextStyle(fontSize: 40),
                       ),
                     ),
@@ -143,14 +144,12 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Stack(
-                        children: List.from(_resultDataList[index]
-                            .resultPercentages
+                        children: List.from(scanData.resultPercentages
                             .asMap()
                             .entries
                             .map((data) {
                               var prefixSum = 0.0;
-                              _resultDataList[index]
-                                  .resultPercentages
+                              scanData.resultPercentages
                                   .asMap()
                                   .forEach((i, value) {
                                 if (data.key >= i) {
@@ -181,10 +180,7 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
                                     : null,
                                 percent: prefixSum > 1 ? 1 : prefixSum,
                                 backgroundColor: data.key ==
-                                        _resultDataList[index]
-                                                .resultPercentages
-                                                .length -
-                                            1
+                                        scanData.resultPercentages.length - 1
                                     ? Colors.black12
                                     : Colors.transparent,
                                 progressColor: Color(colorsList[data.key]),
@@ -195,8 +191,7 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
                       ),
                       Column(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: _resultDataList[index]
-                              .resultPercentages
+                          children: scanData.resultPercentages
                               .asMap()
                               .entries
                               .map((entry) => Column(
@@ -243,8 +238,10 @@ class _ProfileScanResultState extends State<ProfileScanResult> {
                   ),
                   const Divider(color: Colors.black54, height: 48),
                   Text(
-                    _resultDataList[index].resultDescription,
                     style: const TextStyle(height: 1.2),
+                    scanData.resultDescription,
+                    // overflow: TextOverflow.ellipsis,
+                    // maxLines: 5,
                   ),
                 ],
               ),

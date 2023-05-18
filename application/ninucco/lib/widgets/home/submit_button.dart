@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/screens/home/scan_result.dart';
 import 'package:image/image.dart' as IMG;
 import 'package:http_parser/http_parser.dart';
 import 'package:ninucco/utilities/scan_list_data.dart';
 import 'package:provider/provider.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class SubmitButton extends StatefulWidget {
   final bool loading;
@@ -74,13 +77,32 @@ class _SubmitButtonState extends State<SubmitButton> {
     );
   }
 
-  void handleSubmit(String memberId) async {
-    if (widget.loading) {
+  void handleSubmit(MemberModel? me, AuthProvider authProvider) async {
+    if (widget.loading || me == null) {
       return;
     }
+    if (me.point < 50) {
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: '분석하는데 ninu코인이 50개 필요해요!',
+        ),
+      );
+      return;
+    }
+    var newMe = MemberModel(
+      id: me.id,
+      elo: me.elo,
+      loseCount: me.loseCount,
+      point: me.point - 50,
+      winCount: me.winCount,
+      nickname: me.nickname,
+      url: me.url,
+    );
+    authProvider.setMember(newMe);
     widget.setLoading(true);
     Navigator.pushNamed(widget.context, '/ScanResult',
-        arguments: await fetchScanResult(memberId));
+        arguments: await fetchScanResult(me.id));
     widget.setLoading(false);
   }
 
@@ -94,7 +116,7 @@ class _SubmitButtonState extends State<SubmitButton> {
         GestureDetector(
           onTap: () {
             authProvider.setUpdate();
-            handleSubmit(me!.id);
+            handleSubmit(me, authProvider);
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),

@@ -204,9 +204,10 @@ class GridItems extends StatelessWidget {
         switch (name) {
           case "검사결과":
             if (userData.scanResultList.isNotEmpty) {
+              var reversedList = List.from(userData.scanResultList.reversed);
               return SliverGrid.count(
                 crossAxisCount: 3,
-                children: userData.scanResultList
+                children: reversedList
                     .asMap()
                     .entries
                     .map(
@@ -253,9 +254,13 @@ class GridItems extends StatelessWidget {
           case "배틀이력":
             if (userData.curBattleList.isNotEmpty ||
                 userData.prevBattleList.isNotEmpty) {
+              var reversedCurList = List.from(userData.curBattleList.reversed);
+              var reversedPrevList =
+                  List.from(userData.prevBattleList.reversed);
+
               return SliverGrid.count(
                 crossAxisCount: 3,
-                children: userData.curBattleList
+                children: reversedCurList
                         .asMap()
                         .entries
                         .map(
@@ -278,7 +283,7 @@ class GridItems extends StatelessWidget {
                           ),
                         )
                         .toList() +
-                    userData.prevBattleList
+                    reversedPrevList
                         .asMap()
                         .entries
                         .map(
