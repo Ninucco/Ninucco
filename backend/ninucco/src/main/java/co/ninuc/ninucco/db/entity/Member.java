@@ -82,6 +82,11 @@ public class Member implements UserDetails{
     public void updateLoseCount(int loseCount) {
         this.loseCount = loseCount;
     }
+    public boolean subtractPoint(int amount){
+        if(this.point<amount) return false;
+        this.point-=amount;
+        return true;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

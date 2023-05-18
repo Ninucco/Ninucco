@@ -44,8 +44,8 @@ public class FaceServiceImpl {
     public SimilarityResultRes generate(SimilarityReq r){
         //유저 아이디 검증, 포인트 검증, 포인트 빼기
         Member member = validateUtil.memberValidateById(r.getMemberId());
-        if(!member.subtractCoin(50))
-            throw new CustomException(ErrorRes.ERROR_POINT_DEFICIENT);
+        if(!member.subtractPoint(50))
+            throw new CustomException(ErrorRes.NOT_ENOUGH_POINT);
         memberRepository.save(member);
         //파일이 png인지 검사한다
         String contentType = r.getImg().getContentType();
