@@ -39,7 +39,7 @@ do
         old_string="8081"
         new_string="8082"
       fi
-      sed "s/$old_string/$new_string/g" "$file_path"
+      sed -i "s/$old_string/$new_string/g" "$file_path"
       echo "switch port : $old_string to $new_string"
 
       # 새로운 컨테이너에 대한 nginx 설정파일 복사 후 nginx reload
