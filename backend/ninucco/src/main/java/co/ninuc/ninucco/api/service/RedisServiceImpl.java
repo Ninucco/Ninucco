@@ -21,7 +21,10 @@ public class RedisServiceImpl implements RedisService{
     public String getRedisStringValue(String key){
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
         String value = stringStringValueOperations.get(key);
-        return value!=null?value:key;
+        return value!=null?value:"";
+    }
+    public List<String> getRedisListValue(String key){
+        return null;
     }
 
     public List<String> getAllRedisKeyValuePairs(){

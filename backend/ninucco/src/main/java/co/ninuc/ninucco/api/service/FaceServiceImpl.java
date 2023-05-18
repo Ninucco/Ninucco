@@ -60,10 +60,11 @@ public class FaceServiceImpl {
         String keyword = similarityResultList.get(0).getKeyword();
         String personalityKeyword = personalitySimilarityResultList.get(0).getKeyword();
         //프롬프트 생성
-        String prompt=this.getPrompt(r.getModelType(), personalityKeyword, keyword);
-
+        String prompt=this.getPrompt(personalityKeyword, keyword);
+        String imageStrength = redisService.getRedisStringValue("image_strength:"+r.getModelType());
+        String stylePreset = redisService.getRedisStringValue("style_preset:"+r.getModelType());
         //4. 이미지 생성
-        byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt);
+        byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt, imageStrength, stylePreset);
         log.info("2. 이미지 생성 완료");
         //S3에 저장
         //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
@@ -116,19 +117,9 @@ public class FaceServiceImpl {
                 .resultDescription(resultDescription)
                 .resultList(listTop5).build();
     }
-    private String getPrompt(String modelType, String personalityKeyword, String keyword){
-        final String basePrompt1 = "";//"Cute and adorable cartoon, ";
-        final String basePrompt2 = "unreal engine, cozy indoor lighting, artstation, detailed, digital painting,cinematic,character design by mark ryden and pixar and hayao miyazaki, unreal 5, daz, hyperrealistic, octane render";
-                //"fantasy, dreamlike, surrealism, super cute, trending on artstation";
-        StringBuilder sb =  new StringBuilder().append(basePrompt1);
-        if(modelType.equals("programming")){
-            sb.append("developer sitting in a office typing code,");
-        }
-        sb.append(personalityKeyword);
-        if(modelType.equals("fruit")){
-            sb.append("many ").append(keyword).append(" on hands");
-        }
-        sb.append(basePrompt2);
-        return sb.toString();
+    private String getPrompt(String personalityKeyword, String keyword){
+        return new StringBuilder().append(personalityKeyword).append(',')
+        .append(redisService.getRedisStringValue("prompt:"+keyword)).append(',')
+        .append(redisService.getRedisStringValue("prompt:base")).toString();
     }
 }
