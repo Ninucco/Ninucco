@@ -31,17 +31,33 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                 },
                 icon: const Icon(Icons.arrow_back_ios)),
           ),
-          SliverGrid.count(
-            crossAxisCount: 3,
-            children: userData.scanResultList
-                .map((el) => GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context, el.imgUrl);
-                      },
-                      child: CachedNetworkImage(imageUrl: el.imgUrl),
-                    ))
-                .toList(),
-          )
+          userData.scanResultList.isEmpty
+              ? SliverToBoxAdapter(
+                  child: Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height - 114,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/bg/bg2.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text("먼저 검사를 진행 해주세요"),
+                    ),
+                  ),
+                )
+              : SliverGrid.count(
+                  crossAxisCount: 3,
+                  children: userData.scanResultList
+                      .map((el) => GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context, el.imgUrl);
+                            },
+                            child: CachedNetworkImage(imageUrl: el.imgUrl),
+                          ))
+                      .toList(),
+                )
         ],
       ),
     );
