@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:ninucco/models/battle_comment_info_model.dart';
 import 'package:ninucco/models/battle_comment_post_model.dart';
 import 'package:ninucco/models/battle_info_model.dart';
+import 'package:ninucco/models/member_model.dart';
 import 'package:ninucco/providers/auth_provider.dart';
 import 'package:ninucco/screens/battle/battle_prev_detail_screen.dart';
 import 'package:ninucco/services/battle_comment_api_service.dart';
+import 'package:ninucco/services/betting_api_service.dart';
 import 'package:ninucco/widgets/battle/battle_member_widget.dart';
 import 'package:ninucco/widgets/common/my_appbar_widget.dart';
 import 'package:provider/provider.dart';
@@ -26,15 +28,30 @@ class BattleDetailScreen extends StatefulWidget {
 class _BattleDetailScreenState extends State<BattleDetailScreen> {
   final TextEditingController _textEditingController = TextEditingController();
   late BattleInfoModel _resultData;
+  bool _resultBetCheck = false;
 
+  MemberModel? me;
   bool inited = false;
   List<BattleCommentInfoModel>? _battleComments;
   Future<void>? _initBattleComment;
 
-  Future<void> _initDatas(int id) async {
+  Future<bool> _betCheck(int battleId, String memberId) async {
+    return BettingApiService.checkBetting(battleId, memberId);
+  }
+
+  void toggleBetCheck() {
+    setState(() {
+      _resultBetCheck = false;
+    });
+  }
+
+  Future<void> _initDatas(int id, String userId) async {
     final data = await BattleApiCommentService.fetchBattleComments(id);
+    final betData = await _betCheck(_resultData.battleId, userId);
+
     setState(() {
       _battleComments = data;
+      _resultBetCheck = betData;
     });
   }
 
@@ -42,7 +59,6 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
   void initState() {
     super.initState();
     _resultData = widget.settings.arguments as BattleInfoModel;
-    _initBattleComment = _initDatas(_resultData.battleId);
   }
 
   DateTime dateTime = DateTime.now();
@@ -75,10 +91,10 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var me = Provider.of<AuthProvider>(context).member;
+    me = Provider.of<AuthProvider>(context).member;
 
     if (inited == false) {
-      _initBattleComment = _initDatas(_resultData.battleId);
+      _initBattleComment = _initDatas(_resultData.battleId, me!.id);
       inited = true;
     }
 
@@ -125,6 +141,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                           nickname: _resultData.memberANickname,
                           profileImage: _resultData.memberAImage,
                           ratio: _resultData.ratioA,
+                          betCheck: _resultBetCheck,
+                          toggleBetCheck: toggleBetCheck,
                         ),
                         const SizedBox(
                           height: 20,
@@ -136,6 +154,8 @@ class _BattleDetailScreenState extends State<BattleDetailScreen> {
                           nickname: _resultData.memberBNickname,
                           profileImage: _resultData.memberBImage,
                           ratio: _resultData.ratioB,
+                          betCheck: _resultBetCheck,
+                          toggleBetCheck: toggleBetCheck,
                         ),
                       ],
                     ),
