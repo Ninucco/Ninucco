@@ -224,7 +224,7 @@ class _ScanResultState extends State<ScanResult> {
                     GestureDetector(
                       onTap: () {
                         _navProvider.showBottomNav();
-                        Navigator.pushNamed(context, '/');
+                        Navigator.pushNamed(context, '/Category');
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
