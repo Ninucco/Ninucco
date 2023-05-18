@@ -3,7 +3,7 @@ version: '3'
 services:
   model:
     image: ninucco_model:latest
-    container_name: ninucco_model
+    container_name: ninucco_model_green
     ports:
-      - "8000:8000"
+      - "8002:8000"
     restart: always
