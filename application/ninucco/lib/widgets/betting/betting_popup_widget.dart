@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 class BettingPopupWidget extends StatefulWidget {
   final int battleId;
   final String nickname, type, memberId;
+  final bool betCheck;
+  final VoidCallback toggleBetCheck;
 
   const BettingPopupWidget({
     super.key,
@@ -15,6 +17,8 @@ class BettingPopupWidget extends StatefulWidget {
     required this.battleId,
     required this.nickname,
     required this.type,
+    required this.betCheck,
+    required this.toggleBetCheck,
   });
 
   @override
@@ -23,6 +27,13 @@ class BettingPopupWidget extends StatefulWidget {
 
 class _BettingPopupWidgetState extends State<BettingPopupWidget> {
   final myController = TextEditingController();
+  late bool _betCheck;
+  bool inited = false;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
@@ -248,8 +259,10 @@ class _BettingPopupWidgetState extends State<BettingPopupWidget> {
                                           ),
                                           actions: <Widget>[
                                             TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context, '야호!'),
+                                              onPressed: () {
+                                                widget.toggleBetCheck();
+                                                Navigator.pop(context, '야호!');
+                                              },
                                               child: const Text(
                                                 '야호!',
                                                 style: TextStyle(
@@ -308,16 +321,28 @@ class _BettingPopupWidgetState extends State<BettingPopupWidget> {
           },
         );
       },
-      style: ElevatedButton.styleFrom(
-          elevation: 5,
-          backgroundColor: Colors.black,
-          shadowColor: Colors.black45),
-      child: const Text(
-        "여기에 베팅하기",
-        style: TextStyle(
-          fontSize: 15,
-        ),
-      ),
+      style: (widget.betCheck)
+          ? ElevatedButton.styleFrom(
+              elevation: 5,
+              backgroundColor: Colors.black54,
+              shadowColor: Colors.black45)
+          : ElevatedButton.styleFrom(
+              elevation: 5,
+              backgroundColor: Colors.black,
+              shadowColor: Colors.black45),
+      child: (widget.betCheck)
+          ? const Text(
+              "이미 베팅했어요",
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            )
+          : const Text(
+              "여기에 베팅하기",
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            ),
     );
   }
 }

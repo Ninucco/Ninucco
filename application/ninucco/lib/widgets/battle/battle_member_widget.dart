@@ -6,6 +6,8 @@ class BattleMemberWidget extends StatelessWidget {
   final String nickname, profileImage, type, memberId;
   final double ratio;
   final int battleId;
+  final bool betCheck;
+  final VoidCallback toggleBetCheck;
 
   const BattleMemberWidget({
     super.key,
@@ -15,6 +17,8 @@ class BattleMemberWidget extends StatelessWidget {
     required this.nickname,
     required this.profileImage,
     required this.ratio,
+    required this.betCheck,
+    required this.toggleBetCheck,
   });
 
   @override
@@ -174,6 +178,8 @@ class BattleMemberWidget extends StatelessWidget {
                       battleId: battleId,
                       memberId: memberId,
                       nickname: nickname,
+                      betCheck: betCheck,
+                      toggleBetCheck:toggleBetCheck,
                     ),
                   ],
                 ),
