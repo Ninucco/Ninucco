@@ -65,6 +65,8 @@ class _BattlePrevDetailScreenState extends State<BattlePrevDetailScreen> {
       inited = true;
     }
 
+    DateTime dateTime = DateTime.now();
+
     return Scaffold(
       appBar: const MyAppbarWidget(
         titleText: "배틀 결과",
@@ -101,11 +103,20 @@ class _BattlePrevDetailScreenState extends State<BattlePrevDetailScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (value) {
                     setState(() {
+                      List<int> currentTime = [
+                        dateTime.year,
+                        dateTime.month,
+                        dateTime.day,
+                        dateTime.hour,
+                        dateTime.minute,
+                        dateTime.second,
+                      ];
                       var newComment = BattleCommentInfoModel(
                         content: value,
                         id: me.id,
                         nickname: me.nickname,
                         profileImage: me.url,
+                        createdAt: currentTime,
                       );
                       _battleComments = [newComment] + _battleComments!;
                     });
@@ -164,6 +175,7 @@ class Comments extends StatelessWidget {
                     content: data.content,
                     nickname: data.nickname,
                     profileImage: data.profileImage,
+                    createdAt: data.createdAt,
                   ),
                 )
                 .toList(),

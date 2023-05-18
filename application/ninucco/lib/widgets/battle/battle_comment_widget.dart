@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class BattleCommentItem extends StatelessWidget {
   final String profileImage, nickname, content, memberId;
+  final List<dynamic> createdAt;
 
   const BattleCommentItem({
     super.key,
@@ -10,7 +11,34 @@ class BattleCommentItem extends StatelessWidget {
     required this.nickname,
     required this.content,
     required this.memberId,
+    required this.createdAt,
   });
+
+  String calculate() {
+    // 시간차 계산하기
+    DateTime dateTime = DateTime.now();
+    if (dateTime.year == createdAt[0]) {
+      if (dateTime.month == createdAt[1]) {
+        if (dateTime.day == createdAt[2]) {
+          if (dateTime.hour == createdAt[3]) {
+            if (dateTime.minute == createdAt[4]) {
+              return "조금 전";
+            } else {
+              return "${dateTime.minute - createdAt[4]}분 전";
+            }
+          } else {
+            return "${dateTime.hour - createdAt[3]}시간 전";
+          }
+        } else {
+          return "${dateTime.day - createdAt[2]}일 전";
+        }
+      } else {
+        return "${dateTime.month - createdAt[1]}개월 전";
+      }
+    } else {
+      return "${dateTime.year - createdAt[0]}년 전";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +95,9 @@ class BattleCommentItem extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Text(
-                              "15시간 전",
-                              style: TextStyle(
+                            Text(
+                              calculate(),
+                              style: const TextStyle(
                                 fontSize: 10,
                                 color: Colors.black45,
                               ),
