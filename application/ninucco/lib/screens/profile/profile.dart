@@ -216,9 +216,10 @@ class GridItems extends StatelessWidget {
         switch (name) {
           case "검사결과":
             if (userData.scanResultList.isNotEmpty) {
+              var reversedList = List.from(userData.scanResultList.reversed);
               return SliverGrid.count(
                 crossAxisCount: 3,
-                children: userData.scanResultList
+                children: reversedList
                     .asMap()
                     .entries
                     .map(
