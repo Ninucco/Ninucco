@@ -5,7 +5,6 @@ import { Button } from "../../../components";
 
 const S = {
   Background: styled.section`
-    position: absolute;
     top: 0;
     width: 100vw;
     height: 780px;
@@ -33,6 +32,11 @@ const S = {
   `,
 };
 
+const buttonHandler = () => {
+  window.location.href =
+    "https://play.google.com/store/apps/details?id=com.slsnrndi.ninucco";
+};
+
 const Hero: React.FC = () => {
   return (
     <S.Background>
@@ -47,9 +51,9 @@ const Hero: React.FC = () => {
           <br />
           배틀을 통해 좀 더 어울리는 사람을 골라보아요.
         </S.Description>
-        <Button fill="solid" type="button">
+        <Button fill="solid" type="button" onClick={buttonHandler}>
           <div>
-            <img src={googlePlayLogo} alt="google play" width={100} />
+            <img src={googlePlayLogo} alt="google play" width={120} />
           </div>
         </Button>
       </S.Wrapper>

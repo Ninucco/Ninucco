@@ -1,8 +1,9 @@
-import React, { ButtonHTMLAttributes } from "react";
+import React, { ButtonHTMLAttributes, MouseEvent } from "react";
 import styled from "styled-components";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fill?: "solid" | "transparent" | "outline";
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const S = {

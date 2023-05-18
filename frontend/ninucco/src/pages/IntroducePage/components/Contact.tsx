@@ -10,7 +10,7 @@ const S = {
     width: 100%;
     max-width: 1180px;
     margin: auto;
-    padding: 120px 0;
+    padding: 0 0 120px 0;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -70,19 +70,14 @@ const Contact: React.FC = () => {
       <S.Image image={contactImage} />
       <S.TextWrapper>
         <S.Label {...animatedItem[0]}>Contact us</S.Label>
-        <S.Title {...animatedItem[1]}>
-          Est placerat in egestas
-          <br />
-          erat imperdiet
-        </S.Title>
+        <S.Title {...animatedItem[1]}>버그 리포트</S.Title>
         <S.Description {...animatedItem[2]}>
-          Consequat interdum varius sit amet mattis vulputate enim. Sit amet
-          nulla facilisi morbi tempus. Nulla facilisi cras fermentum odio eu.
+          문제가 있다면 해당 메일로 연락 주시면 확인하겠습니다!
         </S.Description>
         <S.Form {...animatedItem[3]}>
           <TextField type="text" placeholder="Name" />
-          <TextField type="text" placeholder="Work Email Address" />
-          <TextField type="text" placeholder="Company Name" />
+          <TextField type="text" placeholder="Email Address" />
+          <TextField type="text" placeholder="내용" />
           <Button fill="solid" type="submit">
             Become a partner
           </Button>

@@ -1,11 +1,8 @@
 import {
   Hero,
   Services,
-  Feature,
-  Figure,
   Works,
   Contact,
-  Banner,
 } from "../../pages/IntroducePage/components";
 
 const IntroducePage: React.FC = () => {
@@ -13,11 +10,8 @@ const IntroducePage: React.FC = () => {
     <>
       <Hero />
       <Services />
-      <Feature />
-      <Figure />
       <Works />
       <Contact />
-      <Banner />
     </>
   );
 };

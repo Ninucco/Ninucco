@@ -13,11 +13,11 @@ const S = {
     width: 100%;
     max-width: 1180px;
     margin: auto;
-    padding: 120px 0;
-    margin-top: 680px;
+    padding: 150px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
   `,
   Label: styled.p`
     display: inline-block;
@@ -50,10 +50,12 @@ const S = {
   ItemTitle: styled.h3`
     ${(props: { theme: any }) => props.theme.typography.heading};
     color: ${(props: { theme: any }) => props.theme.palette.black};
+    margin-top: 1rem;
     margin-bottom: 1rem;
   `,
   ItemDescription: styled.p`
     ${(props: { theme: any }) => props.theme.typography.description};
+    margin-top: 1rem;
     margin-bottom: 1.5rem;
   `,
   ItemButton: styled.button`
@@ -66,22 +68,22 @@ const S = {
 
 const SERVICES_ITEMS: IServiceItem[] = [
   {
-    title: "Volutpat odio",
+    title: "닮은꼴 찾기",
     description:
-      "Facilisis mauris sit amet massa. Commodo odio aenean sed adipiscing. In hac habitasse platea dictumst quisque sagittis purus.",
-    button: "Get started",
+      "여러 가지 닮은꼴 검사를 통해 내가 어떤 것들과 유사한지를 확인할 수 있어요",
+    button: "",
   },
   {
-    title: "Diam donec",
+    title: "비교 배틀",
     description:
-      "Adipiscing tristique. Mi eget mauris pharetra et. Non tellus orci ac auctor augue. Pulvinar elementum integer enim neque volutpat ac.",
-    button: "Switch over",
+      "다른 유저와의 이미지 비교를 통해 어떤 사람이 좀 더 유사한 이미지를 가지는지 확인하고, 포인트를 획득할 수 있어요",
+    button: "",
   },
   {
-    title: "Elit at imperdiet",
+    title: "이미지 공유",
     description:
-      "Dui accumsan sit. Ornare arcu dui vivamus arcu felis. Egestas integer eget aliquet nibh praesent.",
-    button: "Read more",
+      "AI가 생성해 준 이미지를 카카오톡을 통해 친구들과 공유하고 앱을 소개할 수 있어요",
+    button: "",
   },
 ];
 
@@ -95,17 +97,13 @@ const Services: React.FC = () => {
   return (
     <S.Wrapper>
       <S.Label>Our Services</S.Label>
-      <S.Title>
-        Quis hendrerit dolor
-        <br />
-        Magna eget est
-      </S.Title>
+      <S.Title>니누꼬에서 체험할 수 있는 것들</S.Title>
       <S.ItemWrapper>
         {SERVICES_ITEMS.map((item: IServiceItem, index: number) => (
           <S.ItemBox key={item.title} {...animatedItem[index]}>
             <S.ItemTitle>{item.title}</S.ItemTitle>
             <S.ItemDescription>{item.description}</S.ItemDescription>
-            <S.ItemButton>{item.button}</S.ItemButton>
+            {/* <S.ItemButton>{item.button}</S.ItemButton> */}
           </S.ItemBox>
         ))}
       </S.ItemWrapper>

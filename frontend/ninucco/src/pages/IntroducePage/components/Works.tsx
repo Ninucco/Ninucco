@@ -7,7 +7,7 @@ import { useScrollFadeIn } from "../../../hooks";
 interface IWorkItem {
   image: string;
   title: string;
-  label: string;
+  // label: string;
   description: string;
 }
 
@@ -16,7 +16,7 @@ const S = {
     width: 100%;
     max-width: 1180px;
     margin: auto;
-    padding: 120px 0;
+    padding: 0 0 60px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -87,24 +87,21 @@ const S = {
 const WORKS_ITEMS: IWorkItem[] = [
   {
     image: worksImage01,
-    title: "Volutpat odio",
-    label: "Dec 14th, 2019",
+    title: "강아지의 상",
     description:
-      "Facilisis mauris sit amet massa. Commodo odio aenean sed adipiscing. In hac habitasse platea dictumst.",
+      "강아지상의 사람은 사랑스럽고 사회성이 뛰어난 사람입니다. 그들은 온화하고 친근한 성격을 지니며, 주변 사람들과의 관계에서 따뜻한 영향력을 행사합니다.",
   },
   {
     image: worksImage02,
-    title: "Arcu ac tortor dignissim",
-    label: "Dec 14th, 2019",
+    title: "복숭아의 상",
     description:
-      "Convallis aenean et tortor at. Pretium viverra suspendisse potenti nullam ac tortor vitae purus.",
+      "복숭아상의 사람은 우아하고 섬세한 성격을 가진 사람입니다. 그들은 아름다움과 우아함을 추구하며, 세련된 삶의 양식을 가지고 있습니다. 섬세하고 부드러운 매력을 가지고 있으며, 그들의 존재 자체가 주변에 아름다움을 전달합니다.",
   },
   {
     image: worksImage03,
-    title: "Eros donec ac odio",
-    label: "Dec 14th, 2019",
+    title: "전교 회장의 상",
     description:
-      "Tempor orci dapibus ultrices. Elementum nibh tellus molestie nunc. Et magnis dis parturient montes nascetur.",
+      "전교 회장상의 사람은 학교 내에서 최고위의 학생 지도자로서 선출되는 사람을 의미합니다. 이들은 학교 내에서 리더십과 책임감을 갖고 있으며, 학생들을 대표하고 학교 생활을 조직화하는 역할을 맡습니다.",
   },
 ];
 
@@ -117,13 +114,10 @@ const Works: React.FC = () => {
 
   return (
     <S.Wrapper>
-      <S.Label>Our Recent Works</S.Label>
-      <S.Title>
-        Et malesuada fames ac <br />
-        turpis egestas sed
-      </S.Title>
+      <S.Label>User Profiles</S.Label>
+      <S.Title>획득 가능한 프로필의 종류</S.Title>
       <S.Description>
-        Sit amet nisl suscipit adipiscing bibendum est ultricies.
+        3가지 예시 외에도 다양한 이미지를 닮은꼴 찾기를 통해 획득할 수 있어요
       </S.Description>
       <S.List>
         {WORKS_ITEMS.map((item: IWorkItem, index: number) => (
@@ -131,7 +125,7 @@ const Works: React.FC = () => {
             <S.ItemImage image={item.image} />
             <S.TextContainer>
               <S.ItemTitle>{item.title}</S.ItemTitle>
-              <S.ItemLabel>{item.label}</S.ItemLabel>
+              {/* <S.ItemLabel>{item.label}</S.ItemLabel> */}
               <S.ItemDescription>{item.description}</S.ItemDescription>
               <S.TextButton>Read more</S.TextButton>
             </S.TextContainer>
