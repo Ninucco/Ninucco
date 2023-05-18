@@ -8,7 +8,9 @@ import co.ninuc.ninucco.common.exception.CustomException;
 import co.ninuc.ninucco.common.util.SimilarityModelService;
 import co.ninuc.ninucco.common.util.StabilityAIService;
 import co.ninuc.ninucco.common.util.ValidateUtil;
+import co.ninuc.ninucco.db.entity.Member;
 import co.ninuc.ninucco.db.entity.SimilarityResult;
+import co.ninuc.ninucco.db.repository.MemberRepository;
 import co.ninuc.ninucco.db.repository.SimilarityResultRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -28,6 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class FaceServiceImpl {
+    private final MemberRepository memberRepository;
     private final SimilarityModelService similarityModelService;
     private final StabilityAIService stabilityAIService;
     private final AmazonS3Client amazonS3Client;
@@ -39,8 +42,11 @@ public class FaceServiceImpl {
     private String bucket;
 
     public SimilarityResultRes generate(SimilarityReq r){
-        //유저 아이디 검증
-        validateUtil.memberValidateById(r.getMemberId());
+        //유저 아이디 검증, 포인트 검증, 포인트 빼기
+        Member member = validateUtil.memberValidateById(r.getMemberId());
+        if(!member.subtractCoin(50))
+            throw new CustomException(ErrorRes.ERROR_POINT_DEFICIENT);
+        memberRepository.save(member);
         //파일이 png인지 검사한다
         String contentType = r.getImg().getContentType();
         if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
@@ -63,11 +69,11 @@ public class FaceServiceImpl {
         String prompt=this.getPrompt(personalityKeyword, keyword);
         String imageStrength = redisService.getRedisStringValue("image_strength:"+r.getModelType());
         String stylePreset = redisService.getRedisStringValue("style_preset:"+r.getModelType());
+        log.info(">> prompt: "+prompt);
         //4. 이미지 생성
         byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt, imageStrength, stylePreset);
         log.info("2. 이미지 생성 완료");
         //S3에 저장
-        //TODO: S3에 사진 저장되면 이전 사진 삭제되는 문제 해결
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(byteArrayInputStream.available());
@@ -85,9 +91,9 @@ public class FaceServiceImpl {
         String personalityKeywordKor = redisService.getRedisStringValue("kor:"+personalityKeyword);
         String keywordKor = r.getModelType().equals("programming")?keyword:redisService.getRedisStringValue("kor:"+keyword);
 
-        String titleModifier = redisService.getRedisStringValue("title-modifier:"+personalityKeywordKor);
-        String personalityDescriptionModifier = redisService.getRedisStringValue("description-modifier:"+personalityKeywordKor);
-        String descriptionModifier = redisService.getRedisStringValue("description-modifier:"+keywordKor);
+        String titleModifier = redisService.getRedisStringValue("title-modifier:"+personalityKeyword);
+        String personalityDescriptionModifier = redisService.getRedisStringValue("description-modifier:"+personalityKeyword);
+        String descriptionModifier = redisService.getRedisStringValue("description-modifier:"+keyword);
 
         StringBuilder resultTitle = new StringBuilder().append(titleModifier).append(' ')
                 .append(personalityKeywordKor).append(' ')

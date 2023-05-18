@@ -73,6 +73,11 @@ public class Member implements UserDetails{
     public void updateElo(int elo){
         this.elo =elo;
     }
+    public boolean subtractCoin(int amount){
+        if(this.point<amount) return false;
+        this.point-=amount;
+        return true;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
