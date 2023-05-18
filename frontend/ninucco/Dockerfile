@@ -10,5 +10,4 @@ RUN npm install
 
 COPY . .
 
-# 앱 빌드
 CMD ["npm", "run", "dev"]
