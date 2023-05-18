@@ -29,6 +29,7 @@ class BattleCreateItem extends StatelessWidget {
           child: Column(
             children: [
               Material(
+                color: Colors.transparent,
                 child: Stack(
                   alignment: AlignmentDirectional.center,
                   children: [

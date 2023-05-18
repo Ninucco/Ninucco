@@ -133,35 +133,6 @@ class _BattleCreateDetailScreenState extends State<BattleCreateDetailScreen> {
                   : const SizedBox(
                       height: 20,
                     ),
-              const Text(
-                "친구가 아직 회원이 아니신가요?",
-                textAlign: TextAlign.left,
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(
-                  vertical: 5,
-                ),
-                width: MediaQuery.of(context).size.width * 0.75,
-                height: 60,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    elevation: 5,
-                    backgroundColor: Colors.black,
-                    shadowColor: Colors.black45,
-                  ),
-                  child: const Text(
-                    '배틀 초대 링크 생성하기',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                    ),
-                  ),
-                  onPressed: () => {},
-                ),
-              ),
             ],
           ),
         ),
