@@ -36,7 +36,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public CommentListRes selectAllComment(Long battleId) {
-        return new CommentListRes(commentRepository.findAllByBattle_Id(battleId).stream().map(this::toCommentRes).collect(Collectors.toList()));
+        return new CommentListRes(commentRepository.findAllByBattleIdOrderByCreatedAtDesc(battleId).stream().map(this::toCommentRes).collect(Collectors.toList()));
     }
 
     Comment toEntity(Member member, Battle battle, String content) {
@@ -52,6 +52,7 @@ public class CommentServiceImpl implements CommentService{
         return CommentRes.builder()
                 .commentId(comment.getId())
                 .profileImage(member.getUrl())
+                .memberId(member.getId())
                 .nickname(member.getNickname())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())

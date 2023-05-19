@@ -10,5 +10,8 @@ public interface MemberRepository extends JpaRepository<Member, String> {
     Boolean existsByNickname(String nickname);
     Optional<Member> findMemberByNickname(String nickname);
     List<Member> findMembersByNicknameContaining(String keyword);
-    List<Member> findTop10ByOrderByWinCountDesc();
+    long count();
+    List<Member> findTop100ByOrderByWinCountDesc();
+    List<Member> findTop100ByOrderByEloDesc();
+    List<Member> findTop100ByOrderByPointDesc();
 }

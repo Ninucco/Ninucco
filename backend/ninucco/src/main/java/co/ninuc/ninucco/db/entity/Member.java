@@ -2,6 +2,7 @@ package co.ninuc.ninucco.db.entity;
 
 import javax.persistence.*;
 
+import java.util.Collection;
 import lombok.Builder;
 import org.hibernate.annotations.ColumnDefault;
 import lombok.Getter;
@@ -11,13 +12,15 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "member")
 @Getter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Member {
+public class Member implements UserDetails{
     @Id
     @Column(name="id", length = 40)
     String id;
@@ -69,5 +72,60 @@ public class Member {
     }
     public void updateElo(int elo){
         this.elo =elo;
+    }
+    public void updatePoint(long point){
+        this.point =point;
+    }
+    public void updateWinCount(int winCount) {
+        this.winCount = winCount;
+    }
+    public void updateLoseCount(int loseCount) {
+        this.loseCount = loseCount;
+    }
+    public boolean subtractPoint(int amount){
+        if(this.point<amount) return false;
+        this.point-=amount;
+        return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        //우리 db엔 패스워드 정보가 없음
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return nickname;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

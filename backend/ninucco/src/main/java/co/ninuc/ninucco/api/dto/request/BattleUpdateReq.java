@@ -1,11 +1,12 @@
 package co.ninuc.ninucco.api.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
 public class BattleUpdateReq {
     Long battleId;
-    String opponentUrl;
+    MultipartFile opponentImage;
 }

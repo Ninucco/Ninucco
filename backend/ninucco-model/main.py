@@ -17,6 +17,15 @@ origins = [
     f'{MAIN_SERVER_URL}:{MAIN_SERVER_PORT}'
 ]
 
+load_dotenv()
+
+MAIN_SERVER_URL = os.environ.get('MAIN_SERVER_URL')
+MAIN_SERVER_PORT = os.environ.get('MAIN_SERVER_PORT')
+
+origins = [
+    f'{MAIN_SERVER_URL}:{MAIN_SERVER_PORT}'
+]
+
 app = FastAPI()
 # app.add_middleware(
 #     CORSMiddleware,

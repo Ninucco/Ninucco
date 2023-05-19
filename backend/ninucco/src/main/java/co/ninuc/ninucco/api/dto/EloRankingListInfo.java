@@ -1,5 +1,4 @@
 package co.ninuc.ninucco.api.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class SimilarityResult {
-    String keyword;
-    Double value;
+public class EloRankingListInfo implements Res {
+    String memberId;
+    String profileImage;
+    String nickname;
+    Integer elo;
 }

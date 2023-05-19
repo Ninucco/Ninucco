@@ -8,6 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class BattleRankingListInfo implements Res {
+    String memberId;
     String profileImage;
     String nickname;
     Integer winCount;

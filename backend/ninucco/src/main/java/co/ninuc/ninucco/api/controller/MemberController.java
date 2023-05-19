@@ -3,15 +3,14 @@ package co.ninuc.ninucco.api.controller;
 import co.ninuc.ninucco.api.dto.ApiResult;
 import co.ninuc.ninucco.api.dto.Res;
 import co.ninuc.ninucco.api.dto.request.*;
-import co.ninuc.ninucco.api.dto.response.ItemListRes;
-import co.ninuc.ninucco.api.dto.response.MemberListRes;
 import co.ninuc.ninucco.api.service.MemberFriendService;
 import co.ninuc.ninucco.api.service.MemberService;
-import co.ninuc.ninucco.db.repository.MemberRepository;
+import co.ninuc.ninucco.db.entity.type.MemberFriendStatus;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/member")
@@ -20,7 +19,15 @@ public class MemberController {
     private final MemberService memberService;
     private final MemberFriendService memberFriendService;
     private final boolean SUCCESS = true;
-    private final MemberRepository memberRepository;
+//    private final MemberRepository memberRepository;
+
+    @ApiOperation(value = "가입되었는지 확인",notes="파이버베이스 키(PK)를 주면 가입되었는지 확인합니다.")
+    @PostMapping("/checkRegisted")
+    public ResponseEntity<ApiResult<Res>> checkRegisted(@RequestBody LoginReq loginReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.checkMember(loginReq))
+        );
+    }
 
     @ApiOperation(value = "로그인",notes="파이버베이스 키(PK)를 주면 해당 유저의 정보를 반환합니다.")
     @PostMapping("/login")
@@ -46,12 +53,24 @@ public class MemberController {
                 new ApiResult<>(SUCCESS, memberService.findByNicknameKeyword(keyword))
         );
     }
-    
-    @ApiOperation(value = "멤버 사진 업데이트", notes="멤버 사진주소를 업데이트 합니다.")
+
+    @ApiOperation(value = "멤버 사진을 파일로 업데이트", notes="멤버 사진을 파일로 업데이트 합니다.")
     @PatchMapping("/photo")
-    public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestBody MemberUpdatePhotoReq memberUpdatePhotoReq){
+    public ResponseEntity<ApiResult<Res>> updateMemberPhoto(@RequestPart String memberId, @RequestPart MultipartFile img){
+        MemberUpdatePhotoReq memberUpdatePhotoReq= MemberUpdatePhotoReq.builder()
+                .id(memberId)
+                .img(img)
+                .build();
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoReq))
+        );
+    }
+
+    @ApiOperation(value = "멤버 사진을 url로 업데이트", notes="멤버 사진을 주소로 업데이트 합니다.")
+    @PatchMapping("/photo/url")
+    public ResponseEntity<ApiResult<Res>> updateMemberPhotoByUrl(@ModelAttribute MemberUpdatePhotoUrlReq memberUpdatePhotoUrlReq){
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberService.updateMemberUrl(memberUpdatePhotoUrlReq))
         );
     }
 
@@ -73,19 +92,10 @@ public class MemberController {
 
     @ApiOperation(value = "프로필 조회", notes="유저 아이디로 유저 정보를 불러옵니다.")
     @GetMapping("/{memberId}")
-    public ResponseEntity<ApiResult<Res>> updateMemberNickname(@PathVariable String memberId){
+    public ResponseEntity<ApiResult<Res>> selectUserProfile(@PathVariable String memberId){
         return ResponseEntity.ok().body(
                 new ApiResult<>(SUCCESS, memberService.selectOneMember(memberId))
         );
-    }
-
-    @ApiOperation(value = "친구 맺기", notes = "친구 신청을 수락합니다.")
-    @PostMapping("/friend")
-    public ResponseEntity<ApiResult<Res>> insertMemberFriend(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
-        return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend("testId1", memberFriendCreateReq.getFriendId())));
     }
 
     @ApiOperation(value = "닉네임 중복검사", notes="닉네임 중복검사")
@@ -96,31 +106,44 @@ public class MemberController {
         );
     }
 
-    @ApiOperation(value = "친구 관계 조회", notes = "본인과 친구인지 확인합니다.")
-    @GetMapping("/friend/{friendId}")
-    public ResponseEntity<ApiResult<Res>> selectOneMemberFriend(@PathVariable String friendId) {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
+    @ApiOperation(value = "친구 신청", notes = "친구 신청을 합니다.")
+    @PostMapping("/friend")
+    public ResponseEntity<ApiResult<Res>> insertMemberFriend(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend("testId1", friendId)));
+                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend(memberFriendCreateReq.getMyId(), memberFriendCreateReq.getFriendId())));
     }
 
-    @ApiOperation(value = "친구 목록 조회", notes = "본인의 친구 목록을 조회합니다.")
-    @GetMapping("/friend-list")
-    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend() {
+    @ApiOperation(value = "친구 신청 수락", notes = "친구 신청을 수락합니다.")
+    @PostMapping("/friend/allow")
+    public ResponseEntity<ApiResult<Res>> insertMemberFriendAllow(@RequestBody MemberFriendCreateReq memberFriendCreateReq) {
 
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
         return ResponseEntity.ok().body(
-                new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend("testId1")));
+                new ApiResult<>(SUCCESS, memberFriendService.insertMemberFriend(memberFriendCreateReq.getMyId(), memberFriendCreateReq.getFriendId())));
+    }
+    @ApiOperation(value = "친구 관계 조회", notes = "본인과 친구인지 확인합니다. status => WAITING : 친구 수락 대기중, FRIEND: 친구 상태, NONE : 친구 상태 아님")
+    @GetMapping("/friend/check")
+    public ResponseEntity<ApiResult<Res>> selectOneMemberFriend(@RequestParam String myId,@RequestParam String friendId) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberFriendService.selectOneMemberFriend(myId, friendId)));
+    }
+
+    @ApiOperation(value = "친구 목록 조회", notes = "해당 사용자의 친구 목록을 조회합니다. status => WAITING : 보낸 신청 목록, FRIEND : 친구 목록 조회")
+    @GetMapping("/friend-list")
+    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId,@RequestParam MemberFriendStatus status) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberFriendService.selectAllMemberFriend(memberId,status)));
+    }
+
+    @ApiOperation(value = "받은 친구 신청 목록 조회", notes = "해당 사용자의 받은 친구 신청 목록을 조회합니다.")
+    @GetMapping("/received-friend-list")
+    public ResponseEntity<ApiResult<Res>> selectAllMemberFriend(@RequestParam String memberId) {
+        return ResponseEntity.ok().body(
+                new ApiResult<>(SUCCESS, memberFriendService.selectAllReceivedFriend(memberId)));
     }
 
     @ApiOperation(value = "친구 삭제", notes = "친구를 삭제합니다.")
-    @DeleteMapping("/friend/{friendId}")
-    public ResponseEntity<ApiResult<Res>> deleteMemberFriend(@PathVariable String friendId) {
-
-        //TODO memberId를 헤더에 있는 토큰을 이용해 가져온다.
-        String memberId = "testId1";
-
-        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, memberFriendService.deleteMemberFriend(memberId, friendId)));
+    @DeleteMapping("/friend/delete")
+    public ResponseEntity<ApiResult<Res>> deleteMemberFriend(@RequestParam String myId,@RequestParam String friendId) {
+        return ResponseEntity.ok().body(new ApiResult<>(SUCCESS, memberFriendService.deleteMemberFriend(myId, friendId)));
     }
 }
