@@ -1,11 +1,15 @@
 FROM python:3.9
- 
-WORKDIR /code
 
-COPY ./requirements.txt /code/requirements.txt
+WORKDIR /model
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY . /model
 
-COPY ./app /code/app
+RUN pip install --upgrade pip
+RUN pip install tensorflow
+RUN pip install tensorflow-estimator
+RUN pip install tensorflow-intel
+RUN pip install tensorflow-io-gcs-filesystem
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+RUN pip install --no-cache-dir --upgrade -r /model/requirements.txt
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
