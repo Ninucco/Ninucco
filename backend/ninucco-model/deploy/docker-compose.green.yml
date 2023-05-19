@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  model:
+    image: ninucco_model:latest
+    container_name: ninucco_model_green
+    ports:
+      - "8002:8000"
+    restart: always

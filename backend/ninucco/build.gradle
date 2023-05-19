@@ -16,6 +16,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	google()
 }
 
 dependencies {
@@ -26,6 +27,43 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
+	// https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
+	implementation 'org.hibernate:hibernate-validator:8.0.0.Final'
+	testImplementation 'junit:junit:4.12'
+	implementation 'com.google.guava:guava:22.0'
+
+
+	/* swagger2 */
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+
+	/* Firebase Admin sdk */
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	/* Firebase Messaging */
+	implementation 'com.google.firebase:firebase-core:21.1.1'
+	implementation 'com.google.firebase:firebase-messaging:23.1.2'
+
+	/* okhttp3 */
+	implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
+
+	/* json */
+	implementation 'org.json:json:20230227'
+
+	/*aws sdk*/
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-test'
+
+	/* mongodb */
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.7.11'
+
+	/* redis */
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.11'
+
 }
 
 tasks.named('test') {
