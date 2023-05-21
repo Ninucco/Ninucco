@@ -9,8 +9,6 @@ from operator import itemgetter
 # load .env
 load_dotenv()
 
-model_names = ["animal", "fruit", "highschool", "job", "programming", "personality"]
-
 AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.environ.get('AWS_SECRET_KEY')
 BUCKET_NAME = os.environ.get('BUCKET_NAME')
@@ -20,14 +18,14 @@ def get_s3fs():
 
 
 def get_models_and_classes():
-    global model_names
     models = {}
     classes = {}
 
     with tempfile.TemporaryDirectory() as tempdir:
         s3fs = get_s3fs()
+        model_names = list(filter(lambda x: x != '', [x.split('/')[-1] for x in s3fs.ls(f"{BUCKET_NAME}/model/")]))
         s3fs.get(f"{BUCKET_NAME}/model/",
-                 f"{tempdir}/model/", recursive=True)
+                f"{tempdir}/model/", recursive=True)
         for model_name in model_names:
             models[model_name] = tensorflow.keras.models.load_model(
                 f"{tempdir}/model/{model_name}/keras_model.h5", compile=False)
@@ -41,7 +39,6 @@ def get_models_and_classes():
                 classes[model_name].append(line.split(' ', 1)[1].rstrip())
                 line = lables_file.readline()
             lables_file.close()
-        print(models.keys())
         return models, classes
 
 
