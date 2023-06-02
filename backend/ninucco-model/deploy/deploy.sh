@@ -26,12 +26,12 @@ do
   EXIST_AFTER=$(docker-compose -p ${APP_NAME}-${AFTER_COMPOSE_COLOR} -f docker-compose.${AFTER_COMPOSE_COLOR}.yml ps | grep Up)
   echo "EXIST_AFTER : ${EXIST_AFTER}"
   if [ -n "$EXIST_AFTER" ]; then
-	  TEST_API_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://k8a605.p.ssafy.io/predict/face/keywordlist)
+	  TEST_API_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://ninucco.com/predict/face/keywordlist)
     echo "TEST_API_STATUS_CODE : ${TEST_API_STATUS_CODE}"
     if [ "$TEST_API_STATUS_CODE" == 200 ]; then
       echo "TEST API SUCCESS !! >> ${AFTER_COMPOSE_COLOR} Container WAS Running!"
 
-      file_path="../settings/r_proxy/nginx.all.conf"
+      file_path="/home/ubuntu/mount/sites-available/default.conf"
       if [ "$BEFORE_COMPOSE_COLOR" == "green" ]; then
         old_string="8002"
         new_string="8001"
@@ -42,9 +42,9 @@ do
       sed -i "s/$old_string/$new_string/g" "$file_path"
       echo "switch port : $old_string to $new_string"
 
-      # 새로운 컨테이너에 대한 nginx 설정파일 복사 후 nginx reload
-      echo "COPY nginx.conf"
-      docker cp ${file_path} r_proxy:/etc/nginx/conf.d/default.conf
+#      echo "COPY nginx.conf"
+#      docker cp ${file_path} r_proxy:/etc/nginx/conf.d/default.conf
+
       echo "reload nginx"
       docker exec r_proxy service nginx reload
 
