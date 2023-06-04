@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  back-end:
+    image: ninucco_back:latest
+    container_name: ninucco_back_blue
+    ports:
+      - "8081:8080"
+    restart: always
