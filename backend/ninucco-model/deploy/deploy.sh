@@ -42,7 +42,7 @@ do
 #      docker cp ${file_path} r_proxy:/etc/nginx/conf.d/default.conf
 
     echo "reload nginx"
-    docker exec r_proxy service nginx reload
+    docker exec nginx service nginx reload
 
     # 이전 컨테이너 종료
     docker-compose -p ${APP_NAME}-${BEFORE_COMPOSE_COLOR} -f docker-compose.${BEFORE_COMPOSE_COLOR}.yml down
