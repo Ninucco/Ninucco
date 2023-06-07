@@ -58,7 +58,7 @@ do
   fi
 
   # 대기시간 15초초과시 TIME OUT 에러
-  if [ ${SECONDS} -gt 15]; then
+  if [ ${SECONDS} -gt 15 ]; then
     echo "[server] ERROR: TIMEOUT"
     exit 1
   fi
