@@ -17,7 +17,8 @@ def get_s3fs():
     return s3fs.S3FileSystem(key=AWS_ACCESS_KEY, secret=AWS_SECRET_KEY)
 
 
-def get_models_and_classes():
+def get_models_classes_model_names():
+    model_names = []
     models = {}
     classes = {}
 
@@ -39,7 +40,8 @@ def get_models_and_classes():
                 classes[model_name].append(line.split(' ', 1)[1].rstrip())
                 line = lables_file.readline()
             lables_file.close()
-        return models, classes
+        print(model_names)
+        return models, classes, model_names
 
 
 def predict(img_dir, _model, _class):

@@ -31,11 +31,11 @@ app = FastAPI()
 #     CORSMiddleware,
 #     allow_origins = origins
 # )
-models, classes = model.get_models_and_classes()
+models, classes, model_names = model.get_models_classes_model_names()
 
 @app.post("/predict")
 async def predict(modelName: str = Form(...), img: UploadFile = File(...)):
-    if modelName in model.model_names and img.filename.lower().endswith('png'):    
+    if modelName in model_names and img.filename.lower().endswith('png'):    
         with tempfile.TemporaryDirectory('r+') as tmpdir:
             path = get_image(img, tmpdir)
             print(path)
