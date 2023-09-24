@@ -17,11 +17,11 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -51,16 +51,12 @@ public class FaceServiceImpl {
         String contentType = r.getImg().getContentType();
         if(!StringUtils.hasText(contentType) || !contentType.equals("image/png"))
             throw new CustomException(ErrorRes.BAD_REQUEST);
-        //파일 bypeArray로 변환
-        byte[] inputImgByteArray;
-        try{
-            inputImgByteArray = r.getImg().getBytes();
-        }catch(IOException e){
-            throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR);
-        }
+        //파일 resource로 변환
+        Resource imgResource = r.getImg().getResource();
+
         //2. 데이터 리스트를 받는다(keyword-value)
-        List<Similarity> similarityResultList = similarityModelService.getList(r.getModelType(), inputImgByteArray);
-        List<Similarity> personalitySimilarityResultList = similarityModelService.getList("personality", inputImgByteArray);
+        List<Similarity> similarityResultList = similarityModelService.getList(imgResource, r.getModelType());
+        List<Similarity> personalitySimilarityResultList = similarityModelService.getList(imgResource, "personality");
         log.info("1. 데이터 리스트 받기 완료");
         //3. 데이터 리스트에서 가장 상위의 키워드를 뽑는다
         String keyword = similarityResultList.get(0).getKeyword();
@@ -71,7 +67,7 @@ public class FaceServiceImpl {
         String stylePreset = redisService.getRedisStringValue("style_preset:"+r.getModelType());
         log.info(">> prompt: "+prompt);
         //4. 이미지 생성
-        byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(inputImgByteArray, prompt, imageStrength, stylePreset);
+        byte[] resultImgByteArray = stabilityAIService.getByteArrayImgToImg(r.getImg(), prompt, imageStrength, stylePreset);
         log.info("2. 이미지 생성 완료");
         //S3에 저장
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(resultImgByteArray);
@@ -124,8 +120,8 @@ public class FaceServiceImpl {
                 .resultList(listTop5).build();
     }
     private String getPrompt(String personalityKeyword, String keyword){
-        return new StringBuilder().append(personalityKeyword).append(',')
-        .append(redisService.getRedisStringValue("prompt:"+keyword)).append(',')
-        .append(redisService.getRedisStringValue("prompt:base")).toString();
+        return personalityKeyword + ',' +
+                redisService.getRedisStringValue("prompt:" + keyword) + ',' +
+                redisService.getRedisStringValue("prompt:base");
     }
 }

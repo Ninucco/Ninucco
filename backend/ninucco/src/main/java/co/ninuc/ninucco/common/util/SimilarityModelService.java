@@ -1,51 +1,45 @@
 package co.ninuc.ninucco.common.util;
 
-import co.ninuc.ninucco.api.dto.ErrorRes;
 import co.ninuc.ninucco.api.dto.Similarity;
-import co.ninuc.ninucco.common.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Headers;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @Slf4j
 public class SimilarityModelService{
     private final String url;
-    private final InterServiceCommunicationProvider isp;
-
-    public SimilarityModelService(@Value("${ai.model.url}") String modelUrl, InterServiceCommunicationProvider isp) {
-        this.url = modelUrl;
-        this.isp = isp;
-    }
-
-    private JSONObject getJsonObject(String modelType, byte[] imgByteArray){
-        RequestBody requestBody = new MultipartBody.Builder()
-                .addFormDataPart("modelName", modelType)
-                .addFormDataPart("img", "tmp.png", RequestBody.create(imgByteArray, MediaType.parse("image/png")))
-                .setType(MultipartBody.FORM)
+    private final RestTemplate restTemplate;
+    public SimilarityModelService(@Value("${ai.model.url}") String modelUrl, RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder
+                .defaultHeader("Content-Type", MediaType.MULTIPART_FORM_DATA_VALUE)
+                .defaultHeader("Accept", MediaType.APPLICATION_JSON_VALUE)
                 .build();
-        Optional<JSONObject> res = isp.postRequestSendRequestbodyGetJsonObject(url,
-                Headers.of(
-                        "Content-Type","multipart/form-data",
-                        "Accept","application/json"
-                ),
-                requestBody
-                );
-        if(res.isEmpty()) throw new CustomException(ErrorRes.INTERNAL_SERVER_ERROR_FROM_SIMILARITY_MODEL);
-        else return res.get();
+        this.url = modelUrl;
     }
-    public List<Similarity> getList(String modelType, byte[] imgByteArray){
-        JSONArray jsonArray = (JSONArray) this.getJsonObject(modelType, imgByteArray).get("result_list");
+
+    public JSONObject getJsonObject(Resource img, String modelType){
+        MultiValueMap<String, Object> reqParams = new LinkedMultiValueMap<>();
+        reqParams.add("img", img);
+        reqParams.add("modelName", modelType);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(reqParams);
+
+        String response =  restTemplate.postForObject(url, requestEntity, String.class);
+        return new JSONObject(response);
+    }
+    public List<Similarity> getList(Resource img, String modelType){
+        JSONArray jsonArray = (JSONArray) this.getJsonObject(img, modelType).get("result_list");
         List<Similarity> resultList = new ArrayList<>();
         for(Object o: jsonArray){
             JSONObject jsonObj = (JSONObject) o;
