@@ -22,6 +22,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -46,9 +47,6 @@ dependencies {
 	implementation 'com.google.firebase:firebase-core:21.1.1'
 	implementation 'com.google.firebase:firebase-messaging:23.1.2'
 
-	/* okhttp3 */
-	implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
-
 	/* json */
 	implementation 'org.json:json:20230227'
 
@@ -63,7 +61,6 @@ dependencies {
 
 	/* redis */
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.11'
-
 }
 
 tasks.named('test') {
